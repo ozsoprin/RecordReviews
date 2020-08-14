@@ -1,5 +1,3 @@
-using System;
-
 namespace RecordReviews.Models
 {
     public class ErrorViewModel

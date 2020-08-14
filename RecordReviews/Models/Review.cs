@@ -1,22 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
-using Newtonsoft.Json;
+
 namespace RecordReviews.Models
 {
     public class Review
     {
-        [Key]
-        public int Id { get; set; }
+        [Key] public int Id { get; set; }
 
         public int UserId { get; set; }
 
-        [DisplayName("User Name")]
-        public string Username { get; set; }
+        [DisplayName("User Name")] public string Username { get; set; }
 
         public int AlbumId { get; set; }
 
@@ -32,7 +26,6 @@ namespace RecordReviews.Models
         [Range(0, 10, ErrorMessage = "Please Rate This Album On a Scale Of 1-10")]
         public int Rate { get; set; }
 
-        [DisplayName("Created on")]
-        public DateTime CreationTime { get; set; }
+        [DisplayName("Created on")] public DateTime CreationTime { get; set; }
     }
 }
