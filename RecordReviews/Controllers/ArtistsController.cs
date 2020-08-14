@@ -12,9 +12,9 @@ namespace RecordReviews.Controllers
 {
     public class ArtistsController : Controller
     {
-        private readonly ArtistContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public ArtistsController(ArtistContext context)
+        public ArtistsController(ApplicationDbContext context)
         {
             _context = context;
         }

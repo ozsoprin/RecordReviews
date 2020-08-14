@@ -10,85 +10,85 @@ using RecordReviews.Models;
 
 namespace RecordReviews.Controllers
 {
-    public class AlbumsController : Controller
+    public class SearchesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public AlbumsController(ApplicationDbContext context)
+        public SearchesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Albums
+        // GET: Searches
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Albums.ToListAsync());
+            return View(await _context.Search.ToListAsync());
         }
 
-        // GET: Albums/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Searches/Details/5
+        public async Task<IActionResult> Details(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var album = await _context.Albums
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (album == null)
+            var search = await _context.Search
+                .FirstOrDefaultAsync(m => m.type == id);
+            if (search == null)
             {
                 return NotFound();
             }
 
-            return View(album);
+            return View(search);
         }
 
-        // GET: Albums/Create
+        // GET: Searches/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Albums/Create
+        // POST: Searches/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Artist,ArtistId,ReleaseDate,Genre,AvgRate,PageViews")] Album album)
+        public async Task<IActionResult> Create([Bind("type,PrimaryKey,SecondaryKey,MinRate,MaxRate,GenreCountry,MaxDateTime,MinDateTime")] Search search)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(album);
+                _context.Add(search);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(album);
+            return View(search);
         }
 
-        // GET: Albums/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: Searches/Edit/5
+        public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var album = await _context.Albums.FindAsync(id);
-            if (album == null)
+            var search = await _context.Search.FindAsync(id);
+            if (search == null)
             {
                 return NotFound();
             }
-            return View(album);
+            return View(search);
         }
 
-        // POST: Albums/Edit/5
+        // POST: Searches/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Artist,ArtistId,ReleaseDate,Genre,AvgRate,PageViews")] Album album)
+        public async Task<IActionResult> Edit(string id, [Bind("type,PrimaryKey,SecondaryKey,MinRate,MaxRate,GenreCountry,MaxDateTime,MinDateTime")] Search search)
         {
-            if (id != album.Id)
+            if (id != search.type)
             {
                 return NotFound();
             }
@@ -97,12 +97,12 @@ namespace RecordReviews.Controllers
             {
                 try
                 {
-                    _context.Update(album);
+                    _context.Update(search);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AlbumExists(album.Id))
+                    if (!SearchExists(search.type))
                     {
                         return NotFound();
                     }
@@ -113,41 +113,41 @@ namespace RecordReviews.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(album);
+            return View(search);
         }
 
-        // GET: Albums/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Searches/Delete/5
+        public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var album = await _context.Albums
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (album == null)
+            var search = await _context.Search
+                .FirstOrDefaultAsync(m => m.type == id);
+            if (search == null)
             {
                 return NotFound();
             }
 
-            return View(album);
+            return View(search);
         }
 
-        // POST: Albums/Delete/5
+        // POST: Searches/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var album = await _context.Albums.FindAsync(id);
-            _context.Albums.Remove(album);
+            var search = await _context.Search.FindAsync(id);
+            _context.Search.Remove(search);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AlbumExists(int id)
+        private bool SearchExists(string id)
         {
-            return _context.Albums.Any(e => e.Id == id);
+            return _context.Search.Any(e => e.type == id);
         }
     }
 }

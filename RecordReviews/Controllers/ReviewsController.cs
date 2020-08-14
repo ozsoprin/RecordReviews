@@ -12,9 +12,9 @@ namespace RecordReviews.Controllers
 {
     public class ReviewsController : Controller
     {
-        private readonly ReviewContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public ReviewsController(ReviewContext context)
+        public ReviewsController(ApplicationDbContext context)
         {
             _context = context;
         }
