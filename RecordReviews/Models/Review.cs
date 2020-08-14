@@ -24,15 +24,15 @@ namespace RecordReviews.Models
         [Required(ErrorMessage = "Please Enter an Album Title")]
         public string AlbumTitle { get; set; }
 
-        [Required(ErrorMessage = "A Review cannot be Empty")]
+        [Required(ErrorMessage = "Must Fill a Comment")]
         [DataType(DataType.MultilineText)]
-        public string Text { get; set; }
+        public string Comment { get; set; }
 
-        [Required(ErrorMessage = "Please Enter a Score")]
-        [Range(0, 10, ErrorMessage = "Please Enter a Score from 1-10")]
-        public int Score { get; set; }
+        [Required(ErrorMessage = "Please Rate")]
+        [Range(0, 10, ErrorMessage = "Please Rate This Album On a Scale Of 1-10")]
+        public int Rate { get; set; }
 
-        [DisplayName("Written on")]
-        public DateTime ReviewCreationTime { get; set; }
+        [DisplayName("Created on")]
+        public DateTime CreationTime { get; set; }
     }
 }

@@ -10,19 +10,19 @@ namespace RecordReviews.Models
      {
         [Key]
         public string type { get; set; }
-        public string primaryName { get; set; }
-        public string secondaryName { get; set; } // for album (the artist); for review (username); 
+        public string PrimaryKey { get; set; }
+        public string SecondaryKey { get; set; } // for album (the artist); for review (username); 
 
         [Range(0, 10)]
-        public double? ScoreLowerBound { get; set; }
+        public double? MinRate { get; set; }
 
         [Range(0, 10)]
-        public double? ScoreUpperBound { get; set; }
+        public double? MaxRate { get; set; }
 
         public string GenreCountry { get; set; }
 
-        public DateTime? DateLowerBound { get; set; }
-        public DateTime? DateUpperBound { get; set; }
+        public DateTime? MaxDateTime { get; set; }
+        public DateTime? MinDateTime { get; set; }
      }
 }
 

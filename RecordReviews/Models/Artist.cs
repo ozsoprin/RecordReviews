@@ -16,13 +16,13 @@ namespace RecordReviews.Models
         [Required(ErrorMessage = "Artist's Name is Required")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Artist's Origin Country is Required")]
-        [DisplayName("Origin Country")]
-        public string OriginCountry { get; set; }
+        [Required(ErrorMessage = "Artist's Birth Place is Required")]
+        [DisplayName("Birth Place")]
+        public string BirthPlace { get; set; }
 
-        [DisplayName("Average Score")]
-        public double AvgScore { get; set; }
-
+        [DisplayName("Average Rate")]
+        public double AvgRate { get; set; }
+        
         [DisplayName("Page Views")]
         public int PageViews { get; set; }
 

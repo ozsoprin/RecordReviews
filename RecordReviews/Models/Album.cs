@@ -32,8 +32,8 @@ namespace RecordReviews.Models
         [Required(ErrorMessage = "Genre is Required")]
         public string Genre { get; set; }
 
-        [DisplayName("Average Score")]
-        public double AvgScore { get; set; }
+        [DisplayName("Average Rate")]
+        public double AvgRate { get; set; }
 
         [DisplayName("Page Views")]
         public int PageViews { get; set; }
