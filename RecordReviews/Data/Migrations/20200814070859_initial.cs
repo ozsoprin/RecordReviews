@@ -18,8 +18,8 @@ namespace RecordReviews.Data.Migrations
                     ArtistId = table.Column<int>(nullable: false),
                     ReleaseDate = table.Column<DateTime>(nullable: false),
                     Genre = table.Column<string>(nullable: false),
-                    AvgRate = table.Column<double>(nullable: false),
-                    PageViews = table.Column<int>(nullable: false)
+                    AvgRate = table.Column<double>(nullable: true),
+                    PageViews = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -34,8 +34,8 @@ namespace RecordReviews.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: false),
                     BirthPlace = table.Column<string>(nullable: false),
-                    AvgRate = table.Column<double>(nullable: false),
-                    PageViews = table.Column<int>(nullable: false),
+                    AvgRate = table.Column<double>(nullable: true),
+                    PageViews = table.Column<int>(nullable: true),
                     Genre = table.Column<string>(nullable: false)
                 },
                 constraints: table =>

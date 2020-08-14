@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -34,11 +35,14 @@ namespace RecordReviews.Controllers
             }
 
             var artist = await _context.Artists
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(_ => _.Id == id);
             if (artist == null)
             {
                 return NotFound();
             }
+
+            artist.PageViews++;
+            await _context.SaveChangesAsync();
 
             return View(artist);
         }
@@ -54,13 +58,22 @@ namespace RecordReviews.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,BirthPlace,AvgRate,PageViews,Genre")] Artist artist)
+        public async Task<IActionResult> Create([Bind("Id,Name,BirthPlace,Genre")] Artist artist)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(artist);
+                //Check if artist is already exist in db.
+                var _artist = _context.Artists.Where(_ => _.Name == artist.Name).Select(_ => new {_.Id})
+                    .SingleOrDefault();
+                if (_artist != null)
+                {
+                    return RedirectToAction("Details", new {id = _artist.Id});
+                }
+                
+                //Create new artist
+                await _context.AddAsync(artist);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { id = artist.Id });
             }
             return View(artist);
         }

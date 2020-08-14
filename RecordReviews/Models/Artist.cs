@@ -5,6 +5,19 @@ namespace RecordReviews.Models
 {
     public class Artist
     {
+        public Artist()
+        {
+            AvgRate = 0.0;
+            PageViews = 0;
+        }
+
+        public Artist(string name, string birthPlace, string genre)
+        {
+            Name = name;
+            BirthPlace = birthPlace;
+            Genre = genre;
+        }
+
         [Key] public int Id { get; set; }
 
         [DisplayName("Artist's Name")]
@@ -15,9 +28,9 @@ namespace RecordReviews.Models
         [DisplayName("Birth Place")]
         public string BirthPlace { get; set; }
 
-        [DisplayName("Average Rate")] public double AvgRate { get; set; }
+        [DisplayName("Average Rate")] public double? AvgRate { get; set; }
 
-        [DisplayName("Page Views")] public int PageViews { get; set; }
+        [DisplayName("Page Views")] public int? PageViews { get; set; }
 
         [Required(ErrorMessage = "Genre is Required")]
         [DisplayName("Genre")]
