@@ -20,6 +20,7 @@ namespace RecordReviews.Controllers
         // GET: Top10Controller
         public ActionResult Index()
         {
+            //change to - decending
             ViewBag.topArtists = _context.Artists.OrderBy(_ => _.AvgRate).Take(10).ToList();
             ViewBag.topAlbums = _context.Albums.OrderBy(_ => _.AvgRate).Take(10).ToList();
             ViewBag.topUsers = (from a in _context.Users
