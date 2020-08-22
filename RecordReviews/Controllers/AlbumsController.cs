@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Data;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RecordReviews.Data;
 using RecordReviews.Models;
@@ -21,7 +22,8 @@ namespace RecordReviews.Controllers
         // GET: Albums
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Albums.ToListAsync());
+            var applicationDbContext = _context.Albums.Include(a => a.Artist);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Albums/Details/5
@@ -33,14 +35,12 @@ namespace RecordReviews.Controllers
             }
 
             var album = await _context.Albums
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(a => a.Artist)
+                .FirstOrDefaultAsync(m => m.AlbumId == id);
             if (album == null)
             {
                 return NotFound();
             }
-
-            album.PageViews++;
-            await _context.SaveChangesAsync();
 
             return View(album);
         }
@@ -48,6 +48,7 @@ namespace RecordReviews.Controllers
         // GET: Albums/Create
         public IActionResult Create()
         {
+            ViewData["ArtistId"] = new SelectList(_context.Artists, "ArtistID", "ArtistName");
             return View();
         }
 
@@ -56,52 +57,15 @@ namespace RecordReviews.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Artist,ReleaseDate,Genre")] Album album)
+        public async Task<IActionResult> Create([Bind("AlbumId,AlbumTitle,ArtistName,ArtistId,ReleaseDate,Genre,AvgRate,PageViews")] Album album)
         {
             if (ModelState.IsValid)
             {
-                //Check valid release date
-                if (album.ReleaseDate > DateTime.Now)
-                {
-                    ModelState.AddModelError("ReleaseDate","Album's release date is not valid");
-                    return View(album);
-                }
-
-                //Check if the album already exists
-                var _album = _context.Albums.Where(_ => _.Title == album.Title && _.Artist == album.Artist)
-                    .Select(_ => new {_.Id}).SingleOrDefault();
-                if (_album != null)
-                {
-                    return RedirectToAction("Details", new {id = _album.Id});
-                }
-                else
-                {
-                    //Check if the album's artist already exist in the DB
-                    var _artist = _context.Artists.Where(_ => _.Name == album.Artist).Select(_ => new {_.Id})
-                        .SingleOrDefault();
-                    if (_artist != null)
-                    {
-                        //Saving the new album
-                        album.ArtistId = _artist.Id;
-                        await _context.Albums.AddAsync(album);
-                        await _context.SaveChangesAsync();
-                        return RedirectToAction("Details", new { id = album.Id });
-                    }
-                    else
-                    {
-                        //Generating a new artist if not existed
-                        var newArtist = new Artist(album.Artist, "Unknown", album.Genre);
-                        await _context.Artists.AddAsync(newArtist);
-                        await _context.SaveChangesAsync();
-
-                        //Saving the new album
-                        album.ArtistId = newArtist.Id;
-                        await _context.Albums.AddAsync(album);
-                        await _context.SaveChangesAsync();
-                        return RedirectToAction("Details", new { id = album.Id });
-                    }
-                }
+                _context.Add(album);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
+            ViewData["ArtistId"] = new SelectList(_context.Artists, "ArtistID", "ArtistName", album.ArtistId);
             return View(album);
         }
 
@@ -118,6 +82,7 @@ namespace RecordReviews.Controllers
             {
                 return NotFound();
             }
+            ViewData["ArtistId"] = new SelectList(_context.Artists, "ArtistID", "ArtistName", album.ArtistId);
             return View(album);
         }
 
@@ -126,9 +91,9 @@ namespace RecordReviews.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Artist,ArtistId,ReleaseDate,Genre,AvgRate,PageViews")] Album album)
+        public async Task<IActionResult> Edit(int id, [Bind("AlbumId,AlbumTitle,ArtistName,ArtistId,ReleaseDate,Genre,AvgRate,PageViews")] Album album)
         {
-            if (id != album.Id)
+            if (id != album.AlbumId)
             {
                 return NotFound();
             }
@@ -142,7 +107,7 @@ namespace RecordReviews.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AlbumExists(album.Id))
+                    if (!AlbumExists(album.AlbumId))
                     {
                         return NotFound();
                     }
@@ -153,6 +118,7 @@ namespace RecordReviews.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ArtistId"] = new SelectList(_context.Artists, "ArtistID", "ArtistName", album.ArtistId);
             return View(album);
         }
 
@@ -165,7 +131,8 @@ namespace RecordReviews.Controllers
             }
 
             var album = await _context.Albums
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(a => a.Artist)
+                .FirstOrDefaultAsync(m => m.AlbumId == id);
             if (album == null)
             {
                 return NotFound();
@@ -187,7 +154,7 @@ namespace RecordReviews.Controllers
 
         private bool AlbumExists(int id)
         {
-            return _context.Albums.Any(e => e.Id == id);
+            return _context.Albums.Any(e => e.AlbumId == id);
         }
     }
 }

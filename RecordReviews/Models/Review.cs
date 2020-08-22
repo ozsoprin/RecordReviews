@@ -1,22 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace RecordReviews.Models
 {
     public class Review
     {
-        [Key] public int Id { get; set; }
+        [Key] public int ReviewId { get; set; }
 
-        public string UserId { get; set; }
-
-        [DisplayName("User Name")] public string Username { get; set; }
-
+        public IdentityUser User { get; set; }
+        
         public int AlbumId { get; set; }
 
-        [DisplayName("Album Title")]
-        [Required(ErrorMessage = "Please Enter an Album Title")]
-        public string AlbumTitle { get; set; }
+        public Album Album { get; set; }
 
         [Required(ErrorMessage = "Must Fill a Comment")]
         [DataType(DataType.MultilineText)]
@@ -27,5 +28,27 @@ namespace RecordReviews.Models
         public int Rate { get; set; }
 
         [DisplayName("Created on")] public DateTime CreationTime { get; set; }
+
+        public void UpdateRateAfterAdding()
+        {
+            var sum = 0.0;
+            var cnt = 0;
+            foreach (var review in Album.Reviews)
+            {
+                sum += review.Rate;
+                cnt++;
+            }
+
+            Album.AvgRate = Math.Round(sum / cnt, 2);
+            sum = 0.0;
+            cnt = 0;
+            foreach (var album in Album.Artist.Albums)
+            {
+                if (album.AvgRate != null) sum += (double)album.AvgRate;
+                cnt++;
+            }
+
+            Album.Artist.AvgRate = Math.Round(sum / cnt, 2);
+        }
     }
 }

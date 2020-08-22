@@ -10,8 +10,8 @@ using RecordReviews.Data;
 namespace RecordReviews.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200814070859_initial")]
-    partial class initial
+    [Migration("20200822070159_initialize")]
+    partial class initialize
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -223,48 +223,54 @@ namespace RecordReviews.Data.Migrations
 
             modelBuilder.Entity("RecordReviews.Models.Album", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("AlbumId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Artist")
+                    b.Property<string>("AlbumTitle")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ArtistId")
                         .HasColumnType("int");
 
-                    b.Property<double>("AvgRate")
+                    b.Property<string>("ArtistName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("AvgRate")
                         .HasColumnType("float");
 
                     b.Property<string>("Genre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PageViews")
+                    b.Property<int?>("PageViews")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("AlbumId");
 
-                    b.HasKey("Id");
+                    b.HasIndex("ArtistId");
 
                     b.ToTable("Albums");
                 });
 
             modelBuilder.Entity("RecordReviews.Models.Artist", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ArtistID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<double>("AvgRate")
+                    b.Property<string>("ArtistName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("AvgRate")
                         .HasColumnType("float");
 
                     b.Property<string>("BirthPlace")
@@ -275,31 +281,23 @@ namespace RecordReviews.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<double?>("PageViews")
+                        .HasColumnType("float");
 
-                    b.Property<int>("PageViews")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
+                    b.HasKey("ArtistID");
 
                     b.ToTable("Artists");
                 });
 
             modelBuilder.Entity("RecordReviews.Models.Review", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ReviewId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("AlbumId")
                         .HasColumnType("int");
-
-                    b.Property<string>("AlbumTitle")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Comment")
                         .IsRequired()
@@ -311,13 +309,14 @@ namespace RecordReviews.Data.Migrations
                     b.Property<int>("Rate")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("ReviewId");
 
-                    b.HasKey("Id");
+                    b.HasIndex("AlbumId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Reviews");
                 });
@@ -402,6 +401,28 @@ namespace RecordReviews.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("RecordReviews.Models.Album", b =>
+                {
+                    b.HasOne("RecordReviews.Models.Artist", "Artist")
+                        .WithMany("Albums")
+                        .HasForeignKey("ArtistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RecordReviews.Models.Review", b =>
+                {
+                    b.HasOne("RecordReviews.Models.Album", "Album")
+                        .WithMany("Reviews")
+                        .HasForeignKey("AlbumId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

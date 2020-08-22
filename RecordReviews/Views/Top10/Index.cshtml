@@ -1,32 +1,8 @@
-﻿
+﻿@model object
+
 @{
-    ViewData["Title"] = "Index";
-    ViewBag.Title = "Top 10";
+    ViewBag.Title = "title";
+    Layout = "_Layout";
 }
-<!-- Artist list == topArtists, Album list == topAlbums, User list == topUsers -->
 
-<h1>Our Top 10</h1>
-<h2>Top Artists</h2>
-<table class="table table-condensed table-hover">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Genre</th>
-            <th>PageView</th>
-            <th>AvgRate</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var artists in ViewBag.topArtists)
-        {
-            <tr>
-                <td>@artists.Name</td>
-                <td>@artists.Genre</td>
-                <td>@artists.PageViews</td>
-                <td>@artists.AvgRate</td>
-            </tr>
-
-        }
-    </tbody>
-</table>
-
+<h2>title</h2>

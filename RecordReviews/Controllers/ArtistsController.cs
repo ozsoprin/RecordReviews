@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -35,14 +34,11 @@ namespace RecordReviews.Controllers
             }
 
             var artist = await _context.Artists
-                .FirstOrDefaultAsync(_ => _.Id == id);
+                .FirstOrDefaultAsync(m => m.ArtistID == id);
             if (artist == null)
             {
                 return NotFound();
             }
-
-            artist.PageViews++;
-            await _context.SaveChangesAsync();
 
             return View(artist);
         }
@@ -58,22 +54,13 @@ namespace RecordReviews.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,BirthPlace,Genre")] Artist artist)
+        public async Task<IActionResult> Create([Bind("ArtistID,ArtistName,BirthPlace,Genre,AvgRate,PageViews")] Artist artist)
         {
             if (ModelState.IsValid)
             {
-                //Check if artist is already exist in db.
-                var _artist = _context.Artists.Where(_ => _.Name == artist.Name).Select(_ => new {_.Id})
-                    .SingleOrDefault();
-                if (_artist != null)
-                {
-                    return RedirectToAction("Details", new {id = _artist.Id});
-                }
-                
-                //Create new artist
-                await _context.AddAsync(artist);
+                _context.Add(artist);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Details", new { id = artist.Id });
+                return RedirectToAction(nameof(Index));
             }
             return View(artist);
         }
@@ -99,9 +86,9 @@ namespace RecordReviews.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,BirthPlace,AvgRate,PageViews,Genre")] Artist artist)
+        public async Task<IActionResult> Edit(int id, [Bind("ArtistID,ArtistName,BirthPlace,Genre,AvgRate,PageViews")] Artist artist)
         {
-            if (id != artist.Id)
+            if (id != artist.ArtistID)
             {
                 return NotFound();
             }
@@ -115,7 +102,7 @@ namespace RecordReviews.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ArtistExists(artist.Id))
+                    if (!ArtistExists(artist.ArtistID))
                     {
                         return NotFound();
                     }
@@ -138,7 +125,7 @@ namespace RecordReviews.Controllers
             }
 
             var artist = await _context.Artists
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.ArtistID == id);
             if (artist == null)
             {
                 return NotFound();
@@ -160,7 +147,7 @@ namespace RecordReviews.Controllers
 
         private bool ArtistExists(int id)
         {
-            return _context.Artists.Any(e => e.Id == id);
+            return _context.Artists.Any(e => e.ArtistID == id);
         }
     }
 }

@@ -13,16 +13,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Username)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AlbumId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AlbumTitle)
+                @Html.DisplayNameFor(model => model.Album)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Comment)
@@ -40,16 +31,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AlbumId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AlbumTitle)
+                @Html.DisplayFor(modelItem => item.Album.AlbumTitle)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Comment)
@@ -61,9 +43,9 @@
                 @Html.DisplayFor(modelItem => item.CreationTime)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.ReviewId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ReviewId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ReviewId">Delete</a>
             </td>
         </tr>
 }

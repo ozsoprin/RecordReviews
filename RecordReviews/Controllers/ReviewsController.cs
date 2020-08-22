@@ -22,7 +22,8 @@ namespace RecordReviews.Controllers
         // GET: Reviews
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Reviews.ToListAsync());
+            var applicationDbContext = _context.Reviews.Include(r => r.Album);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Reviews/Details/5
@@ -34,7 +35,8 @@ namespace RecordReviews.Controllers
             }
 
             var review = await _context.Reviews
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(r => r.Album)
+                .FirstOrDefaultAsync(m => m.ReviewId == id);
             if (review == null)
             {
                 return NotFound();
@@ -46,6 +48,7 @@ namespace RecordReviews.Controllers
         // GET: Reviews/Create
         public IActionResult Create()
         {
+            ViewData["AlbumId"] = new SelectList(_context.Albums, "AlbumId", "AlbumTitle");
             return View();
         }
 
@@ -54,7 +57,7 @@ namespace RecordReviews.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,Username,AlbumId,AlbumTitle,Comment,Rate,CreationTime")] Review review)
+        public async Task<IActionResult> Create([Bind("ReviewId,AlbumId,Comment,Rate,CreationTime")] Review review)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +65,7 @@ namespace RecordReviews.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AlbumId"] = new SelectList(_context.Albums, "AlbumId", "AlbumTitle", review.AlbumId);
             return View(review);
         }
 
@@ -78,6 +82,7 @@ namespace RecordReviews.Controllers
             {
                 return NotFound();
             }
+            ViewData["AlbumId"] = new SelectList(_context.Albums, "AlbumId", "AlbumTitle", review.AlbumId);
             return View(review);
         }
 
@@ -86,9 +91,9 @@ namespace RecordReviews.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,Username,AlbumId,AlbumTitle,Comment,Rate,CreationTime")] Review review)
+        public async Task<IActionResult> Edit(int id, [Bind("ReviewId,AlbumId,Comment,Rate,CreationTime")] Review review)
         {
-            if (id != review.Id)
+            if (id != review.ReviewId)
             {
                 return NotFound();
             }
@@ -102,7 +107,7 @@ namespace RecordReviews.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ReviewExists(review.Id))
+                    if (!ReviewExists(review.ReviewId))
                     {
                         return NotFound();
                     }
@@ -113,6 +118,7 @@ namespace RecordReviews.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["AlbumId"] = new SelectList(_context.Albums, "AlbumId", "AlbumTitle", review.AlbumId);
             return View(review);
         }
 
@@ -125,7 +131,8 @@ namespace RecordReviews.Controllers
             }
 
             var review = await _context.Reviews
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(r => r.Album)
+                .FirstOrDefaultAsync(m => m.ReviewId == id);
             if (review == null)
             {
                 return NotFound();
@@ -147,7 +154,7 @@ namespace RecordReviews.Controllers
 
         private bool ReviewExists(int id)
         {
-            return _context.Reviews.Any(e => e.Id == id);
+            return _context.Reviews.Any(e => e.ReviewId == id);
         }
     }
 }

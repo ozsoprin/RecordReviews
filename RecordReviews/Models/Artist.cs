@@ -1,5 +1,9 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace RecordReviews.Models
 {
@@ -7,33 +11,31 @@ namespace RecordReviews.Models
     {
         public Artist()
         {
-            AvgRate = 0.0;
             PageViews = 0;
+            AvgRate = 0.0;
         }
 
-        public Artist(string name, string birthPlace, string genre)
-        {
-            Name = name;
-            BirthPlace = birthPlace;
-            Genre = genre;
-        }
-
-        [Key] public int Id { get; set; }
+        [Key]
+        public int ArtistID { get; set; }
 
         [DisplayName("Artist's Name")]
         [Required(ErrorMessage = "Artist's Name is Required")]
-        public string Name { get; set; }
+        public string ArtistName { get; set; }
 
-        [Required(ErrorMessage = "Artist's Birth Place is Required")]
         [DisplayName("Birth Place")]
+        [Required(ErrorMessage = "Artist's Birth Place is Required")]
         public string BirthPlace { get; set; }
 
-        [DisplayName("Average Rate")] public double? AvgRate { get; set; }
-
-        [DisplayName("Page Views")] public int? PageViews { get; set; }
-
-        [Required(ErrorMessage = "Genre is Required")]
         [DisplayName("Genre")]
+        [Required(ErrorMessage = "Genre is Required")]
         public string Genre { get; set; }
+
+        public ICollection<Album> Albums { get; set; }
+
+        [DisplayName("Average Rate")]
+        public double? AvgRate { get; set; }
+
+        [DisplayName("Page Views")]
+        public double? PageViews { get; set; }
     }
 }
