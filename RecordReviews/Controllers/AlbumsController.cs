@@ -35,7 +35,7 @@ namespace RecordReviews.Controllers
             }
 
             var album = await _context.Albums
-                .Include(a => a.Artist).Include(a=>a.Reviews).ThenInclude(r=> r.User).ThenInclude(u=>u.UserName)
+                .Include(a => a.Artist).Include(a=>a.Reviews)
                 .FirstOrDefaultAsync(m => m.AlbumId == id);
             if (album == null)
             {

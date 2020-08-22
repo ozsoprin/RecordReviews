@@ -35,7 +35,7 @@ namespace RecordReviews.Controllers
             }
 
             var review = await _context.Reviews
-                .Include(r => r.Album).ThenInclude(a=>a.Artist).ThenInclude(a => a.ArtistName).Include(r=>r.User).ThenInclude(u=>u.UserName)
+                .Include(r => r.Album).Include(r=>r.User)
                 .FirstOrDefaultAsync(m => m.ReviewId == id);
             if (review == null)
             {
@@ -46,9 +46,15 @@ namespace RecordReviews.Controllers
         }
 
         // GET: Reviews/Create
-        public IActionResult Create()
+        public IActionResult Create(int? albumID)
         {
             ViewData["AlbumId"] = new SelectList(_context.Albums, "AlbumId", "AlbumTitle");
+
+            if (albumID != null)
+            {
+                var album = _context.Albums.SingleOrDefault(a => a.AlbumId == albumID);
+                return View(new Review { AlbumId = album.AlbumId});
+            }
             return View();
         }
 
@@ -57,13 +63,16 @@ namespace RecordReviews.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ReviewId,AlbumId,Comment,Rate,CreationTime")] Review review)
+        public async Task<IActionResult> Create([Bind("ReviewId,AlbumId,Comment,Rate")] Review review)
         {
             if (ModelState.IsValid)
             {
+                review.CreationTime = DateTime.Now;
+                review.Album = await _context.Albums.Include(a=>a.Reviews).Include(a => a.Artist).ThenInclude(a=>a.Albums).ThenInclude(a=>a.Reviews).FirstOrDefaultAsync(a => a.AlbumId == review.AlbumId);
                 _context.Add(review);
+                review.UpdateRateAfterAdding();
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details","Albums", new { id = review.Album.AlbumId });
             }
             ViewData["AlbumId"] = new SelectList(_context.Albums, "AlbumId", "AlbumTitle", review.AlbumId);
             return View(review);
@@ -131,7 +140,7 @@ namespace RecordReviews.Controllers
             }
 
             var review = await _context.Reviews
-                .Include(r => r.Album)
+                .Include(r => r.Album).ThenInclude(a => a.Artist).ThenInclude(a => a.Albums).ThenInclude(a => a.Reviews)
                 .FirstOrDefaultAsync(m => m.ReviewId == id);
             if (review == null)
             {
@@ -146,7 +155,10 @@ namespace RecordReviews.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var review = await _context.Reviews.FindAsync(id);
+            var review = await _context.Reviews
+                .Include(r => r.Album).ThenInclude(a => a.Artist).ThenInclude(a=>a.Albums).ThenInclude(a=>a.Reviews)
+                .FirstOrDefaultAsync(m => m.ReviewId == id);
+            review.UpdateRateAfterDelete(review.ReviewId);
             _context.Reviews.Remove(review);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

@@ -50,5 +50,32 @@ namespace RecordReviews.Models
 
             Album.Artist.AvgRate = Math.Round(sum / cnt, 2);
         }
+
+        public void UpdateRateAfterDelete(int reviewId)
+        {
+            var sum = 0.0;
+            var cnt = 0;
+            foreach (var review in Album.Reviews)
+            {
+                if (review.ReviewId == reviewId)
+                {
+                    continue;
+                }
+
+                sum += review.Rate;
+                cnt++;
+            }
+
+            Album.AvgRate = Math.Round(sum / cnt, 2);
+            sum = 0.0;
+            cnt = 0;
+            foreach (var album in Album.Artist.Albums)
+            {
+                if (album.AvgRate != null) sum += (double)album.AvgRate;
+                cnt++;
+            }
+
+            Album.Artist.AvgRate = Math.Round(sum / cnt, 2);
+        }
     }
 }

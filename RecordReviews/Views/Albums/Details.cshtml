@@ -54,6 +54,12 @@
         </dd>
     </dl>
 </div>
+
+<section id="write-review">
+    @Html.ActionLink("Write a Review", "Create", "Reviews", new { albumId = Model.AlbumId }, new { @class = "btn btn-outline-primary btn-lg btn-block" })
+
+</section>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model.AlbumId">Edit</a> |
     <a asp-action="Index">Back to List</a>
