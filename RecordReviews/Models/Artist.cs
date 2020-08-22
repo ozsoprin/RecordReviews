@@ -9,10 +9,20 @@ namespace RecordReviews.Models
 {
     public class Artist
     {
+        private Artist artist;
+        private string v;
+
         public Artist()
         {
             PageViews = 0;
             AvgRate = 0.0;
+        }
+
+        public Artist(string artistName, string birthPlace, string genre)
+        {
+            this.ArtistName = artistName;
+            this.BirthPlace = birthPlace;
+            Genre = genre;
         }
 
         [Key]

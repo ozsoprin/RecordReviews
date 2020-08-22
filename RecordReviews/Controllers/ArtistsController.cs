@@ -34,7 +34,7 @@ namespace RecordReviews.Controllers
             }
 
             var artist = await _context.Artists
-                .FirstOrDefaultAsync(m => m.ArtistID == id);
+                .Include(a=>a.Albums).ThenInclude(a=>a.Reviews).FirstOrDefaultAsync(m => m.ArtistID == id);
             if (artist == null)
             {
                 return NotFound();
@@ -54,14 +54,24 @@ namespace RecordReviews.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ArtistID,ArtistName,BirthPlace,Genre,AvgRate,PageViews")] Artist artist)
+        public async Task<IActionResult> Create([Bind("ArtistName,BirthPlace,Genre")] Artist artist)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(artist);
+                //Check if artist is already exist in db.
+                var _artist = _context.Artists.Where(_ => _.ArtistName == artist.ArtistName).Select(_ => new { _.ArtistID })
+                    .SingleOrDefault();
+                if (_artist != null)
+                {
+                    return RedirectToAction("Details", new { id = _artist.ArtistID });
+                }
+
+                //Create new artist
+                await _context.AddAsync(artist);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { id = artist.ArtistID });
             }
+
             return View(artist);
         }
 

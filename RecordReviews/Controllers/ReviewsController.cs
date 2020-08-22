@@ -35,7 +35,7 @@ namespace RecordReviews.Controllers
             }
 
             var review = await _context.Reviews
-                .Include(r => r.Album)
+                .Include(r => r.Album).ThenInclude(a=>a.Artist).ThenInclude(a => a.ArtistName).Include(r=>r.User).ThenInclude(u=>u.UserName)
                 .FirstOrDefaultAsync(m => m.ReviewId == id);
             if (review == null)
             {
