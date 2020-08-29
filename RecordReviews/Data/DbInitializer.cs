@@ -12,13 +12,25 @@ namespace RecordReviews.Data
     {
         public static class ReviewGenerator
         {
-            public static void GenerateBadReview(ApplicationDbContext context,Album album, IdentityUser user)
+            public static void GenerateReview(ApplicationDbContext context, Album album, IdentityUser user,int type)
             {
                 var rand = new Random();
                 var dateGen = new RandomDateTime(album.ReleaseDate);
                 var date = dateGen.Next();
-                var rate = (rand.Next() % 5) + 1;
-                string comment = "It's OK, nothing more, nothing less";
+                int rate = 0;
+                switch (type)
+                {
+                    case 0:
+                        rate = (rand.Next() % 5) + 1;
+                        break;
+                    case 1:
+                        rate = (rand.Next() % 5) + 4;
+                        break;
+                    case 2:
+                        rate = (rand.Next() % 4) + 7;
+                        break;
+                }
+                string comment = "Best Album Ever!";
                 switch (rate)
                 {
                     case 1:
@@ -33,21 +45,9 @@ namespace RecordReviews.Data
                     case 4:
                         comment = "Heard worst than that one";
                         break;
-                }
-                var review = new Review { Comment = comment, Rate = rate, Album = album, User = user, CreationTime = date};
-                context.Reviews.Add(review);
-                review.UpdateRate();
-            }
-
-            public static void GenerateGoodReview(ApplicationDbContext context, Album album, IdentityUser user)
-            {
-                var rand = new Random();
-                var dateGen = new RandomDateTime(album.ReleaseDate);
-                var date = dateGen.Next();
-                var rate = (rand.Next() % 5) + 6;
-                string comment = "Best Album Ever!";
-                switch (rate)
-                {
+                    case 5:
+                        comment = "It's OK, nothing more, nothing less";
+                        break;
                     case 6:
                         comment = "Nice one, good listing";
                         break;
@@ -65,6 +65,7 @@ namespace RecordReviews.Data
                 context.Reviews.Add(review);
                 review.UpdateRate();
             }
+
         }
 
         public class RandomDateTime
@@ -155,22 +156,14 @@ namespace RecordReviews.Data
             var rand = new Random();
             foreach (var album in albumList)
             {
-                if (rand.Next() % 2 == 0)
+                var type = rand.Next() % 3;
+                foreach (var user in UserList)
                 {
-                    foreach (var user in UserList)
-                    {
-                        ReviewGenerator.GenerateBadReview(context, album, user);
-                    }
+                    ReviewGenerator.GenerateReview(context, album, user, type);
                 }
-                else
-                {
-                    foreach (var user in UserList)
-                    {
-                        ReviewGenerator.GenerateGoodReview(context, album, user);
-                    }
-                }
+
+                context.SaveChanges();
             }
-            context.SaveChanges();
         }
     }
 }
