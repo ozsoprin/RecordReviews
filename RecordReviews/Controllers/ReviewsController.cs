@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -22,9 +23,15 @@ namespace RecordReviews.Controllers
         // GET: Reviews
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Reviews.Include(r => r.Album).ThenInclude(a=>a.Artist);
-            ViewBag.MostReviewedArtist = _context.Artists.SingleOrDefault(a => a.ArtistName == "Sia");
-            ViewBag.MostReviewedAlbum = _context.Albums.SingleOrDefault(a => a.AlbumTitle == "25");
+            var applicationDbContext = _context.Reviews.Include(r => r.Album).ThenInclude(a => a.Artist);
+            var mostReviewedAlbum = applicationDbContext.GroupBy(r => r.AlbumId)
+                .Select(r => new { AlbumID = r.Key, Count = r.Count()})
+                .OrderByDescending(x => x.Count).Take(1).SingleOrDefault();
+            var mostReviewedArtist = applicationDbContext.GroupBy(r => r.Album.Artist.ArtistID)
+                .Select(r => new { ArtistID = r.Key, Count = r.Count() })
+                .OrderByDescending(x => x.Count).Take(1).SingleOrDefault();
+            ViewBag.MostReviewedArtist = _context.Artists.SingleOrDefault(a=>a.ArtistID == mostReviewedArtist.ArtistID);
+            ViewBag.MostReviewedAlbum = _context.Albums.SingleOrDefault(a => a.AlbumId == mostReviewedAlbum.AlbumID);
             return View(await applicationDbContext.OrderByDescending(r=>r.CreationTime).Take(5).ToListAsync());
         }
 

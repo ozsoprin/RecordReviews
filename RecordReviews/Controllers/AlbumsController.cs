@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using RecordReviews.Data;
 using RecordReviews.Models;
 
@@ -20,9 +21,14 @@ namespace RecordReviews.Controllers
         }
 
         // GET: Albums
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
             var applicationDbContext = _context.Albums.Include(a => a.Artist);
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                applicationDbContext = (IIncludableQueryable<Album, Artist>) applicationDbContext.Where(a => a.AlbumTitle.Contains(searchString));
+            }
+
             return View(await applicationDbContext.ToListAsync());
         }
 

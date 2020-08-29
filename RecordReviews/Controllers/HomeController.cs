@@ -24,7 +24,7 @@ namespace RecordReviews.Controllers
 
         public IActionResult Index()
         {
-            ViewData["ArtistsForMap"] = _context.Artists.ToList();
+            ViewBag.ArtistsForMap = _context.Artists.ToList();
             return View();
         }
 
