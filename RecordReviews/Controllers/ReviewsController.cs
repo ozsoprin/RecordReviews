@@ -23,9 +23,8 @@ namespace RecordReviews.Controllers
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Reviews.Include(r => r.Album).ThenInclude(a=>a.Artist);
-            ViewData["MostReviewedArtist"] = _context.Artists.Include(a=>a.ArtistID).Include(a=>a.ArtistName).FirstOrDefault(a => a.ArtistName == "Sia");
-            ViewData["MostReviewedAlbum"] = _context.Albums.Include(a => a.AlbumTitle)
-                .Include(a => a.AlbumId).Include(a => a.Artist).SingleOrDefault(a => a.AlbumTitle == "25");
+            ViewBag.MostReviewedArtist = _context.Artists.SingleOrDefault(a => a.ArtistName == "Sia");
+            ViewBag.MostReviewedAlbum = _context.Albums.SingleOrDefault(a => a.AlbumTitle == "25");
             return View(await applicationDbContext.OrderByDescending(r=>r.CreationTime).Take(5).ToListAsync());
         }
 

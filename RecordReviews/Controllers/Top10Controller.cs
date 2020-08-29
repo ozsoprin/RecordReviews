@@ -20,9 +20,9 @@ namespace RecordReviews.Controllers
         }
         public ActionResult Index()
         {
-            ViewData["Top10Artists"] = _context.Artists.Include(a=>a.ArtistID).Include(a => a.ArtistName).Include(a => a.PageViews).Include(a => a.AvgRate).OrderByDescending(a=>a.AvgRate).Take(10).ToList();
-            ViewData["Top10Albums"] = _context.Albums.Include(a=>a.AlbumTitle).Include(a => a.AlbumId).Include(a => a.ArtistName).Include(a => a.ArtistId).Include(a => a.PageViews).Include(a => a.AvgRate).OrderByDescending(a=>a.AvgRate).Take(10).ToList();
-            ViewData["Top10Users"] = _context.Users.Take(10).ToList();
+            ViewBag.Top10Artists = _context.Artists.OrderByDescending(a=>a.AvgRate).Take(10).ToList();
+            ViewBag.Top10Albums = _context.Albums.OrderByDescending(a=>a.AvgRate).Take(10).ToList();
+            ViewBag.Top10Users = _context.Users.Take(10).ToList();
             return View();
         }
     }
