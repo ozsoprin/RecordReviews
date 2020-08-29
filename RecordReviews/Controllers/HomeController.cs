@@ -25,14 +25,13 @@ namespace RecordReviews.Controllers
         public IActionResult Index()
         {
             var aList = _context.Artists.ToList();
-            var countryList = new List<string>();
+            var countryList = new HashSet<string>();
             foreach (var artist in aList)
             {
                 countryList.Add(artist.BirthPlace);
             }
-            ViewBag.ArtistsForMap = countryList.ToArray();
 
-            return View();
+            return View(countryList.ToArray());
         }
 
         public IActionResult Privacy()
