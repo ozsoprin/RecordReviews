@@ -24,7 +24,14 @@ namespace RecordReviews.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.ArtistsForMap = _context.Artists.ToList();
+            var aList = _context.Artists.ToList();
+            var countryList = new List<string>();
+            foreach (var artist in aList)
+            {
+                countryList.Add(artist.BirthPlace);
+            }
+            ViewBag.ArtistsForMap = countryList;
+
             return View();
         }
 
