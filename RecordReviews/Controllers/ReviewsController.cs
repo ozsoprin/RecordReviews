@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using RecordReviews.Data;
 using RecordReviews.Models;
 
@@ -21,18 +22,33 @@ namespace RecordReviews.Controllers
         }
 
         // GET: Reviews
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
             var applicationDbContext = _context.Reviews.Include(r => r.Album).ThenInclude(a => a.Artist);
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                applicationDbContext = (IIncludableQueryable<Review, Artist>) applicationDbContext.Where(a => a.Album.AlbumTitle.Contains(searchString));
+            }
             var mostReviewedAlbum = applicationDbContext.GroupBy(r => r.AlbumId)
                 .Select(r => new { AlbumID = r.Key, Count = r.Count()})
                 .OrderByDescending(x => x.Count).Take(1).SingleOrDefault();
-            var mostReviewedArtist = applicationDbContext.GroupBy(r => r.Album.Artist.ArtistID)
+            var mostReviewedArtist = applicationDbContext
+                .Join(_context.Albums, review => review.AlbumId, album => album.AlbumId, (review, album) => album)
+                .Join(_context.Artists, album => album.ArtistId, artist => artist.ArtistID, (album, artist) => artist)
+                .GroupBy(a => a.ArtistID)
                 .Select(r => new { ArtistID = r.Key, Count = r.Count() })
                 .OrderByDescending(x => x.Count).Take(1).SingleOrDefault();
-            ViewBag.MostReviewedArtist = _context.Artists.SingleOrDefault(a=>a.ArtistID == mostReviewedArtist.ArtistID);
-            ViewBag.MostReviewedAlbum = _context.Albums.SingleOrDefault(a => a.AlbumId == mostReviewedAlbum.AlbumID);
-            return View(await applicationDbContext.OrderByDescending(r=>r.CreationTime).Take(5).ToListAsync());
+            var mostReviewedGenre = applicationDbContext
+                .Join(_context.Albums, review => review.AlbumId, album => album.AlbumId, (review, album) => album)
+                .Join(_context.Artists, album => album.ArtistId, artist => artist.ArtistID, (album, artist) => artist)
+                .GroupBy(a => a.Genre)
+                .Select(r => new { Genre = r.Key, Count = r.Count() })
+                .OrderByDescending(x => x.Count).Take(1).SingleOrDefault();
+            ViewBag.MostReviewedArtist = _context.Artists.FirstOrDefault(a=>a.ArtistID == mostReviewedArtist.ArtistID);
+            ViewBag.MostReviewedGenre = mostReviewedGenre.Genre;
+            ViewBag.MostReviewedGenreAlbums = _context.Albums.Where(a => a.Genre == mostReviewedGenre.Genre).OrderByDescending(a=>a.AvgRate).Take(2).ToList();
+            ViewBag.MostReviewedAlbum = _context.Albums.FirstOrDefault(a => a.AlbumId == mostReviewedAlbum.AlbumID);
+            return View(await applicationDbContext.OrderByDescending(r=>r.CreationTime).ToListAsync());
         }
 
         // GET: Reviews/Details/5
