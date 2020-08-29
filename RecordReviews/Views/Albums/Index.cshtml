@@ -46,11 +46,13 @@
             {
                 <div class="col-md-3">
                     <div class="mb-5 mr-4">
-                        <img class="w-100 mb-2 shadow" alt="@item.ArtistName" title="@item.AlbumTitle" src=""
-                             data-holder-rendered="true">
+                        <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">
+                            <img class="w-100 mb-2 shadow" alt="@item.ArtistName" title="@item.AlbumTitle" src=""
+                                 data-holder-rendered="true">
+                        </a>
                         <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">@item.AlbumTitle</a><br />
                         <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistId">@item.ArtistName</a><br />
-                        <p class="min-font-muted text-muted">Rated @item.AvgRate</p>
+                        <a class="rate-link min-font-muted text-muted" href="" ><span>Rated @item.AvgRate</span></a>
                         <div>
                             <a class="min-font-muted text-muted" asp-action="Edit" asp-route-id="@item.AlbumId">Edit |</a>
                             <a class="min-font-muted text-muted" asp-action="Delete" asp-route-id="@item.AlbumId"> Delete</a>

@@ -3,52 +3,6 @@
 @{
     ViewBag.Title = "Top 10";
     Layout = "_Layout";
-
-    //Initialize Top 10 Albums
-
-    Album album1 = new Album();
-    album1.AlbumTitle = "Chances Are";
-    album1.ArtistName = "Bob Marley";
-    Album album2 = new Album();
-    album2.AlbumTitle = "This Is Acting";
-    album2.ArtistName = "Sia";
-    Album album3 = new Album();
-    album3.AlbumTitle = "25";
-    album3.ArtistName = "Adele";
-    Album album4 = new Album();
-    album4.AlbumTitle = "Unplugged";
-    album4.ArtistName = "Eric Clapton";
-    Album album5 = new Album();
-    album5.AlbumTitle = "American Gangster";
-    album5.ArtistName = "Jay Z";
-
-    List<Album> list1 = new List<Album>();
-    list1.Add(album1);
-    list1.Add(album2);
-    list1.Add(album3);
-    list1.Add(album4);
-    list1.Add(album5);
-    ViewData["Top10Albums"] = list1;
-
-    //Initialize Top 10 Artists
-    Artist artist1 = new Artist();
-    artist1.ArtistName= "Bob Marley";
-    Artist artist2 = new Artist();
-    artist2.ArtistName = "Sia";
-    Artist artist3 = new Artist();
-    artist3.ArtistName = "Adele";
-    Artist artist4 = new Artist();
-    artist4.ArtistName = "Eric Clapton";
-    Artist artist5 = new Artist();
-    artist5.ArtistName = "Jay Z";
-
-    List<Artist> list2 = new List<Artist>();
-    list2.Add(artist1);
-    list2.Add(artist2);
-    list2.Add(artist3);
-    list2.Add(artist4);
-    list2.Add(artist5);
-    ViewData["Top10Artists"] = list2;
 }
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -114,21 +68,23 @@
             <div class="container ml-5 pl-5">
 
                 <div class="row mt-5 mb-5 pl-5">
-                    @foreach (var item in (List<Artist>)ViewData["Top10Artists"])
+                    @foreach (var item in (List<Artist>)ViewBag.Top10Artists)
                     {
-                       
+
                         <div class="col-md-2 col-md-offset-1">
-                            <div class="mb-5 mr-4">
-                                <img class="artistImg rounded-circle z-depth-2 w-100 shadow" alt="@item.ArtistName" src=""
-                                        data-holder-rendered="true">
+                            <div class="mb-5 mr-4 w-100">
+                                <a class="img-link" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistID">
+                                    <img class="artistImg rounded-circle z-depth-2 w-100 shadow" alt="@item.ArtistName" src=""
+                                         data-holder-rendered="true">
+                                </a>
                                 <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistID">@item.ArtistName</a><br />
-                                <p class="min-font-muted text-muted">Rated @item.AvgRate</p>
+                                <a class="rate-link min-font-muted text-muted" href=""><span>Rated @item.AvgRate</span></a>
                             </div>
                         </div>
-                        
+
                     }
                 </div>
-            </div>
+            </div> 
         </div>
     </section>
     <!--Top-10 Artists section end-->
@@ -145,15 +101,17 @@
             <div class="container ml-5 pl-5">
 
                 <div class="row mt-5 mb-5 pl-5">
-                    @foreach (var item in (List<Album>)ViewData["Top10Albums"])
+                    @foreach (var item in (List<Album>)ViewBag.Top10Albums)
                     {
                         <div class="col-md-2 col-md-offset-1">
-                            <div class="mb-5 mr-4">
-                                <img class="albumImg w-100 mb-2 shadow" alt="@item.ArtistName" title="@item.AlbumTitle" src=""
-                                     data-holder-rendered="true">
+                            <div class="mb-5 mr-4 w-100">
+                                <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">
+                                    <img class="albumImg w-100 mb-2 shadow" alt="@item.ArtistName" title="@item.AlbumTitle" src=""
+                                         data-holder-rendered="true">
+                                </a>
                                 <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">@item.AlbumTitle</a><br />
                                 <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistId">@item.ArtistName</a><br />
-                                <p class="min-font-muted text-muted">Rated @item.AvgRate</p>
+                                <a class="rate-link min-font-muted text-muted" href=""><span>Rated @item.AvgRate</span></a>
                             </div>
                         </div>
                     }
@@ -163,4 +121,35 @@
     </section>
     <!--Top-10 Albums section end-->
     <!--Top-10 Users section start-->
+    @*<section id="Top-10-Users">
+
+        <div class="container-fluid">
+            <header class="header">
+                <div class="row top-heading mt-5">
+                    <p class="top-10-title col-md-12 font-weight-bold">Top 10 Albums</p>
+                </div>
+            </header>
+
+            <div class="container ml-5 pl-5">
+
+                <div class="row mt-5 mb-5 pl-5">
+                    @foreach (var item in (List<Album>)ViewBag.Top10Users)
+                    {
+                        <div class="col-md-2 col-md-offset-1">
+                            <div class="mb-5 mr-4 w-100">
+                                <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">
+                                    <img class="albumImg w-100 mb-2 shadow" alt="@item.ArtistName" title="@item.AlbumTitle" src=""
+                                         data-holder-rendered="true">
+                                </a>
+                                <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">@item.AlbumTitle</a><br />
+                                <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistId">@item.ArtistName</a><br />
+                                <a class="rate-link min-font-muted text-muted" href=""><span>Rated @item.AvgRate</span></a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>*@
+
     <!--Top-10 Users section end-->

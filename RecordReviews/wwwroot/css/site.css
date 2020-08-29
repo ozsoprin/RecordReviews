@@ -410,3 +410,29 @@ p.top-10-title {
             opacity: 1;
             right: 0;
         }
+
+
+.rate-link span {
+    text-decoration: none;
+    transition: all 1s ease-in-out;
+}
+
+.rate-link:hover span {
+    font-weight: bold;
+    font-size: 25px;
+    text-decoration: none;
+    text-shadow: 3px 3px 14px rgba(149, 150, 150, 1);
+    transition: all 1s ease-in-out;
+}
+
+.rate-link:hover {
+    text-decoration: none;
+}
+
+.img-link:hover {
+    opacity: 0.7;
+}
+
+tr {
+    line-height: 50px;
+}

@@ -47,10 +47,12 @@
                 {
                     <div class="col-md-3">
                         <div class="mb-5 mr-4">
-                            <img class="rounded-circle z-depth-2 w-100 shadow" alt="@item.ArtistName" src=""
-                                 data-holder-rendered="true">
+                            <a class="img-link" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistID">
+                                <img class="rounded-circle z-depth-2 w-100 shadow" alt="@item.ArtistName" src=""
+                                     data-holder-rendered="true">
+                            </a>
                             <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistID">@item.ArtistName</a><br />
-                            <p class="min-font-muted text-muted">Rated @item.AvgRate</p>
+                            <a class="rate-link min-font-muted text-muted" href=""><span>Rated @item.AvgRate</span></a>
                             <div>
                                 <a class="min-font-muted text-muted" asp-action="Edit" asp-route-id="@item.ArtistID">Edit |</a>  
                                 <a class="min-font-muted text-muted" asp-action="Delete" asp-route-id="@item.ArtistID"> Delete</a>
