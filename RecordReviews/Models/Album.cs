@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using RecordReviews.Data;
 
 namespace RecordReviews.Models
 {
@@ -44,5 +45,27 @@ namespace RecordReviews.Models
         
         [DisplayName("Page Views")]
         public int? PageViews { get; set; }
+
+        public void UpdateAlbumRate()
+        {
+            var sum = 0.0;
+            var count = 0;
+            foreach (var review in Reviews)
+            {
+                sum += (double) review.Rate;
+                count++;
+            }
+
+            AvgRate = count != 0 ? Math.Round(sum / count, 2) : 0;
+        }
+
+        public void DeleteAlbum(ApplicationDbContext _context)
+        {
+            foreach (var review in Reviews)
+            {
+                _context.Reviews.Remove(review);
+            }
+            _context.Albums.Remove(this);
+        }
     }
 }

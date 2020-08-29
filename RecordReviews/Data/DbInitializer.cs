@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using RecordReviews.Models;
@@ -9,6 +10,81 @@ namespace RecordReviews.Data
 {
     public static class DbInitializer
     {
+        public static class ReviewGenerator
+        {
+            public static void GenerateBadReview(ApplicationDbContext context,Album album, IdentityUser user)
+            {
+                var rand = new Random();
+                var dateGen = new RandomDateTime(album.ReleaseDate);
+                var date = dateGen.Next();
+                var rate = (rand.Next() % 5) + 1;
+                string comment = "It's OK, nothing more, nothing less";
+                switch (rate)
+                {
+                    case 1:
+                        comment = "Pure garbage! I regret listening to it";
+                        break;
+                    case 2:
+                        comment = "Bad album! Didn't feel it this time";
+                        break;
+                    case 3:
+                        comment = "Won't listen to it again...";
+                        break;
+                    case 4:
+                        comment = "Heard worst than that one";
+                        break;
+                }
+                var review = new Review { Comment = comment, Rate = rate, Album = album, User = user, CreationTime = date};
+                context.Reviews.Add(review);
+                review.UpdateRate();
+            }
+
+            public static void GenerateGoodReview(ApplicationDbContext context, Album album, IdentityUser user)
+            {
+                var rand = new Random();
+                var dateGen = new RandomDateTime(album.ReleaseDate);
+                var date = dateGen.Next();
+                var rate = (rand.Next() % 5) + 6;
+                string comment = "Best Album Ever!";
+                switch (rate)
+                {
+                    case 6:
+                        comment = "Nice one, good listing";
+                        break;
+                    case 7:
+                        comment = $"This album is totally {user.UserName} approved!";
+                        break;
+                    case 8:
+                        comment = "Loved it! Can't wait to hear it once again";
+                        break;
+                    case 9:
+                        comment = "Great album! Really recommended";
+                        break;
+                }
+                var review = new Review { Comment = comment, Rate = rate, Album = album, User = user, CreationTime = date };
+                context.Reviews.Add(review);
+                review.UpdateRate();
+            }
+        }
+
+        public class RandomDateTime
+        {
+            DateTime start;
+            Random gen;
+            int range;
+
+            public RandomDateTime(DateTime dateTime)
+            {
+                start = DateTime.Parse("2020-01-01") < dateTime ? dateTime : DateTime.Parse("2020-01-01");
+                gen = new Random();
+                range = (DateTime.Today - start).Days;
+            }
+
+            public DateTime Next()
+            {
+                return start.AddDays(gen.Next(range)).AddHours(gen.Next(0, 24)).AddMinutes(gen.Next(0, 60)).AddSeconds(gen.Next(0, 60));
+            }
+        }
         public static void Initialize(ApplicationDbContext context)
         {
             context.Database.EnsureCreated();
@@ -51,49 +127,50 @@ namespace RecordReviews.Data
 
             var users = new[]
             {
-                new IdentityUser {UserName = "PennyWise",Email = "PennyW@IT.com"},
-                new IdentityUser {UserName = "Chucky",Email = "Chucky@ChildsPlay.com"},
-                new IdentityUser {UserName = "Michael Myers",Email = "Mike@Halloween.com"},
-                new IdentityUser {UserName = "Freddy Krueger",Email = "Freddy@NightmareOnElmStreet.com"},
-                new IdentityUser {UserName = "Jason Voorhees",Email = "Jason@Fridaythe13th.com"},
-                new IdentityUser {UserName = "The Monster",Email = "Monster@Frankenstein.com"},
+                new IdentityUser {UserName = "Bugs Bunny",Email = "Bugs@LooneyTunes.com"},
+                new IdentityUser {UserName = "Daffy Duck",Email = "Daffy@LooneyTunes.com"},
+                new IdentityUser {UserName = "Tweety",Email = "Tweety@LooneyTunes.com"},
+                new IdentityUser {UserName = "Porky Pig",Email = "Porkey@LooneyTunes.com"},
+                new IdentityUser {UserName = "Foghorn Leghorn",Email = "Foghorn@LooneyTunes.com"},
+                new IdentityUser {UserName = "Elmer Fudd",Email = "Elmer@LooneyTunes.com"},
+                new IdentityUser {UserName = "Yosemite Sam",Email = "Sam@LooneyTunes.com"},
+                new IdentityUser {UserName = "Sylvester",Email = "Sylvester@LooneyTunes.com"},
+                new IdentityUser {UserName = "Tasmanian Devil",Email = "Tas@LooneyTunes.com"},
+                new IdentityUser {UserName = "Marvin the Martian",Email = "Marvin@LooneyTunes.com"},
+                new IdentityUser {UserName = "Speedy Gonzales",Email = "Speedy@LooneyTunes.com"},
+                new IdentityUser {UserName = "Pepé Le Pew",Email = "Pepé@LooneyTunes.com"},
+                new IdentityUser {UserName = "Gossamer",Email = "Gossamer@LooneyTunes.com"},
+                new IdentityUser {UserName = "Lola Bunny",Email = "Lola@LooneyTunes.com"},
+                new IdentityUser {UserName = "Wile E. Coyote",Email = "Wile@LooneyTunes.com"},
+                new IdentityUser {UserName = "Road Runner",Email = "Runner@LooneyTunes.com"},
             };
             foreach (var user in users)
             {
                 context.Users.Add(user);
             }
-
             context.SaveChanges();
 
-            var reviews = new[]
+            var albumList = context.Albums.ToList();
+            var UserList = context.Users.ToList();
+            var rand = new Random();
+            foreach (var album in albumList)
             {
-                new Review {Comment = "Makes me clam when I want to kill someone", CreationTime = DateTime.Parse("2020-05-10"), Rate = 8, User = context.Users.SingleOrDefault(u=>u.UserName == "Michael Myers"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "Chances Are")},
-                new Review {Comment = "Helps to show my emotions", CreationTime = DateTime.Parse("2020-05-10"), Rate = 7, User = context.Users.SingleOrDefault(u=>u.UserName == "Michael Myers"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "25")},
-                new Review {Comment = "Old stuff are always better", CreationTime = DateTime.Parse("2020-05-10"), Rate = 10, User = context.Users.SingleOrDefault(u=>u.UserName == "Michael Myers"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "Unplugged")},
-                new Review {Comment = "Makes me dance like a kid", CreationTime = DateTime.Parse("2020-07-01"), Rate = 9, User = context.Users.SingleOrDefault(u=>u.UserName == "PennyWise"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "Graduation")},
-                new Review {Comment = "It's just ok i guess", CreationTime = DateTime.Parse("2020-07-01"), Rate = 5, User = context.Users.SingleOrDefault(u=>u.UserName == "PennyWise"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "This Is Acting")},
-                new Review {Comment = "Great hear on friday night", CreationTime = DateTime.Parse("2020-03-13"), Rate = 10, User = context.Users.SingleOrDefault(u=>u.UserName == "Jason Voorhees"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "American Gangster")},
-                new Review {Comment = "Pure garbage, I liked the he better before hearing this one", CreationTime = DateTime.Parse("2020-03-13"), Rate = 2, User = context.Users.SingleOrDefault(u=>u.UserName == "Jason Voorhees"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "25")},
-                new Review {Comment = "Love Rap albums, this is one of my favorites", CreationTime = DateTime.Parse("2020-03-13"), Rate = 9, User = context.Users.SingleOrDefault(u=>u.UserName == "Jason Voorhees"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "Graduation")},
-                new Review {Comment = "My dad told me to listen...It's nice but I still prefer Drake", CreationTime = DateTime.Parse("2020-04-18"), Rate = 6, User = context.Users.SingleOrDefault(u=>u.UserName == "Chucky"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "Unplugged")},
-                new Review {Comment = "Her voice makes me cry sometimes", CreationTime = DateTime.Parse("2020-04-18"), Rate = 7, User = context.Users.SingleOrDefault(u=>u.UserName == "Chucky"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "This Is Acting")},
-                new Review {Comment = "Love Jay, one of the best in the game", CreationTime = DateTime.Parse("2020-04-18"), Rate = 9, User = context.Users.SingleOrDefault(u=>u.UserName == "Chucky"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "American Gangster")},
-                new Review {Comment = "The best song in this one is 'Pray'", CreationTime = DateTime.Parse("2020-06-04"), Rate = 9, User = context.Users.SingleOrDefault(u=>u.UserName == "Freddy Krueger"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "American Gangster")},
-                new Review {Comment = "Just ok, didn't feel it this time", CreationTime = DateTime.Parse("2020-06-04"), Rate = 4, User = context.Users.SingleOrDefault(u=>u.UserName == "Freddy Krueger"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "Chances Are")},
-                new Review {Comment = "I am cleaning my nails to this album", CreationTime = DateTime.Parse("2020-06-04"), Rate = 7, User = context.Users.SingleOrDefault(u=>u.UserName == "Freddy Krueger"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "Unplugged")},
-                new Review {Comment = "Me no like", CreationTime = DateTime.Parse("2020-02-25"), Rate = 3, User = context.Users.SingleOrDefault(u=>u.UserName == "The Monster"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "Graduation")},
-                new Review {Comment = "Good Sia very much", CreationTime = DateTime.Parse("2020-02-25"), Rate = 10, User = context.Users.SingleOrDefault(u=>u.UserName == "The Monster"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "This Is Acting")},
-                new Review {Comment = "Adele is OK", CreationTime = DateTime.Parse("2020-02-25"), Rate = 7, User = context.Users.SingleOrDefault(u=>u.UserName == "The Monster"), Album = context.Albums.SingleOrDefault(a => a.AlbumTitle == "25")},
-            };
-            foreach (var review in reviews)
-            {
-                context.Reviews.Add(review);
-                review.UpdateRateAfterAdding();
+                if (rand.Next() % 2 == 0)
+                {
+                    foreach (var user in UserList)
+                    {
+                        ReviewGenerator.GenerateBadReview(context, album, user);
+                    }
+                }
+                else
+                {
+                    foreach (var user in UserList)
+                    {
+                        ReviewGenerator.GenerateGoodReview(context, album, user);
+                    }
+                }
             }
-            
-
             context.SaveChanges();
-
         }
     }
 }

@@ -24,7 +24,7 @@ namespace RecordReviews
                     var context = services.GetRequiredService<ApplicationDbContext>();
                     DbInitializer.Initialize(context);
                 }
-                catch (Exception e) { }
+                catch (Exception) { }
             }
             host.Run();
         }

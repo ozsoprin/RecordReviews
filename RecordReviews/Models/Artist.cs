@@ -9,9 +9,6 @@ namespace RecordReviews.Models
 {
     public class Artist
     {
-        private Artist artist;
-        private string v;
-
         public Artist()
         {
             PageViews = 0;
@@ -47,5 +44,22 @@ namespace RecordReviews.Models
 
         [DisplayName("Page Views")]
         public double? PageViews { get; set; }
+
+        public void UpdateArtistRate()
+        {
+            var sum = 0.0;
+            var count = 0;
+            foreach (var album in Albums)
+            {
+                album.UpdateAlbumRate();
+                if (album.AvgRate != null)
+                {
+                    sum += (double) album.AvgRate;
+                    count++;
+                }
+            }
+
+            AvgRate = count !=0 ? Math.Round(sum / count, 2) : 0;
+        }
     }
 }

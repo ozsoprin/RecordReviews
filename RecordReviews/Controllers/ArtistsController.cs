@@ -149,10 +149,14 @@ namespace RecordReviews.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var artist = await _context.Artists.FindAsync(id);
+            var artist = await _context.Artists.Where(a=>a.ArtistID ==id).Include(a=>a.Albums).ThenInclude(a=>a.Reviews).FirstOrDefaultAsync();
+            foreach (var album in artist.Albums)
+            {
+                album.DeleteAlbum(_context);
+            }
             _context.Artists.Remove(artist);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index","Artists");
         }
 
         private bool ArtistExists(int id)

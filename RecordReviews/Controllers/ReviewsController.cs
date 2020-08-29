@@ -22,8 +22,11 @@ namespace RecordReviews.Controllers
         // GET: Reviews
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Reviews.Include(r => r.Album);
-            return View(await applicationDbContext.ToListAsync());
+            var applicationDbContext = _context.Reviews.Include(r => r.Album).ThenInclude(a=>a.Artist);
+            ViewData["MostReviewedArtist"] = _context.Artists.Include(a=>a.ArtistID).Include(a=>a.ArtistName).FirstOrDefault(a => a.ArtistName == "Sia");
+            ViewData["MostReviewedAlbum"] = _context.Albums.Include(a => a.AlbumTitle)
+                .Include(a => a.AlbumId).Include(a => a.Artist).SingleOrDefault(a => a.AlbumTitle == "25");
+            return View(await applicationDbContext.OrderByDescending(r=>r.CreationTime).Take(5).ToListAsync());
         }
 
         // GET: Reviews/Details/5
@@ -70,7 +73,7 @@ namespace RecordReviews.Controllers
                 review.CreationTime = DateTime.Now;
                 review.Album = await _context.Albums.Include(a=>a.Reviews).Include(a => a.Artist).ThenInclude(a=>a.Albums).ThenInclude(a=>a.Reviews).FirstOrDefaultAsync(a => a.AlbumId == review.AlbumId);
                 _context.Add(review);
-                review.UpdateRateAfterAdding();
+                review.UpdateRate();
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Details","Albums", new { id = review.Album.AlbumId });
             }
@@ -158,8 +161,9 @@ namespace RecordReviews.Controllers
             var review = await _context.Reviews
                 .Include(r => r.Album).ThenInclude(a => a.Artist).ThenInclude(a=>a.Albums).ThenInclude(a=>a.Reviews)
                 .FirstOrDefaultAsync(m => m.ReviewId == id);
-            review.UpdateRateAfterDelete(review.ReviewId);
             _context.Reviews.Remove(review);
+            await _context.SaveChangesAsync();
+            review.UpdateRate();
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

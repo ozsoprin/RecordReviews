@@ -184,10 +184,16 @@ namespace RecordReviews.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var album = await _context.Albums.FindAsync(id);
+            var album = await _context.Albums.Where(a=> a.AlbumId == id).Include(a=>a.Artist).Include(a=>a.Reviews).FirstOrDefaultAsync();
+            foreach (var review in album.Reviews)
+            {
+                _context.Reviews.Remove(review);
+            }
             _context.Albums.Remove(album);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            album.Artist.UpdateArtistRate();
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index","Albums");
         }
 
         private bool AlbumExists(int id)
