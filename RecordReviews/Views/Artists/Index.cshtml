@@ -1,59 +1,65 @@
 ﻿@model IEnumerable<RecordReviews.Models.Artist>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Artists";
 }
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        async function creatArtistImg(element) {
+            var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+            var name = $(element).attr('alt');
+            var url = await encodeURI("https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=" +
+                name +
+                "&api_key=" +
+                LastFmKey +
+                "&autocorrect=1&limit=10&format=json");
+            $.getJSON(url,
+                function (json) {
+                    //var i = Math.floor(Math.random() * 10) % 10;
+                    var src = json.topalbums.album[1].image[3]["#text"];  
+                    $(element).attr("src", src);
+                });
+        }
+    </script>
+    <script>
+        $(document).ready(async function () {
+            $("img").each(async function (index, element) {
+                await creatArtistImg(element);
+            });
+        });
+    </script>
 
-<h1>Index</h1>
+    <div class="container-fluid">
+        <header class="=header">
+            <div class="row top-heading mt-5">
+                <p class="col-md-12 font-weight-bold">Artists</p>
+            </div>
+        </header>
+        
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ArtistName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BirthPlace)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Genre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AvgRate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PageViews)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ArtistName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BirthPlace)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Genre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AvgRate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PageViews)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ArtistID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ArtistID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ArtistID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        <div class="container">
+            <p>
+                <a class="text-dark" asp-action="Create">Create New</a>
+            </p>
+
+            <div class="row mt-5 mb-5">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-3">
+                        <div class="mb-5 mr-4">
+                            <img class="rounded-circle z-depth-2 w-100 shadow" alt="@item.ArtistName" src=""
+                                 data-holder-rendered="true">
+                            <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistID">@item.ArtistName</a><br />
+                            <p class="min-font-muted text-muted">Rated @item.AvgRate</p>
+                            <div>
+                                <a class="min-font-muted text-muted" asp-action="Edit" asp-route-id="@item.ArtistID">Edit |</a>  
+                                <a class="min-font-muted text-muted" asp-action="Delete" asp-route-id="@item.ArtistID"> Delete</a>
+                            </div>
+                           
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+

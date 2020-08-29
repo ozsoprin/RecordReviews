@@ -1,8 +1,151 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    //Initialize "just for you" albums
+
+    Album album1 = new Album();
+    album1.AlbumTitle = "Chances Are";
+    album1.ArtistName = "Bob Marley";
+    Album album2 = new Album();
+    album2.AlbumTitle = "This Is Acting";
+    album2.ArtistName = "Sia";
+    Album album3 = new Album();
+    album3.AlbumTitle = "25";
+    album3.ArtistName = "Adele";
+    Album album4 = new Album();
+    album4.AlbumTitle = "Unplugged";
+    album4.ArtistName = "Eric Clapton";
+    List<Album> list = new List<Album>();
+    list.Add(album1);
+    list.Add(album2);
+    list.Add(album3);
+    list.Add(album4);
+
+    ViewData["Albums"] = list;
+
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!--scripts for img(last.fm) start-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    async function creatAlbumImg(element) {
+        var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+        var artist = $(element).attr('alt');
+        var title = $(element).attr('title');
+        var url = encodeURI("https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key="
+            + LastFmKey + "&artist=" + artist + "&album=" + title + "&autocorrect=1&format=json");
+        $.getJSON(url,
+            function (json) {
+                //var i = Math.floor(Math.random() * 10) % 10;
+                var src = json.album.image[4]["#text"];
+                $(element).attr("src", src);
+            });
+    }
+</script>
+<!--scripts for google map start-->
+@*<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c&callback=initMap&libraries=&v=weekly"
+            async defer>
+    </script>
+    <script>
+        var map;
+        var geocoder;
+        var countryList = ["Israel", "Algeria", "Morocco"];
+
+        function initMap() {
+            geocoder = new google.maps.Geocoder();
+            var latlng = new google.maps.LatLng(-0.397, 5.644);
+            var options = {
+                zoom: 2,
+                center: latlng,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            }
+
+            map = new google.maps.Map(document.getElementById("map"), options);
+
+            for (var i = 0; i < 3; i++) {
+                codeAddress(countryList[i]);
+            }
+        };
+        function codeAddress(address) {
+            geocoder.geocode({ 'address': address }, function (results, status) {
+                if (status === google.maps.GeocoderStatus.OK) {
+                    map.setCenter(results[0].geometry.location);
+                    var marker = new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location
+                    });
+                } else {
+                    alert("Geocode unsuccessful");
+                }
+            });
+        };
+    </script>*@
+<!--script for google map end-->
+
+
+
+<script>
+    $(document).ready(async function () {
+        $("img").each(async function (index, element) {
+            await creatAlbumImg(element);
+        });
+    });
+</script>
+
+
+
+
+    <!--just for you section start-->
+    <section id="just-for-you">
+
+        <div class="container-fluid">
+            <header class="header">
+                <div class="row top-heading mt-5">
+                    <p class="col-md-12 font-weight-bold">Just For You</p>
+                    <p class="text">
+                        Check out your recommendations below and start listening.<br />
+                        The more you listen, the better your recommendations will get!
+                    </p>
+                </div>
+            </header>
+
+
+            <div class="container">
+
+                <div class="row mt-5 mb-5">
+                    @foreach (var item in (List<Album>)ViewData["Albums"])
+                    {
+                        <div class="col-md-3">
+                            <div class="mb-5 mr-4">
+                                <img class="w-100 mb-2 shadow" alt="@item.ArtistName" title="@item.AlbumTitle" src=""
+                                     data-holder-rendered="true">
+                                <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">@item.AlbumTitle</a><br />
+                                <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistId">@item.ArtistName</a><br />
+                                <p class="min-font-muted text-muted">Rated @item.AvgRate</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--just for you section end-->
+    <!--music news section start-->
+    <section id="news">
+    </section>
+    <!--music news section end-->
+    <!--map section start-->
+    @*<section id="map ">
+            <div class="row top-heading mt-5">
+                <div class="col-md-12">
+                    <p>All Artist's Locations</p>
+                    <div class="mx-auto" id="map"></div>
+                </div>
+            </div>
+        </section>*@
+    <!--map section end-->
+
+
+
+
