@@ -30,7 +30,7 @@ namespace RecordReviews.Controllers
             {
                 countryList.Add(artist.BirthPlace);
             }
-            ViewBag.ArtistsForMap = countryList;
+            ViewBag.ArtistsForMap = countryList.ToArray();
 
             return View();
         }
