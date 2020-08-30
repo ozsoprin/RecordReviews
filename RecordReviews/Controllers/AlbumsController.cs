@@ -23,10 +23,10 @@ namespace RecordReviews.Controllers
         // GET: Albums
         public async Task<IActionResult> Index(string searchString)
         {
-            var applicationDbContext = _context.Albums.Include(a => a.Artist);
+            var applicationDbContext = _context.Albums.Include(a => a.Artist).Select(a=>a);
             if (!String.IsNullOrEmpty(searchString))
             {
-                applicationDbContext = (IIncludableQueryable<Album, Artist>) applicationDbContext.Where(a => a.AlbumTitle.Contains(searchString));
+                applicationDbContext = applicationDbContext.Where(a => a.AlbumTitle.Contains(searchString));
             }
 
             return View(await applicationDbContext.ToListAsync());

@@ -24,10 +24,10 @@ namespace RecordReviews.Controllers
         // GET: Reviews
         public async Task<IActionResult> Index(string searchString)
         {
-            var applicationDbContext = _context.Reviews.Include(r => r.Album).ThenInclude(a => a.Artist);
+            var applicationDbContext = _context.Reviews.Include(r => r.Album).ThenInclude(a => a.Artist).Select(r=>r);
             if (!String.IsNullOrEmpty(searchString))
             {
-                applicationDbContext = (IIncludableQueryable<Review, Artist>) applicationDbContext.Where(a => a.Album.AlbumTitle.Contains(searchString));
+                applicationDbContext = applicationDbContext.Where(a => a.Album.Artist.ArtistName.Contains(searchString));
             }
             var mostReviewedAlbum = applicationDbContext.GroupBy(r => r.AlbumId)
                 .Select(r => new { AlbumID = r.Key, Count = r.Count()})

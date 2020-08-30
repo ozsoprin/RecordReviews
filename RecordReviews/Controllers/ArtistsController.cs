@@ -23,10 +23,11 @@ namespace RecordReviews.Controllers
         // GET: Artists
         public async Task<IActionResult> Index(string searchString)
         {
-            var applicationDbContext = _context.Artists;
+            var applicationDbContext = from a in _context.Artists
+                select a;
             if (!String.IsNullOrEmpty(searchString))
             {
-                applicationDbContext = (DbSet<Artist>) applicationDbContext.Where(a => a.ArtistName.Contains(searchString));
+                applicationDbContext = applicationDbContext.Where(a => a.ArtistName.Contains(searchString));
             }
             return View(await applicationDbContext.ToListAsync());
         }
