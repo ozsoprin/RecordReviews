@@ -41,6 +41,12 @@
             <a class="text-dark" asp-action="Create">Create New</a>
         </p>
 
+        <form class="row form-inline d-flex md-form form-sm mt-0" asp-controller="Albums" asp-action="Index">
+            <button type="submit" class="fabutton pl-3"><i class="fa fa-search" aria-hidden="true"></i></button>
+            <input class="col-md-11 form-control form-control-sm ml-3 w-75" type="text" name="searchString" placeholder="Search by Album Title"
+                   aria-label="Search">
+        </form>
+
         <div class="row mt-5 mb-5">
             @foreach (var item in Model)
             {
@@ -52,7 +58,7 @@
                         </a>
                         <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">@item.AlbumTitle</a><br />
                         <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistId">@item.ArtistName</a><br />
-                        <a class="rate-link min-font-muted text-muted" href="" ><span>Rated @item.AvgRate</span></a>
+                        <a class="rate-link min-font-muted text-muted" href=""><span>Rated @item.AvgRate</span></a>
                         <div>
                             <a class="min-font-muted text-muted" asp-action="Edit" asp-route-id="@item.AlbumId">Edit |</a>
                             <a class="min-font-muted text-muted" asp-action="Delete" asp-route-id="@item.AlbumId"> Delete</a>

@@ -61,24 +61,26 @@
         <div class="container-fluid">
             <header class="header">
                 <div class="row top-heading mt-5">
-                    <p class="top-10-title col-md-12 font-weight-bold">Top 10 Artists</p>
+                    <p class="top-10-title col-md-12 font-weight-bold mt-4">Top 10 Artists</p>
                 </div>
             </header>
 
-            <div class="container ml-5 pl-5">
+            <div class="container">
 
-                <div class="row mt-5 mb-5 pl-5">
-                    @foreach (var item in (List<Artist>)ViewBag.Top10Artists)
+                <div class="row mt-3 mb-5 pl-5 mr-4">
+                    @for (var i=0; i< ViewBag.Top10Artists.Count; i++)
                     {
 
-                        <div class="col-md-2 col-md-offset-1">
+                        <div class="col-md-5ths ">
                             <div class="mb-5 mr-4 w-100">
-                                <a class="img-link" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistID">
-                                    <img class="artistImg rounded-circle z-depth-2 w-100 shadow" alt="@item.ArtistName" src=""
+                                @{ var index = i + 1;}
+                                <p class="index">@index</p>
+                                <a class="img-link" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.Top10Artists[i].ArtistID">
+                                    <img class="artistImg rounded-circle z-depth-2 w-100 shadow mb-2" alt="@ViewBag.Top10Artists[i].ArtistName" src=""
                                          data-holder-rendered="true">
                                 </a>
-                                <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistID">@item.ArtistName</a><br />
-                                <a class="rate-link min-font-muted text-muted" href=""><span>Rated @item.AvgRate</span></a>
+                                <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.Top10Artists[i].ArtistID">@ViewBag.Top10Artists[i].ArtistName</a><br />
+                                <a class="rate-link min-font-muted text-muted" href=""><span>Rated @ViewBag.Top10Artists[i].AvgRate</span></a>
                             </div>
                         </div>
 
@@ -94,24 +96,26 @@
         <div class="container-fluid">
             <header class="header">
                 <div class="row top-heading mt-5">
-                    <p class="top-10-title col-md-12 font-weight-bold">Top 10 Albums</p>
+                    <p class="top-10-title col-md-12 font-weight-bold mt-4">Top 10 Albums</p>
                 </div>
             </header>
 
-            <div class="container ml-5 pl-5">
+            <div class="container">
 
-                <div class="row mt-5 mb-5 pl-5">
-                    @foreach (var item in (List<Album>)ViewBag.Top10Albums)
+                <div class="row mt-3 mb-5 pl-5 mr-4">
+                    @for (var i = 0; i < ViewBag.Top10Albums.Count; i++)
                     {
-                        <div class="col-md-2 col-md-offset-1">
+                        <div class="col-md-5ths">
                             <div class="mb-5 mr-4 w-100">
-                                <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">
-                                    <img class="albumImg w-100 mb-2 shadow" alt="@item.ArtistName" title="@item.AlbumTitle" src=""
+                                @{ var index = i + 1;}
+                                <p class="index">@index</p>
+                                <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@ViewBag.Top10Albums[i].AlbumId">
+                                    <img class="albumImg w-100 mb-2 shadow" alt="@ViewBag.Top10Albums[i].ArtistName" title="@ViewBag.Top10Albums[i].AlbumTitle" src=""
                                          data-holder-rendered="true">
                                 </a>
-                                <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">@item.AlbumTitle</a><br />
-                                <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistId">@item.ArtistName</a><br />
-                                <a class="rate-link min-font-muted text-muted" href=""><span>Rated @item.AvgRate</span></a>
+                                <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@ViewBag.Top10Albums[i].AlbumId">@ViewBag.Top10Albums[i].AlbumTitle</a><br />
+                                <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.Top10Albums[i].ArtistId">@ViewBag.Top10Albums[i].ArtistName</a><br />
+                                <a class="rate-link min-font-muted text-muted" href=""><span>Rated @ViewBag.Top10Albums[i].AvgRate</span></a>
                             </div>
                         </div>
                     }
@@ -121,35 +125,62 @@
     </section>
     <!--Top-10 Albums section end-->
     <!--Top-10 Users section start-->
-    @*<section id="Top-10-Users">
+    <section id="Top-10-Users">
 
         <div class="container-fluid">
             <header class="header">
                 <div class="row top-heading mt-5">
-                    <p class="top-10-title col-md-12 font-weight-bold">Top 10 Albums</p>
+                    <p class="top-10-title col-md-12 font-weight-bold mt-4">Top 10 Users</p>
                 </div>
             </header>
 
-            <div class="container ml-5 pl-5">
+            <div class="container pl-5">
 
-                <div class="row mt-5 mb-5 pl-5">
-                    @foreach (var item in (List<Album>)ViewBag.Top10Users)
+
+                <div class="row mt-3 mb-5 pl-5 mr-4">
+                    @for (var i = 0; i < ViewBag.Top10Users.Count; i++)
                     {
-                        <div class="col-md-2 col-md-offset-1">
+                        <div class="col-md-5ths">
                             <div class="mb-5 mr-4 w-100">
-                                <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">
-                                    <img class="albumImg w-100 mb-2 shadow" alt="@item.ArtistName" title="@item.AlbumTitle" src=""
-                                         data-holder-rendered="true">
-                                </a>
-                                <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">@item.AlbumTitle</a><br />
-                                <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistId">@item.ArtistName</a><br />
-                                <a class="rate-link min-font-muted text-muted" href=""><span>Rated @item.AvgRate</span></a>
+                                @{ var index = i + 1;}
+                                <p class="index">@index</p>
+                                <a class="font-weight-bold text-decoration-none text-dark" >@ViewBag.Top10Users[i].UserName</a><br />
+                                <a class="min-font-muted font-weight-bold text-muted" >@ViewBag.Top10Users[i].Email</a>
                             </div>
                         </div>
                     }
                 </div>
+
+
+                @*<div class="table-responsive-md">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    User Name
+                                </th>
+                                <th scope="col">
+                                    Email
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (var i = 0; i < ViewBag.Top10Users.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        @ViewBag.Top10Users[i].UserName
+                                    </td>
+                                    <td>
+                                        @ViewBag.Top10Users[i].Email
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>*@
             </div>
         </div>
-    </section>*@
+    </section>
 
     <!--Top-10 Users section end-->

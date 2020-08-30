@@ -354,18 +354,33 @@ body {
     padding: 70px;
 }*/
 
-#Top-10-Artists, #Top-10-Albums {
+#Top-10-Artists {
     background: #74ebd5; /* fallback for old browsers */
     background: -webkit-linear-gradient(to right, #ACB6E5, #74ebd5); /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to right, #ACB6E5, #74ebd5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     border-radius: 80px;
-    height: 450px;
-    padding-top: 1px;
-    margin-top: 30px;
+    height: 840px;
 }
+
+#Top-10-Albums {
+    background: #74ebd5; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #ACB6E5, #74ebd5); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #ACB6E5, #74ebd5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    border-radius: 80px;
+    height: 880px;
+}
+
+#Top-10-Users {
+    background: #74ebd5; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #ACB6E5, #74ebd5); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #ACB6E5, #74ebd5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    border-radius: 80px;
+    height: 700;
+}
+
 p.top-10-title {
     color: white;
-    text-shadow: 3px 3px 14px rgba(149, 150, 150, 1);
+    text-shadow: 3px 3px 7px rgba(149, 150, 150, 1);
 }
 
  .btn {
@@ -435,4 +450,53 @@ p.top-10-title {
 
 tr {
     line-height: 50px;
+}
+/*.top-heading {
+    text-shadow: 3px 3px 7px rgba(149, 150, 150, 1);
+}*/
+
+.most-reviewed-genre-link span {
+    text-decoration: none;
+    transition: all 1s ease-in-out;
+    font-size: 30px;
+}
+
+.most-reviewed-genre-link:hover span {
+    font-weight: bold;
+    font-size: 40px;
+    text-decoration: none;
+    text-shadow: 3px 3px 14px rgba(149, 150, 150, 1);
+    transition: all 1s ease-in-out;
+}
+
+.most-reviewed-genre-link:hover {
+    text-decoration: none;
+}
+.search{
+    font-size:14px;
+}
+
+.fabutton {
+    background: none;
+    padding: 0px;
+    border: none;
+}
+.index {
+    font-size: 40px;
+    color: white;
+    text-shadow: 3px 3px 7px rgba(149, 150, 150, 1);
+}
+
+.col-md-5ths {
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+@media (min-width: 992px) {
+    .col-md-5ths {
+        width: 20%;
+        float: left;
+    }
 }

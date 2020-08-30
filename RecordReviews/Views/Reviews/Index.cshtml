@@ -2,56 +2,235 @@
 
 @{
     ViewData["Title"] = "Reviews";
-   
+
 }
+@using System.Globalization
 
-<h1>Index</h1>
+<!--scripts for img(last.fm) start-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    async function creatAlbumImg(element) {
+        var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+        var artist = $(element).attr('alt');
+        var title = $(element).attr('title');
+        var url = encodeURI("https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key="
+            + LastFmKey + "&artist=" + artist + "&album=" + title + "&autocorrect=1&format=json");
+        $.getJSON(url,
+            function (json) {
+                //var i = Math.floor(Math.random() * 10) % 10;
+                var src = json.album.image[4]["#text"];
+                $(element).attr("src", src);
+            });
+    }
+</script>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<div class="table-responsive-md">
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">
-                    @Html.DisplayNameFor(model => model.Album)
-                </th>
-                <th scope="col">
-                    @Html.DisplayNameFor(model => model.Comment)
-                </th>
-                <th scope="col">
-                    @Html.DisplayNameFor(model => model.Rate)
-                </th>
-                <th scope="col">
-                    @Html.DisplayNameFor(model => model.CreationTime)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Album.AlbumTitle)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Comment)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Rate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CreationTime)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.ReviewId">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.ReviewId">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.ReviewId">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<script>
+    $(document).ready(async function () {
+        $("img").each(async function (index, element) {
+            await creatAlbumImg(element);
+        });
+    });
+</script>
+
+@*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#review-table").DataTable();
+    });
+</script>*@
+
+<!--last reviews section start-->
+<div class="container-fluid">
+    <div class="container">
+        <header class="header">
+            <div class="row top-heading mt-5">
+                <p class="col-md-12 font-weight-bold">Last Reviews</p>
+            </div>
+        </header>
+        <p>
+            <a class="text-dark" asp-action="Create">Create New</a>
+        </p>
+
+        <div class="table-responsive-md">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            @Html.DisplayNameFor(model => model.Album)
+                        </th>
+                        <th scope="col">
+                            @Html.DisplayNameFor(model => model.Comment)
+                        </th>
+                        <th scope="col">
+                            @Html.DisplayNameFor(model => model.Rate)
+                        </th>
+                        <th scope="col">
+                            @Html.DisplayNameFor(model => model.CreationTime)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < 5; i++)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => Model.ElementAt(i).Album.AlbumTitle)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => Model.ElementAt(i).Comment)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => Model.ElementAt(i).Rate)
+                            </td>
+                            <td>
+                                @{
+                                    var time = Model.ElementAt(i).CreationTime.ToString("g", CultureInfo.CreateSpecificCulture("en-us"));
+                                }
+                                @Html.DisplayFor(modelItem => time)
+                            </td>
+                            <td>
+                                <a class="text-muted" asp-action="Edit" asp-route-id="@Model.ElementAt(i).ReviewId">Edit</a> |
+                                <a class="text-muted" asp-action="Details" asp-route-id="@Model.ElementAt(i).ReviewId">Details</a> |
+                                <a class="text-muted" asp-action="Delete" asp-route-id="@Model.ElementAt(i).ReviewId">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+<!--last reviews section end-->
+<!--most reviewed section start-->
+<div class="container-fluid">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row top-heading mt-5">
+                    <h2 class="font-weight-bold w-100 text-center">Most Reviewed Artist</h2>
+                </div>
+                <div class="my-2 w-100 text-center">
+                    <a asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.MostReviewedArtist.ArtistID">
+                        <img class="img-link artistImg rounded-circle z-depth-2 shadow rounded mx-auto d-block" alt="@ViewBag.MostReviewedArtist.ArtistName" src=""
+                             data-holder-rendered="true">
+                    </a><br />
+                    <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.MostReviewedArtist.ArtistID">@ViewBag.MostReviewedArtist.ArtistName</a><br />
+                    <a class="rate-link min-font-muted text-muted" href=""><span>Rated @ViewBag.MostReviewedArtist.AvgRate</span></a>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="row top-heading mt-5">
+                    <h2 class="font-weight-bold w-100 text-center">Most Reviewed Album</h2>
+                </div>
+                <div class="my-2 w-100 text-center">
+                    <a asp-controller="Albums" asp-action="Details" asp-route-id="@ViewBag.MostReviewedAlbum.AlbumId">
+                        <img class="img-link albumImg mb-2 shadow rounded mx-auto d-block" alt="@ViewBag.MostReviewedAlbum.ArtistName" title="@ViewBag.MostReviewedAlbum.AlbumTitle" src=""
+                             data-holder-rendered="true">
+                    </a><br />
+                    <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@ViewBag.MostReviewedAlbum.AlbumId">@ViewBag.MostReviewedAlbum.AlbumTitle</a><br />
+                    <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.MostReviewedAlbum.ArtistId">@ViewBag.MostReviewedAlbum.ArtistName</a><br />
+                    <a class="rate-link min-font-muted text-muted" href=""><span>Rated @ViewBag.MostReviewedAlbum.AvgRate</span></a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="row top-heading mt-5">
+                <h2 class="font-weight-bold w-100">Most Reviewed Genre is: </h2>
+            </div>
+            <a class="row most-reviewed-genre-link font-weight-bold text-muted w-100"><span>@ViewBag.MostReviewedGenre</span></a>
+            <div class="row mt-4">
+                <h5 class="font-weight-bold w-100 mb-3">Most reviewed @ViewBag.MostReviewedGenre albums are:</h5>
+                @foreach (var item in (List<Album>)ViewBag.MostReviewedGenreAlbums)
+                {
+                    <div class="row col-md-3 col-md-offset-1">
+                        <div class="mb-5 mr-4 w-100">
+                            <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">
+                                <img class="albumImg w-100 mb-2 shadow" alt="@item.ArtistName" title="@item.AlbumTitle" src=""
+                                     data-holder-rendered="true">
+                            </a>
+                            <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">@item.AlbumTitle</a><br />
+                            <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistId">@item.ArtistName</a><br />
+                            <a class="rate-link min-font-muted text-muted" href=""><span>Rated @item.AvgRate</span></a>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--most reviewed section end-->
+<!--all reviews section start-->
+<div class="container-fluid">
+    <div class="container">
+        <header class="header">
+            <div class="row top-heading mt-5">
+                <p class="col-md-12 font-weight-bold">All Reviews</p>
+            </div>
+        </header>
+
+        <form class="row form-inline d-flex md-form form-sm mb-4" asp-controller="Reviews" asp-action="Index">
+            <button type="submit" class="fabutton pl-3"><i class="fa fa-search" aria-hidden="true"></i></button>
+            <input class="col-md-11 form-control form-control-sm ml-3 w-75" type="text" name="searchString" placeholder="Search by Album Title"
+                   aria-label="Search">
+        </form>
+
+        <div class="table-responsive-md">
+            <table id="review-table" class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            @Html.DisplayNameFor(model => model.Album)
+                        </th>
+                        <th scope="col">
+                            @Html.DisplayNameFor(model => model.Comment)
+                        </th>
+                        <th scope="col">
+                            @Html.DisplayNameFor(model => model.Rate)
+                        </th>
+                        <th scope="col">
+                            @Html.DisplayNameFor(model => model.CreationTime)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.Count(); i++)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => Model.ElementAt(i).Album.AlbumTitle)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => Model.ElementAt(i).Comment)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => Model.ElementAt(i).Rate)
+                            </td>
+                            <td>
+                                @{
+                                    var time = Model.ElementAt(i).CreationTime.ToString("g", CultureInfo.CreateSpecificCulture("en-us"));
+                                }
+                                @Html.DisplayFor(modelItem => time)
+                            </td>
+                            <td>
+                                <a class="text-muted" asp-action="Edit" asp-route-id="@Model.ElementAt(i).ReviewId">Edit</a> |
+                                <a class="text-muted" asp-action="Details" asp-route-id="@Model.ElementAt(i).ReviewId">Details</a> |
+                                <a class="text-muted" asp-action="Delete" asp-route-id="@Model.ElementAt(i).ReviewId">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!--all reviews section end-->

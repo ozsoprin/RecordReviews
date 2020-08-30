@@ -24,6 +24,27 @@
     ViewData["Albums"] = list;
 
 }
+@*<script>
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: 'your-app-id',
+            autoLogAppEvents: true,
+            xfbml: true,
+            version: 'v8.0'
+        });
+    };
+</script>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+<script>
+    FB.api(
+        '/104250951413353/feed',
+        'POST',
+        { "message": "Listen to our music ! :)" },
+        function (response) {
+            // Insert your code here
+        }
+    );
+</script>*@
 
 <!--scripts for img(last.fm) start-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -45,47 +66,47 @@
 <!--scripts for google map start-->
 @*<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c&callback=initMap&libraries=&v=weekly"
-        async defer>
-</script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c&callback=initMap&libraries=&v=weekly"
+            async defer>
+    </script>
 
-<script>
-    var map;
-    var geocoder;
-    var countryList = @Model.ToArray();
+    <script>
+        var map;
+        var geocoder;
+        var countryList = @Model.ToArray();
 
-    function initMap() {
-        geocoder = new google.maps.Geocoder();
-        var latlng = new google.maps.LatLng(-0.397, 5.644);
-        var options = {
-            zoom: 2,
-            center: latlng,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        }
-
-        map = new google.maps.Map(document.getElementById("map"), options);
-
-
-        countryList.forEach(element => codeAddress(element));
-        //for (var i = 0; i < 3; i++) {
-        //    codeAddress(countryList[i]);
-        //}
-    };
-    function codeAddress(address) {
-        var location = geocoder.geocode()
-        geocoder.geocode({ 'address': address }, function (results, status) {
-            if (status === google.maps.GeocoderStatus.OK) {
-                map.setCenter(results[0].geometry.location);
-                var marker = new google.maps.Marker({
-                    map: map,
-                    position: results[0].geometry.location
-                });
-            } else {
-                alert("Geocode unsuccessful");
+        function initMap() {
+            geocoder = new google.maps.Geocoder();
+            var latlng = new google.maps.LatLng(-0.397, 5.644);
+            var options = {
+                zoom: 2,
+                center: latlng,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
             }
-        });
-    };
-</script>*@
+
+            map = new google.maps.Map(document.getElementById("map"), options);
+
+
+            countryList.forEach(element => codeAddress(element));
+            //for (var i = 0; i < 3; i++) {
+            //    codeAddress(countryList[i]);
+            //}
+        };
+        function codeAddress(address) {
+            var location = geocoder.geocode()
+            geocoder.geocode({ 'address': address }, function (results, status) {
+                if (status === google.maps.GeocoderStatus.OK) {
+                    map.setCenter(results[0].geometry.location);
+                    var marker = new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location
+                    });
+                } else {
+                    alert("Geocode unsuccessful");
+                }
+            });
+        };
+    </script>*@
 
 @*@{
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c&callback=initMap&libraries=&v=weekly"
@@ -186,11 +207,11 @@
 <!--music news section end-->
 <!--map section start-->
 @*<section id="map ">
-    <div class="row top-heading mt-5">
-        <div class="col-md-12">
-            <p>All Artist's Locations</p>
-            <div class="mx-auto" id="map"></div>
+        <div class="row top-heading mt-5">
+            <div class="col-md-12">
+                <p>All Artist's Locations</p>
+                <div class="mx-auto" id="map"></div>
+            </div>
         </div>
-    </div>
-</section>*@
+    </section>*@
 <!--map section end-->
