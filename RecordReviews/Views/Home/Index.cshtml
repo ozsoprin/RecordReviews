@@ -22,29 +22,7 @@
     list.Add(album4);
 
     ViewData["Albums"] = list;
-
 }
-@*<script>
-    window.fbAsyncInit = function () {
-        FB.init({
-            appId: 'your-app-id',
-            autoLogAppEvents: true,
-            xfbml: true,
-            version: 'v8.0'
-        });
-    };
-</script>
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
-<script>
-    FB.api(
-        '/104250951413353/feed',
-        'POST',
-        { "message": "Listen to our music ! :)" },
-        function (response) {
-            // Insert your code here
-        }
-    );
-</script>*@
 
 <!--scripts for img(last.fm) start-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -63,91 +41,38 @@
             });
     }
 </script>
+
 <!--scripts for google map start-->
-@*<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+@*<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c&callback=initMap&libraries=&v=weekly"
+        async defer>
+</script>
+<script>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c&callback=initMap&libraries=&v=weekly"
-            async defer>
-    </script>
+    var GoogleKey = 'AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c';
+     function initMap() {
+          var options = {
+              zoom: 1,
+               center: { lat: 0, lng: 1 }
+          };
+         var map = new google.maps.Map(document.getElementById("google-map"), options);
+         var locations = @Html.Raw(Json.Serialize(Model));
 
-    <script>
-        var map;
-        var geocoder;
-        var countryList = @Model.ToArray();
+         locations.forEach(element => {
 
-        function initMap() {
-            geocoder = new google.maps.Geocoder();
-            var latlng = new google.maps.LatLng(-0.397, 5.644);
-            var options = {
-                zoom: 2,
-                center: latlng,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            }
+             $.getJSON("https://maps.googleapis.com/maps/api/geocode/json?address=" + element + "&key=" + GoogleKey,
+                 function (json) {
+                     if (json.status === 'OK') {
+                         var marker = new google.maps.Marker({ position: json.results[0].geometry.location, map: map });
+                         map.setCenter(marker.getPosition());
+                     }
+                 });
+         }
+         );
+     }
 
-            map = new google.maps.Map(document.getElementById("map"), options);
+</script>*@
 
-
-            countryList.forEach(element => codeAddress(element));
-            //for (var i = 0; i < 3; i++) {
-            //    codeAddress(countryList[i]);
-            //}
-        };
-        function codeAddress(address) {
-            var location = geocoder.geocode()
-            geocoder.geocode({ 'address': address }, function (results, status) {
-                if (status === google.maps.GeocoderStatus.OK) {
-                    map.setCenter(results[0].geometry.location);
-                    var marker = new google.maps.Marker({
-                        map: map,
-                        position: results[0].geometry.location
-                    });
-                } else {
-                    alert("Geocode unsuccessful");
-                }
-            });
-        };
-    </script>*@
-
-@*@{
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c&callback=initMap&libraries=&v=weekly"
-                async defer>
-            var map;
-            var geocoder;
-            var artists = (List<Artist>)ViewBag.ArtistsForMap;
-
-            function initMap() {
-                geocoder = new google.maps.Geocoder();
-                var latlng = new google.maps.LatLng(-0.397, 5.644);
-                var options = {
-                    zoom: 2,
-                    center: latlng,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
-                }
-
-                map = new google.maps.Map(document.getElementById("map"), options);
-
-                for (var i = 0; i < artists.Count; i++) {
-                    codeAddress(artists[i].BirthPlace);
-                }
-            };
-            function codeAddress(address) {
-                geocoder.geocode({ 'address': address }, function (results, status) {
-                    if (status === google.maps.GeocoderStatus.OK) {
-                        map.setCenter(results[0].geometry.location);
-                        var marker = new google.maps.Marker({
-                            map: map,
-                            position: results[0].geometry.location
-                        });
-                    } else {
-                        alert("Geocode unsuccessful");
-                    }
-                });
-            };
-        </script>
-    }*@
 <!--script for google map end-->
-
-
 
 <script>
     $(document).ready(async function () {
@@ -155,14 +80,7 @@
             await creatAlbumImg(element);
         });
     });
-    //$(document).ready(async function () {
-    //    await initMap();
-    //});
-
 </script>
-
-
-
 
 <!--just for you section start-->
 <section id="just-for-you">
@@ -205,13 +123,23 @@
 <section id="news">
 </section>
 <!--music news section end-->
-<!--map section start-->
-@*<section id="map ">
-        <div class="row top-heading mt-5">
-            <div class="col-md-12">
+<!--map + graph section start-->
+<section id="map&graph">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row top-heading mt-5">
                 <p>All Artist's Locations</p>
-                <div class="mx-auto" id="map"></div>
             </div>
+            <div id="google-map" class="mx-auto"></div>
         </div>
-    </section>*@
-<!--map section end-->
+
+        <div class="col-md-6">
+            <div class="row top-heading mt-5">
+                <p>Statistics</p>
+            </div>
+            <div id="graph"></div>
+        </div>
+    </div>
+
+</section>
+<!--map + graph section end-->

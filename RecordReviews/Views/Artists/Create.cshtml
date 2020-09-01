@@ -3,6 +3,45 @@
 @{
     ViewData["Title"] = "Create";
 }
+<!--scripts for post on facebook start-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $(".btn").click(function () {
+            var token = "EAAEXg0s6zRoBAJZCYRm0ZCFViLt6kDVoxJMaWiBdeoFNwQXcl79d1HiJADhJ9lWCJYZBpj8JpRF6lsiROwpy4B0nw2UeWKbSsGvQ0crl5SGTr10K9SY2WTOGk6UZCSRiWFUFU4mZCxKZCOXZA3fPCpuiAcKbQOQMYKqWQDlZCpgFIpXKD787dF7V";
+            $.ajaxSetup({ cache: true });
+            $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
+                FB.init({
+                    appId: '104250951413353',
+                    version: 'v2.7' // or v2.1, v2.2, v2.3, ...
+                });
+                FB.api(
+                    '/104250951413353/feed',
+                    'GET',
+                    { "access_token": token },
+                    function (response) {
+                        // Insert your code here
+                    }
+                );
+                var name = $(".name").val();
+
+                var body = 'New Artist -  ' + name + ' | Come check this out!';
+                FB.api('/104250951413353/feed', 'POST', { "message": body, "access_token": token }, function (response) {
+                    if (!response || response.error) {
+                        alert('Error occured' + response.error);
+                    } else {
+                        alert('Post ID: ' + response.id);
+                    }
+                });
+            });
+
+        });
+    });
+
+</script>
+<!--scripts for post on facebook end-->
 
 <h1>Create</h1>
 
@@ -14,7 +53,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="ArtistName" class="control-label"></label>
-                <input asp-for="ArtistName" class="form-control" />
+                <input asp-for="ArtistName" class="name form-control" />
                 <span asp-validation-for="ArtistName" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -27,24 +66,15 @@
                 <input asp-for="Genre" class="form-control" />
                 <span asp-validation-for="Genre" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="AvgRate" class="control-label"></label>
-                <input asp-for="AvgRate" class="form-control" />
-                <span asp-validation-for="AvgRate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PageViews" class="control-label"></label>
-                <input asp-for="PageViews" class="form-control" />
-                <span asp-validation-for="PageViews" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-outline-secondary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a class=" text-muted" asp-action="Index">Back to Artists</a>
 </div>
 
