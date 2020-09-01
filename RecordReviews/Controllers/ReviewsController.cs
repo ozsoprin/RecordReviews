@@ -28,17 +28,18 @@ namespace RecordReviews.Controllers
             if (!String.IsNullOrEmpty(searchString))
             {
                 applicationDbContext = applicationDbContext.Where(a => a.Album.Artist.ArtistName.Contains(searchString));
+                TempData["searchString"] = searchString;
             }
-            var mostReviewedAlbum = applicationDbContext.GroupBy(r => r.AlbumId)
+            var mostReviewedAlbum = _context.Reviews.Include(r => r.Album).ThenInclude(a => a.Artist).Select(r => r).GroupBy(r => r.AlbumId)
                 .Select(r => new { AlbumID = r.Key, Count = r.Count()})
                 .OrderByDescending(x => x.Count).Take(1).SingleOrDefault();
-            var mostReviewedArtist = applicationDbContext
+            var mostReviewedArtist = _context.Reviews.Include(r => r.Album).ThenInclude(a => a.Artist).Select(r => r)
                 .Join(_context.Albums, review => review.AlbumId, album => album.AlbumId, (review, album) => album)
                 .Join(_context.Artists, album => album.ArtistId, artist => artist.ArtistID, (album, artist) => artist)
                 .GroupBy(a => a.ArtistID)
                 .Select(r => new { ArtistID = r.Key, Count = r.Count() })
                 .OrderByDescending(x => x.Count).Take(1).SingleOrDefault();
-            var mostReviewedGenre = applicationDbContext
+            var mostReviewedGenre = _context.Reviews.Include(r => r.Album).ThenInclude(a => a.Artist).Select(r => r)
                 .Join(_context.Albums, review => review.AlbumId, album => album.AlbumId, (review, album) => album)
                 .Join(_context.Artists, album => album.ArtistId, artist => artist.ArtistID, (album, artist) => artist)
                 .GroupBy(a => a.Genre)

@@ -30,7 +30,8 @@ namespace RecordReviews.Models
 
         [DisplayName("Release Date")]
         [Required(ErrorMessage = "Release Date is Required")]
-        [DataType(DataType.DateTime, ErrorMessage = "Please Enter a Valid Date")]
+        [DataType(DataType.Date, ErrorMessage = "Please Enter a Valid Date")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime ReleaseDate { get; set; }
         
         [Required(ErrorMessage = "Genre is Required")]

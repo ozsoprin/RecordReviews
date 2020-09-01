@@ -13,12 +13,10 @@ namespace RecordReviews.Controllers
 {
     public class HomeController : Controller
     {
-        //private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
 
-        public HomeController(ApplicationDbContext context)//ILogger<HomeController> logger)
+        public HomeController(ApplicationDbContext context)
         {
-            //_logger = logger;
             _context = context;
         }
 
@@ -31,6 +29,8 @@ namespace RecordReviews.Controllers
                 countryList.Add(artist.BirthPlace);
             }
 
+            ViewBag.ReviewStatistic = _context.Reviews.GroupBy(r => r.CreationTime.Month)
+                .Select(r => new {Month = r.Key, Count = r.Count()}).OrderBy(x => x.Month).ToList();
             return View(countryList.ToArray());
         }
 

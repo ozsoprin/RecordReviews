@@ -29,6 +29,9 @@ namespace RecordReviews.Controllers
                 applicationDbContext = applicationDbContext.Where(a => a.AlbumTitle.Contains(searchString));
             }
 
+            ViewBag.AlbumStatistic = _context.Albums
+                .Select(a => new {Title = a.AlbumTitle, Rate = a.AvgRate}).ToList();
+
             return View(await applicationDbContext.ToListAsync());
         }
 

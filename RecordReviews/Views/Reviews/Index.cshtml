@@ -38,15 +38,15 @@
     <div class="container">
         <header class="header">
             <div class="row top-heading mt-5">
-                @*@if ((string)TempData["searchString"] != null)
+                @if ((string)TempData["searchString"] != null)
                 {
-                    <p id="title" class="col-md-12 font-weight-bold">Last Reviews about @TempData["searchString"] </p>
+                    <p id="title" class="col-md-12 font-weight-bold">Reviews Written About @TempData["searchString"] </p>
                 }
                 else
                 {
                     <p id="title" class="col-md-12 font-weight-bold">Last 10 Reviews </p>
-                }*@
-                <p id="title" class="col-md-12 font-weight-bold">Last 10 Reviews </p>
+                }
+                @*<p id="title" class="col-md-12 font-weight-bold">Last 10 Reviews </p>*@
             </div>
         </header>
         <p>
