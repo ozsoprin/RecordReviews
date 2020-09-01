@@ -8,16 +8,22 @@ html {
     margin: 0;
     padding: 0;
     font-family: 'Raleway', sans-serif;
+   
 }
 
 body {
     /* Margin bottom by footer height */
     margin-bottom: 60px;
+    margin-top:80px;
     height: 100%;
     width: 100%;
-    margin: 0;
     padding: 0;
     font-family: 'Raleway', sans-serif;
+    background-color: #D9AFD9;
+    background-image: linear-gradient(0deg, #D9AFD9 0%, #97D9E1 85%);
+}
+.navbar {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .footer {
@@ -26,9 +32,6 @@ body {
     width: 100%;
     white-space: nowrap;
     line-height: 60px; /* Vertically center the text there */
-    /*added*/
-    background-color: black;
-    color: white;
     font-size: 20px;
 }
 
@@ -44,14 +47,6 @@ body {
     font-size: 55px;
     text-transform: capitalize;
 }
-
-
-/*footer {
-    background-color: black;
-    color: white;
-    font-size: 20px;
-}
-*/
 
 /*google map*/
 #google-map {
@@ -72,44 +67,57 @@ body {
 }*/
 
 #Top-10-Artists {
-    background: #74ebd5; /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #ACB6E5, #74ebd5); /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #ACB6E5, #74ebd5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: #97D9E1; /* fallback for old browsers */
     border-radius: 80px;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
     height: 840px;
 }
 
 #Top-10-Albums {
-    background: #74ebd5; /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #ACB6E5, #74ebd5); /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #ACB6E5, #74ebd5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: #97D9E1; /* fallback for old browsers */
     border-radius: 80px;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
     height: 880px;
 }
 
 #Top-10-Users {
-    background: #74ebd5; /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #ACB6E5, #74ebd5); /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #ACB6E5, #74ebd5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: #97D9E1; /* fallback for old browsers */
     border-radius: 80px;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
     height: 700px;
 }
+
 
 p.top-10-title {
     color: white;
     text-shadow: 3px 3px 7px rgba(149, 150, 150, 1);
 }
 
- .btn {
-    background-image: linear-gradient(to right, #ACB6E5, #74ebd5);
-    border-color: white;
-    color: white;
-    border-radius: 8px;
+.btn {
+    width: 140px;
+    height: 45px;
+    letter-spacing: 2.5px;
+    font-weight: 500;
+    color: black;
+    background-color: white;
+    border: none;
+    border-radius: 45px;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease 0s;
+    cursor: pointer;
+    outline: none;
+    margin-top: 10px;
 }
+
+    .btn:hover {
+        background-color: #D9AFD9;
+        box-shadow: 0px 15px 20px #b6e4ea;
+        color: white;
+        transform: translateY(-7px);
+    }
 
 #advanced-search-btn {
     border: none;
-    color: #FFFFFF;
     padding: 7px;
     width: 200px;
     transition: all 0.5s;
@@ -217,3 +225,15 @@ tr {
         float: left;
     }
 }
+.just-for-you {
+    background-color: #D9AFD9;
+    background-image: linear-gradient(0deg, #D9AFD9 0%, #97D9E1 85%);
+}
+
+.link-home-footer, #link-fa-footer {
+    color: white;
+}
+.link-home-footer:hover {
+    color: white;
+}
+
