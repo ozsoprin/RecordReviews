@@ -2,8 +2,31 @@
 
 @{
     ViewData["Title"] = "Search";
-}
 
+    //Album album1 = new Album();
+    //album1.AlbumTitle = "Chances Are";
+    //album1.ArtistName = "Bob Marley";
+    //Album album2 = new Album();
+    //album2.AlbumTitle = "This Is Acting";
+    //album2.ArtistName = "Sia";
+    //Album album3 = new Album();
+    //album3.AlbumTitle = "25";
+    //album3.ArtistName = "Adele";
+    //Album album4 = new Album();
+    //album4.AlbumTitle = "Unplugged";
+    //album4.ArtistName = "Eric Clapton";
+    //List<Album> list = new List<Album>();
+    //list.Add(album1);
+    //list.Add(album2);
+    //list.Add(album3);
+    //list.Add(album4);
+
+    //TempData["Results"] = list;
+    //TempData["type"] = "Album";
+}
+@using System.Globalization
+
+<!--search section start-->
 <section>
     <h2>Search</h2>
 
@@ -45,6 +68,16 @@
                 <div class="col-md-7">
                     @Html.EditorFor(model => model.SecondaryKey, new { htmlAttributes = new { @class = "form-control advanced-input", id = "s-name-input" } })
                     @Html.ValidationMessageFor(model => model.SecondaryKey, null, new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" id="g">
+                <label for="Genre" class="col-md-7" id="genre">
+                    <b></b>
+                </label>
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.Genre, new { htmlAttributes = new { @class = "form-control advanced-input", id = "g-input" } })
+                    @Html.ValidationMessageFor(model => model.Genre, null, new { @class = "text-danger" })
                 </div>
             </div>
 
@@ -106,21 +139,184 @@
         </div>
     }
 </section>
+<!--search section end-->
+<!--results section start-->
+<section class="mt-5">
+    @{
+        if (TempData["Results"] != null)
+        {
+            <h2>Results</h2>
+            var type = (string)TempData["type"];
+            if (type == "Artist")
+            {
+                <div class="table-responsive-md">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    Artist's Name
+                                </th>
+                                <th scope="col">
+                                    Genre
+                                </th>
+                                <th scope="col">
+                                    Average Rate
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in (List<Artist>)TempData["Results"])
+                            {
+                                <tr>
+                                    <td>
+                                        @item.ArtistName
+                                    </td>
+                                    <td>
+                                        @item.Genre
+                                    </td>
+                                    <td>
+                                        @item.AvgRate
+                                    </td>
+                                    <td>
+                                        <a class="text-muted" asp-action="Edit" asp-route-id="@item.ArtistID">Edit</a> |
+                                        <a class="text-muted" asp-action="Details" asp-route-id="@item.ArtistID">Details</a> |
+                                        <a class="text-muted" asp-action="Delete" asp-route-id="@item.ArtistID">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else if (type == "Album")
+            {
+                <div class="table-responsive-md">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    Album Title
+                                </th>
+                                <th scope="col">
+                                    Artist's Name
+                                </th>
+                                <th scope="col">
+                                    Release Datete
+                                </th>
+                                <th scope="col">
+                                    Genre
+                                </th>
+                                <th scope="col">
+                                    Average Rate
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in (List<Album>)TempData["Results"])
+                            {
+                                <tr>
+                                    <td>
+                                        @item.AlbumTitle
+                                    </td>
+                                    <td>
+                                        @item.ArtistName
+                                    </td>
+                                    <td>
+                                        @{
+                                            var time = item.ReleaseDate.ToString("g", CultureInfo.CreateSpecificCulture("en-us"));
+                                        }
+                                        @Html.DisplayFor(modelItem => time)
+                                    </td>
+                                    <td>
+                                        @item.Genre
+                                    </td>
+                                    <td>
+                                        @item.AvgRate
+                                    </td>
+                                    <td>
+                                        <a class="text-muted" asp-action="Edit" asp-route-id="@item.AlbumId">Edit</a> |
+                                        <a class="text-muted" asp-action="Details" asp-route-id="@item.AlbumId">Details</a> |
+                                        <a class="text-muted" asp-action="Delete" asp-route-id="@item.AlbumId">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive-md">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    Album
+                                </th>
+                                <th scope="col">
+                                    Comment
+                                </th>
+                                <th scope="col">
+                                    Rate
+                                </th>
+                                <th scope="col">
+                                    Created on
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in (List<Review>)TempData["Results"])
+                            {
+                                <tr>
+                                    <td>
+                                        @item.Album.AlbumTitle
+                                    </td>
+                                    <td>
+                                        @item.Comment
+                                    </td>
+                                    <td>
+                                        @item.Rate
+                                    </td>
+                                    <td>
+                                        @{
+                                            var time = item.CreationTime.ToString("g", CultureInfo.CreateSpecificCulture("en-us"));
+                                        }
+                                        @Html.DisplayFor(modelItem => time)
+                                    </td>
+                                    <td>
+                                        <a class="text-muted" asp-action="Edit" asp-route-id="@item.ReviewId">Edit</a> |
+                                        <a class="text-muted" asp-action="Details" asp-route-id="@item.ReviewId">Details</a> |
+                                        <a class="text-muted" asp-action="Delete" asp-route-id="@item.ReviewId">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
+    }
+</section>
+<!--results section end-->
 
 @section Scripts
-{
+    {
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $(".advanced-item").hide();
             $(".advanced-input").val(null);
+            $("#g").hide();
         });
     </script>
     <script>
-        $(document).ready(function() {
-            $("#advanced-search-btn").click(function() {
+        $(document).ready(function () {
+            $("#advanced-search-btn").click(function () {
                 var selectedType = $("option:selected").val();
-                if ($("#btn-val").html() === "Go To Normal Search")
-                {
+                if ($("#btn-val").html() === "Go To Normal Search") {
+                    $("#g").hide();
                     $(".advanced-item").hide();
                     $(".advanced-input").val(null);
                     switch (selectedType) {
@@ -134,35 +330,37 @@
                             $("#primary-name").html("<b>Artist's Name:</b>");
                             break;
                         default:
-                                break;
+                            break;
                     }
                     $("#btn-val").html("Go To Advanced Search");
                 }
-                else
-                {
+                else {
                     $(".advanced-input").val(null);
                     $(".advanced-item").hide();
+                    $("#g").hide();
                     switch (selectedType) {
-                    case "Album":
-                        $("#primary-name").html("<b>Album Title:</b>");
-                        $("#secondary-name").html("<b>By Artist:</b>");
-                        $("#genre-country").html("<b>Genre:</b>");
-                        $("#date-range-label").html("<h6><b>Release Date Range:</b></h6>");
-                        $(".advanced-album").show();
-                        break;
-                    case "Review":
-                        $("#primary-name").html("<b>Album Title:</b>");
-                        $("#secondary-name").html("<b>Written By:</b>");
-                        $("#date-range-label").html("<h6><b>Creation Time Range:</b></h6>");
-                        break;
-                    case "Artist":
-                        $("#primary-name").html("<b>Artist's Name:</b>");
-                        $("#genre-country").html("<b>Origin Country:</b>");
-                        $("#date-range-label").html("<h6><b>Years Active:</b></h6>");
-                        $(".advanced-artist").show();
-                        break;
-                    default:
-                        break;
+                        case "Album":
+                            $("#primary-name").html("<b>Album Title:</b>");
+                            $("#secondary-name").html("<b>By Artist:</b>");
+                            $("#genre-country").html("<b>Genre:</b>");
+                            $("#date-range-label").html("<h6><b>Release Date Range:</b></h6>");
+                            $(".advanced-album").show();
+                            break;
+                        case "Review":
+                            $("#primary-name").html("<b>Album Title:</b>");
+                            $("#secondary-name").html("<b>Written By:</b>");
+                            $("#date-range-label").html("<h6><b>Creation Time Range:</b></h6>");
+                            break;
+                        case "Artist":
+                            $("#primary-name").html("<b>Artist's Name:</b>");
+                            $("#genre-country").html("<b>Origin Country:</b>");
+                            $("#date-range-label").html("<h6><b>Years Active:</b></h6>");
+                            $("#genre").html("<h6><b>Genre:</b></h6>");
+                            $("#g").show();
+                            $(".advanced-artist").show();
+                            break;
+                        default:
+                            break;
                     }
                     $(".advanced-all").show();
                     $("#btn-val").html("Go To Normal Search");
@@ -171,46 +369,50 @@
         });
     </script>
     <script>
-        $(document).ready(function() {
-            $("select#type").change(function() {
+        $(document).ready(function () {
+            $("select#type").change(function () {
                 var selectedType = $(this).children("option:selected").val();
                 var isAdvanced = $("#btn-val").html() === "Go To Normal Search";
                 if (isAdvanced) {
+                    $("#g").hide();
                     $(".advanced-item").hide();
                     switch (selectedType) {
-                    case "Album":
-                        $("#primary-name").html("<b>Album Title:</b>");
-                        $("#secondary-name").html("<b>By Artist:</b>");
-                        $("#genre-country").html("<b>Genre:</b>");
-                        $("#date-range-label").html("<h6><b>Release Date Range:</b></h6>");
-                        $(".advanced-album").show();
-                        break;
-                    case "Artist":
-                        $("#primary-name").html("<b>Artist's Name:</b>");
-                        $("#genre-country").html("<b>Origin Country:</b>");
-                        $("#date-range-label").html("<h6><b>Years Active:</b></h6>");
-                        $(".advanced-artist").show();
-                        break;
-                    case "Review":
-                        $("#primary-name").html("<b>Album Title:</b>");
-                        $("#secondary-name").html("<b>Written By:</b>");
-                        $("#date-range-label").html("<h6><b>Creation Time Range:</b></h6>");
-                        $(".advanced-review").show();
-                        break;
-                    default:
+                        case "Album":
+                            $("#primary-name").html("<b>Album Title:</b>");
+                            $("#secondary-name").html("<b>By Artist:</b>");
+                            $("#genre-country").html("<b>Genre:</b>");
+                            $("#date-range-label").html("<h6><b>Release Date Range:</b></h6>");
+                            $(".advanced-album").show();
+                            break;
+                        case "Artist":
+                            $("#primary-name").html("<b>Artist's Name:</b>");
+                            $("#genre-country").html("<b>Origin Country:</b>");
+                            $("#date-range-label").html("<h6><b>Years Active:</b></h6>");
+                            $("#genre").html("<h6><b>Genre:</b></h6>");
+                            $("#g").show();
+                            $(".advanced-artist").show();
+                            break;
+                        case "Review":
+                            $("#primary-name").html("<b>Album Title:</b>");
+                            $("#secondary-name").html("<b>Written By:</b>");
+                            $("#date-range-label").html("<h6><b>Creation Time Range:</b></h6>");
+                            $(".advanced-review").show();
+                            break;
+                        default:
                     }
                     $(".advanced-all").show();
                 } else {
                     $(".advanced-item").hide();
+                    $("#g").hide();
                     switch (selectedType) {
-                    case "Album":
-                    case "Review":
-                        $("#primary-name").html("<b>Album Title:</b>");
-                        break;
-                    case "Artist":
-                        $("#primary-name").html("<b>Artist's Name:</b>");
-                        break;
-                    default:
+                        case "Album":
+                        case "Review":
+                            $("#primary-name").html("<b>Album Title:</b>");
+                            break;
+                        case "Artist":
+                            $("#primary-name").html("<b>Artist's Name:</b>");
+                            break;
+                        default:
                     }
                 }
             });
@@ -230,67 +432,67 @@
 
 @*<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.PrimaryKey)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SecondaryKey)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MinRate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaxRate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GenreCountry)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaxDateTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MinDateTime)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PrimaryKey)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SecondaryKey)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MinRate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MaxRate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.GenreCountry)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MaxDateTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.MinDateTime)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.type">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.type">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.type">Delete</a>
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.PrimaryKey)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SecondaryKey)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MinRate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MaxRate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.GenreCountry)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MaxDateTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MinDateTime)
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>*@
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PrimaryKey)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SecondaryKey)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MinRate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MaxRate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.GenreCountry)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MaxDateTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MinDateTime)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.type">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.type">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.type">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>*@
