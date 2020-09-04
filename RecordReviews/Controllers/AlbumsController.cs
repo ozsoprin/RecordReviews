@@ -32,7 +32,7 @@ namespace RecordReviews.Controllers
             ViewBag.AlbumStatistic = _context.Albums
                 .Select(a => new {Title = a.AlbumTitle, Rate = a.AvgRate}).ToList();
 
-            return View(await applicationDbContext.ToListAsync());
+            return View(await applicationDbContext.OrderByDescending(a => a.AvgRate).ToListAsync());
         }
 
         // GET: Albums/Details/5
@@ -50,7 +50,8 @@ namespace RecordReviews.Controllers
             {
                 return NotFound();
             }
-
+            album.PageViews++;
+            _context.SaveChanges();
             return View(album);
         }
 

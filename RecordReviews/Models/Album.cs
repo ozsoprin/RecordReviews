@@ -53,11 +53,13 @@ namespace RecordReviews.Models
             var count = 0;
             foreach (var review in Reviews)
             {
-                sum += (double) review.Rate;
+                sum += (double)review.Rate;
                 count++;
             }
 
             AvgRate = count != 0 ? Math.Round(sum / count, 2) : 0;
+
+
         }
 
         public void DeleteAlbum(ApplicationDbContext _context)

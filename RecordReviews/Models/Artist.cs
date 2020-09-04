@@ -51,6 +51,7 @@ namespace RecordReviews.Models
             var count = 0;
             foreach (var album in Albums)
             {
+                if(album.Reviews == null) continue;
                 album.UpdateAlbumRate();
                 if (album.AvgRate != null)
                 {

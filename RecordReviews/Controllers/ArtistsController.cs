@@ -23,15 +23,14 @@ namespace RecordReviews.Controllers
         // GET: Artists
         public async Task<IActionResult> Index(string searchString)
         {
-            var applicationDbContext = from a in _context.Artists
-                select a;
+            var applicationDbContext = _context.Artists.Select(a => a);
             if (!String.IsNullOrEmpty(searchString))
             {
                 applicationDbContext = applicationDbContext.Where(a => a.ArtistName.Contains(searchString));
             }
 
             ViewBag.ArtistStatistic = _context.Artists.Select(a => new { Name = a.ArtistName, Rate = a.AvgRate }).ToList();
-            return View(await applicationDbContext.ToListAsync());
+            return View(await applicationDbContext.OrderByDescending(a => a.AvgRate).ToListAsync());
         }
 
         // GET: Artists/Details/5
@@ -49,6 +48,8 @@ namespace RecordReviews.Controllers
                 return NotFound();
             }
 
+            artist.PageViews++;
+            _context.SaveChanges();
             return View(artist);
         }
 
