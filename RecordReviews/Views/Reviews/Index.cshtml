@@ -9,6 +9,25 @@
 <!--scripts for img(last.fm) start-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
+    async function creatArtistImg(element) {
+        var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+        var name = $(element).attr('alt');
+        var url = await encodeURI("https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=" +
+            name +
+            "&api_key=" +
+            LastFmKey +
+            "&autocorrect=1&limit=10&format=json");
+        $.getJSON(url,
+            function (json) {
+                //var i = Math.floor(Math.random() * 10) % 10;
+                var src = json.topalbums.album[1].image[3]["#text"];
+                $(element).attr("src", src);
+            });
+    }
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
     async function creatAlbumImg(element) {
         var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
         var artist = $(element).attr('alt');
@@ -23,16 +42,15 @@
             });
     }
 </script>
-
 <script>
     $(document).ready(async function () {
-        $("img").each(async function (index, element) {
+        $(".albumImg").each(async function (index, element) {
             await creatAlbumImg(element);
         });
+        await creatArtistImg(".artistImg");
     });
 </script>
 <!--scripts for img(last.fm) end-->
-
 <!--last reviews section start-->
 <div class="container-fluid">
     <div class="container">
