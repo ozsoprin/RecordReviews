@@ -15,7 +15,11 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light fixed-top">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">RecordReviews</a>
+                <a id="a-icon" class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img id="icon" class="shadow" alt="RecordReviews"  src="/Images/icon.png"
+                         data-holder-rendered="true">
+                </a>   
+                @*<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">RecordReviews</a>*@
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -56,7 +60,7 @@
     </div>
    
     <footer class="border-top footer text-muted">
-        <div class="row container col-md-12">
+        <div class="row container col-md-12 pt-2">
             <div class="col md-6 text-center">
                 <p>&copy; @DateTime.Now.Year - <a class="link-home-footer" asp-area="" asp-controller="Home" asp-action="Index">RecordReviews</a></p>
             </div>
