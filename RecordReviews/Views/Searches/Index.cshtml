@@ -49,12 +49,12 @@
             </div>
 
             <div class="form-group advanced-item advanced-artist advanced-album" id="g-c">
-                <label for="GenreCountry" class="col-md-7" id="genre-country">
+                <label for="Genre" class="col-md-7" id="genre-country">
                     <b>Genre:</b>
                 </label>
                 <div class="col-md-7">
-                    @Html.EditorFor(model => model.GenreCountry, new { htmlAttributes = new { @class = "form-control advanced-input", id = "g-c-input" } })
-                    @Html.ValidationMessageFor(model => model.GenreCountry, null, new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.Genre, new { htmlAttributes = new { @class = "form-control advanced-input", id = "g-c-input" } })
+                    @Html.ValidationMessageFor(model => model.Genre, null, new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group advanced-item advanced-all">

@@ -17,9 +17,11 @@ namespace RecordReviews.Models
 
         [Range(0, 10)] public double? MaxRate { get; set; }
 
-        public string GenreCountry { get; set; }
-
+        public string Genre { get; set; }
+        public string Country { get; set; }
+        [DataType(DataType.Date, ErrorMessage = "Please Enter a Valid Date")]
         public DateTime? MaxDateTime { get; set; }
+        [DataType(DataType.Date, ErrorMessage = "Please Enter a Valid Date")]
         public DateTime? MinDateTime { get; set; }
     }
 }
