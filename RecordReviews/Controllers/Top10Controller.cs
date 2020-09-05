@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ namespace RecordReviews.Controllers
         {
             _context = context;
         }
+        [AllowAnonymous]
         public ActionResult Index()
         {
             ViewBag.Top10Artists = _context.Artists.OrderByDescending(a=>a.AvgRate).Take(10).ToList();

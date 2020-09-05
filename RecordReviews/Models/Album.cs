@@ -8,10 +8,17 @@ using RecordReviews.Data;
 
 namespace RecordReviews.Models
 {
+    public enum AlbumStatus
+    {
+        Submitted,
+        Approved,
+        Rejected
+    }
     public class Album
     {
         public Album()
         {
+            Status = AlbumStatus.Submitted;
             PageViews = 0;
             AvgRate = 0.0;
         }
@@ -46,7 +53,7 @@ namespace RecordReviews.Models
         
         [DisplayName("Page Views")]
         public int? PageViews { get; set; }
-
+        
         public void UpdateAlbumRate()
         {
             var sum = 0.0;
@@ -58,8 +65,6 @@ namespace RecordReviews.Models
             }
 
             AvgRate = count != 0 ? Math.Round(sum / count, 2) : 0;
-
-
         }
 
         public void DeleteAlbum(ApplicationDbContext _context)
@@ -70,5 +75,9 @@ namespace RecordReviews.Models
             }
             _context.Albums.Remove(this);
         }
+
+        public AlbumStatus Status { get; set; }
+
+        public string OwnerID { get; set; }
     }
 }

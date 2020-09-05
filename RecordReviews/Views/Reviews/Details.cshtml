@@ -39,7 +39,40 @@
         </dd>
     </dl>
 </div>
+
+@if (Model.Status != ReviewStatus.Approved)
+{
+    @if ((await AuthorizationService.AuthorizeAsync(
+       User, Model, Operations.Approve)).Succeeded)
+    {
+        <form style="display:inline;" method="post">
+            <input type="hidden" name="id" value="@Model.ReviewId" />
+            <input type="hidden" name="status" value="@ReviewStatus.Approved" />
+            <button type="submit" class="btn btn-xs btn-success">Approve</button>
+        </form>
+    }
+}
+
+@if (Model.Status != ReviewStatus.Rejected)
+{
+    @if ((await AuthorizationService.AuthorizeAsync(
+       User, Model, Operations.Reject)).Succeeded)
+    {
+        <form style="display:inline;" method="post">
+            <input type="hidden" name="id" value="@Model.ReviewId" />
+            <input type="hidden" name="status" value="@ReviewStatus.Rejected" />
+            <button type="submit" class="btn btn-xs btn-danger">Reject</button>
+        </form>
+    }
+}
+
 <div>
-    <a class="text-muted" asp-action="Edit" asp-route-id="@Model.ReviewId">Edit</a> |
-    <a class="text-muted" asp-action="Index">Back to Reviews</a>
+    @if ((await AuthorizationService.AuthorizeAsync(
+       User, Model,
+       Operations.Update)).Succeeded)
+    {
+        <a class="text-muted" asp-action="Edit" asp-route-id="@Model.ReviewId">Edit</a>
+        <text> | </text>
+    }
+<a class="text-muted" asp-action="Index">Back to Reviews</a>
 </div>

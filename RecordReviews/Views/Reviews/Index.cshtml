@@ -114,9 +114,23 @@
                                 @Html.DisplayFor(modelItem => time)
                             </td>
                             <td>
-                                <a class="text-muted" asp-action="Edit" asp-route-id="@Model.ElementAt(i).ReviewId">Edit</a> |
-                                <a class="text-muted" asp-action="Details" asp-route-id="@Model.ElementAt(i).ReviewId">Details</a> |
-                                <a class="text-muted" asp-action="Delete" asp-route-id="@Model.ElementAt(i).ReviewId">Delete</a>
+                                @if ((await AuthorizationService.AuthorizeAsync(
+                                    User, Model.ElementAt(i),
+                                    Operations.Update)).Succeeded)
+                                {
+                                    <a class="text-muted" asp-action="Edit" asp-route-id="@Model.ElementAt(i).ReviewId">Edit</a>
+                                    <text> | </text>
+                                }
+
+                                <a class="text-muted" asp-action="Details" asp-route-id="@Model.ElementAt(i).ReviewId">Details</a>
+
+                                @if ((await AuthorizationService.AuthorizeAsync(
+                                    User, Model.ElementAt(i),
+                                    Operations.Delete)).Succeeded)
+                                {
+                                    <text> | </text>
+                                    <a class="text-muted" asp-action="Delete" asp-route-id="@Model.ElementAt(i).ReviewId">Delete</a>
+                                }
                             </td>
                         </tr>
                     }

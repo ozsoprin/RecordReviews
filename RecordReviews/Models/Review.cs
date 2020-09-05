@@ -9,8 +9,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace RecordReviews.Models
 {
+    public enum ReviewStatus
+    {
+        Submitted,
+        Approved,
+        Rejected
+    }
     public class Review
     {
+        public Review()
+        {
+            Status = ReviewStatus.Submitted;
+        }
+
         [Key] public int ReviewId { get; set; }
 
         public IdentityUser User { get; set; }
@@ -33,5 +44,9 @@ namespace RecordReviews.Models
         {
             Album.Artist.UpdateArtistRate();
         }
+
+        public ReviewStatus Status { get; set; }
+
+        public string OwnerID { get; set; }
     }
 }

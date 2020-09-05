@@ -3,27 +3,48 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using RecordReviews.Data;
 using RecordReviews.Models;
+using RecordReviews.Authorization;
 
 namespace RecordReviews.Controllers
 {
     public class ReviewsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private IAuthorizationService _authorizationService;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ReviewsController(ApplicationDbContext context)
+        public ReviewsController(ApplicationDbContext context,
+            IAuthorizationService authorizationService,
+            UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _authorizationService = authorizationService;
+            _userManager = userManager;
         }
 
         // GET: Reviews
+        [AllowAnonymous]
         public async Task<IActionResult> Index(string searchString)
         {
+            var reviews = _context.Reviews.Include(r => r.Album).ThenInclude(a => a.Artist).Select(r => r);
+            var isAuthorized = User.IsInRole(Constants.ManagersRole) ||
+                               User.IsInRole(Constants.AdministratorsRole);
+
+            var currentUserId = _userManager.GetUserId(User);
+            if (!isAuthorized)
+            {
+                reviews = reviews.Where(r => r.Status == ReviewStatus.Approved
+                                               || r.OwnerID == currentUserId).Select(r => r);
+            }
+
             var applicationDbContext = _context.Reviews.Include(r => r.Album).ThenInclude(a => a.Artist).Select(r=>r);
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -49,7 +70,7 @@ namespace RecordReviews.Controllers
             ViewBag.MostReviewedGenre = mostReviewedGenre.Genre;
             ViewBag.MostReviewedGenreAlbums = _context.Albums.Where(a => a.Genre == mostReviewedGenre.Genre).OrderByDescending(a=>a.AvgRate).Take(2).ToList();
             ViewBag.MostReviewedAlbum = _context.Albums.FirstOrDefault(a => a.AlbumId == mostReviewedAlbum.AlbumID);
-            return View(await applicationDbContext.OrderByDescending(r=>r.CreationTime).ToListAsync());
+            return View(await reviews.OrderByDescending(r => r.CreationTime).ToListAsync());
         }
 
         // GET: Reviews/Details/5
@@ -67,8 +88,54 @@ namespace RecordReviews.Controllers
             {
                 return NotFound();
             }
+            
+            var isAuthorized = User.IsInRole(Constants.ManagersRole) ||
+                               User.IsInRole(Constants.AdministratorsRole);
+
+            var currentUserId = _userManager.GetUserId(User);
+
+            if (!isAuthorized
+                && currentUserId != review.OwnerID
+                && review.Status != ReviewStatus.Approved)
+            {
+                return Forbid();
+            }
 
             return View(review);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Details(int? id, ReviewStatus status)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var review = await _context.Reviews
+                .Include(r => r.Album).Include(r => r.User)
+                .FirstOrDefaultAsync(m => m.ReviewId == id);
+            if (review == null)
+            {
+                return NotFound();
+            }
+
+            var contactOperation = (status == ReviewStatus.Approved)
+                ? Operations.Approve
+                : Operations.Reject;
+
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, review,
+                contactOperation);
+            if (!isAuthorized.Succeeded)
+            {
+                return Forbid();
+            }
+            review.Status = status;
+            _context.Reviews.Update(review);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", "Reviews", new { id = review.ReviewId });
         }
 
         // GET: Reviews/Create
@@ -93,6 +160,15 @@ namespace RecordReviews.Controllers
         {
             if (ModelState.IsValid)
             {
+                review.OwnerID = _userManager.GetUserId(User);
+                var isAuthorized = await _authorizationService.AuthorizeAsync(
+                    User, review,
+                    Operations.Create);
+                if (!isAuthorized.Succeeded)
+                {
+                    return Forbid();
+                }
+
                 review.CreationTime = DateTime.Now;
                 review.Album = await _context.Albums.Include(a=>a.Reviews).Include(a => a.Artist).ThenInclude(a=>a.Albums).ThenInclude(a=>a.Reviews).FirstOrDefaultAsync(a => a.AlbumId == review.AlbumId);
                 _context.Add(review);
@@ -117,6 +193,15 @@ namespace RecordReviews.Controllers
             {
                 return NotFound();
             }
+
+            var isAuthorized = await _authorizationService.AuthorizeAsync(
+                User, review,
+                Operations.Update);
+            if (!isAuthorized.Succeeded)
+            {
+                return Forbid();
+            }
+
             ViewData["AlbumId"] = new SelectList(_context.Albums, "AlbumId", "AlbumTitle", review.AlbumId);
             return View(review);
         }
@@ -124,19 +209,53 @@ namespace RecordReviews.Controllers
         // POST: Reviews/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost,ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ReviewId,AlbumId,Comment,Rate,CreationTime")] Review review)
+        public async Task<IActionResult> EditConfirmed(int id, [Bind("ReviewId,AlbumId,Comment,Rate,CreationTime")] Review editReview)
         {
-            if (id != review.ReviewId)
-            {
-                return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
+                var review = await _context
+                    .Reviews.AsNoTracking()
+                    .FirstOrDefaultAsync(m => m.ReviewId == id);
                 try
                 {
+                    
+                    if (review == null)
+                    {
+                        return NotFound();
+                    }
+
+                    review.Rate = editReview.Rate;
+                    review.Comment = editReview.Comment;
+                    review.CreationTime = DateTime.Now;
+                    
+                    var isAuthorized = await _authorizationService.AuthorizeAsync(
+                        User, review,
+                        Operations.Update);
+                    if (!isAuthorized.Succeeded)
+                    {
+                        return Forbid();
+                    }
+
+                    _context.Attach(review).State = EntityState.Modified;
+
+                    if (review.Status == ReviewStatus.Approved)
+                    {
+                        // If the contact is updated after approval, 
+                        // and the user cannot approve,
+                        // set the status back to submitted so the update can be
+                        // checked and approved.
+                        var canApprove = await _authorizationService.AuthorizeAsync(User,
+                            review,
+                            Operations.Approve);
+
+                        if (!canApprove.Succeeded)
+                        {
+                            review.Status = ReviewStatus.Submitted;
+                        }
+                    }
                     _context.Update(review);
                     await _context.SaveChangesAsync();
                 }
@@ -153,8 +272,8 @@ namespace RecordReviews.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AlbumId"] = new SelectList(_context.Albums, "AlbumId", "AlbumTitle", review.AlbumId);
-            return View(review);
+            
+            return View();
         }
 
         // GET: Reviews/Delete/5
@@ -173,6 +292,14 @@ namespace RecordReviews.Controllers
                 return NotFound();
             }
 
+            var isAuthorized = await _authorizationService.AuthorizeAsync(
+                User, review,
+                Operations.Delete);
+            if (!isAuthorized.Succeeded)
+            {
+                return Forbid();
+            }
+
             return View(review);
         }
 
@@ -184,10 +311,25 @@ namespace RecordReviews.Controllers
             var review = await _context.Reviews
                 .Include(r => r.Album).ThenInclude(a => a.Artist).ThenInclude(a=>a.Albums).ThenInclude(a=>a.Reviews)
                 .FirstOrDefaultAsync(m => m.ReviewId == id);
+
+            if (review == null)
+            {
+                return NotFound();
+            }
+
+            var isAuthorized = await _authorizationService.AuthorizeAsync(
+                User, review,
+                Operations.Delete);
+            if (!isAuthorized.Succeeded)
+            {
+                return Forbid();
+            }
+
             _context.Reviews.Remove(review);
             await _context.SaveChangesAsync();
             review.UpdateRate();
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

@@ -6,7 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using RecordReviews.Models;
+using RecordReviews.Authorization;
 
 namespace RecordReviews.Data
 {
@@ -14,7 +16,7 @@ namespace RecordReviews.Data
     {
         public static class ReviewGenerator
         {
-            public static void GenerateReview(ApplicationDbContext context, Album album, IdentityUser user,int type)
+            public static void GenerateReview(ApplicationDbContext context, Album album, IdentityUser user,int type,string adminID)
             {
                 var rand = new Random();
                 var dateGen = new RandomDateTime(album.ReleaseDate);
@@ -64,6 +66,8 @@ namespace RecordReviews.Data
                         break;
                 }
                 var review = new Review { Comment = comment, Rate = rate, Album = album, User = user, CreationTime = date, AlbumId   = album.AlbumId};
+                review.OwnerID = adminID;
+                review.Status = ReviewStatus.Approved;
                 context.Reviews.Add(review);
                 album.UpdateAlbumRate();
                 album.PageViews++;
@@ -89,7 +93,82 @@ namespace RecordReviews.Data
                 return start.AddDays(gen.Next(range)).AddHours(gen.Next(0, 24)).AddMinutes(gen.Next(0, 60)).AddSeconds(gen.Next(0, 60));
             }
         }
-        public static void Initialize(ApplicationDbContext context)
+
+        public static async Task Initialize(IServiceProvider serviceProvider)
+        {
+            using (var context = new ApplicationDbContext(
+                serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
+            {
+                // For sample purposes seed both with the same password.
+                // Password is set with the following:
+                // dotnet user-secrets set SeedUserPW <pw>
+                // The admin user can do anything
+
+                var adminID = await EnsureUser(serviceProvider, "abc123ABC!", "admin@RecordReviews.com");
+                await EnsureRole(serviceProvider, adminID, Constants.AdministratorsRole);
+
+                // allowed user can create and edit contacts that they create
+                var managerID = await EnsureUser(serviceProvider, "abc123ABC!", "manager@RecordReviews.com");
+                await EnsureRole(serviceProvider, managerID, Constants.ManagersRole);
+
+                InitializeDB(context,adminID);
+            }
+        }
+
+        private static async Task<string> EnsureUser(IServiceProvider serviceProvider,
+            string testUserPw, string UserName)
+        {
+            var userManager = serviceProvider.GetService<UserManager<IdentityUser>>();
+
+            var user = await userManager.FindByNameAsync(UserName);
+            if (user == null)
+            {
+                user = new IdentityUser
+                {
+                    UserName = UserName,
+                    EmailConfirmed = true
+                };
+                await userManager.CreateAsync(user, testUserPw);
+            }
+
+            if (user == null)
+            {
+                throw new Exception("The password is probably not strong enough!");
+            }
+
+            return user.Id;
+        }
+
+        private static async Task<IdentityResult> EnsureRole(IServiceProvider serviceProvider,
+            string uid, string role)
+        {
+            IdentityResult IR = null;
+            var roleManager = serviceProvider.GetService<RoleManager<IdentityRole>>();
+
+            if (roleManager == null)
+            {
+                throw new Exception("roleManager null");
+            }
+
+            if (!await roleManager.RoleExistsAsync(role))
+            {
+                IR = await roleManager.CreateAsync(new IdentityRole(role));
+            }
+
+            var userManager = serviceProvider.GetService<UserManager<IdentityUser>>();
+
+            var user = await userManager.FindByIdAsync(uid);
+
+            if (user == null)
+            {
+                throw new Exception("The testUserPw password was probably not strong enough!");
+            }
+
+            IR = await userManager.AddToRoleAsync(user, role);
+
+            return IR;
+        }
+        public static void InitializeDB(ApplicationDbContext context, string adminID)
         {
             context.Database.EnsureCreated();
             if (context.Artists.Any())
@@ -123,6 +202,8 @@ namespace RecordReviews.Data
             foreach (var artist in artists)
             {
                 context.Artists.Add(artist);
+                artist.OwnerID = adminID;
+                artist.Status = ArtistStatus.Approved;
             }
 
             context.SaveChanges();
@@ -253,6 +334,8 @@ namespace RecordReviews.Data
             foreach (var album in albums)
             {
                 context.Albums.Add(album);
+                album.OwnerID = adminID;
+                album.Status = AlbumStatus.Approved;
             }
 
             context.SaveChanges();
@@ -292,7 +375,7 @@ namespace RecordReviews.Data
                 foreach (var user in UserList)
                 {
                     if(rand.Next() % 4 == 0) continue;
-                    ReviewGenerator.GenerateReview(context, album, user, type);
+                    ReviewGenerator.GenerateReview(context, album, user, type, adminID);
                 }
             }
             context.SaveChanges();
@@ -304,5 +387,7 @@ namespace RecordReviews.Data
             }
             context.SaveChanges();
         }
+
+
     }
 }

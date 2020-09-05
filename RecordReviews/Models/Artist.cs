@@ -7,10 +7,18 @@ using System.Threading.Tasks;
 
 namespace RecordReviews.Models
 {
+    public enum ArtistStatus
+    {
+        Submitted,
+        Approved,
+        Rejected
+    }
+
     public class Artist
     {
         public Artist()
         {
+            Status = ArtistStatus.Submitted;
             PageViews = 0;
             AvgRate = 0.0;
         }
@@ -62,5 +70,9 @@ namespace RecordReviews.Models
 
             AvgRate = count !=0 ? Math.Round(sum / count, 2) : 0;
         }
+
+        public ArtistStatus Status { get; set; }
+
+        public string OwnerID { get; set; }
     }
 }
