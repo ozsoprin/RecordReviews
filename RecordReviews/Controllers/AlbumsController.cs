@@ -3,38 +3,55 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using RecordReviews.Data;
 using RecordReviews.Models;
+using RecordReviews.Authorization;
 
 namespace RecordReviews.Controllers
 {
     public class AlbumsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private IAuthorizationService _authorizationService;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public AlbumsController(ApplicationDbContext context)
+        public AlbumsController(ApplicationDbContext context,
+            IAuthorizationService authorizationService,
+            UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _authorizationService = authorizationService;
+            _userManager = userManager;
         }
 
         // GET: Albums
         [AllowAnonymous]
         public async Task<IActionResult> Index(string searchString)
         {
-            var applicationDbContext = _context.Albums.Include(a => a.Artist).Select(a=>a);
+            var albums = _context.Albums.Include(a => a.Artist).Select(r => r);
+            var isAuthorized = User.IsInRole(Constants.ManagersRole) ||
+                               User.IsInRole(Constants.AdministratorsRole);
+
+            var currentUserId = _userManager.GetUserId(User);
+            if (!isAuthorized)
+            {
+                albums = albums.Where(r => r.Status == AlbumStatus.Approved || r.OwnerID == currentUserId).Select(a => a);
+            }
+
             if (!String.IsNullOrEmpty(searchString))
             {
-                applicationDbContext = applicationDbContext.Where(a => a.AlbumTitle.Contains(searchString));
+                albums = albums.Where(a => a.AlbumTitle.Contains(searchString));
             }
 
             ViewBag.AlbumStatistic = _context.Albums
                 .Select(a => new {Title = a.AlbumTitle, Rate = a.AvgRate}).ToList();
 
-            return View(await applicationDbContext.OrderByDescending(a => a.AvgRate).ToListAsync());
+            return View(await albums.OrderByDescending(a => a.AvgRate).ToListAsync());
         }
 
         // GET: Albums/Details/5
@@ -52,9 +69,55 @@ namespace RecordReviews.Controllers
             {
                 return NotFound();
             }
+            var isAuthorized = User.IsInRole(Constants.ManagersRole) ||
+                               User.IsInRole(Constants.AdministratorsRole);
+
+            var currentUserId = _userManager.GetUserId(User);
+
+            if (!isAuthorized
+                && currentUserId != album.OwnerID
+                && album.Status != AlbumStatus.Approved)
+            {
+                return Forbid();
+            }
+
             album.PageViews++;
-            _context.SaveChanges();
+            
             return View(album);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Details(int? id, AlbumStatus status)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var album = await _context.Albums
+                .Include(a => a.Artist).Include(a => a.Reviews)
+                .FirstOrDefaultAsync(m => m.AlbumId == id);
+            if (album == null)
+            {
+                return NotFound();
+            }
+
+            var contactOperation = (status == AlbumStatus.Approved)
+                ? Operations.Approve
+                : Operations.Reject;
+
+            var isAuthorized = await _authorizationService.AuthorizeAsync(User, album,
+                contactOperation);
+            if (!isAuthorized.Succeeded)
+            {
+                return Forbid();
+            }
+            album.Status = status;
+            _context.Albums.Update(album);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", "Albums", new { id = album.AlbumId });
         }
 
         // GET: Albums/Create
@@ -87,34 +150,38 @@ namespace RecordReviews.Controllers
                 {
                     return RedirectToAction("Details", new { id = _album.AlbumId });
                 }
-                else
-                {
-                    //Check if the album's artist already exist in the DB
-                    var _artist = _context.Artists.Where(_ => _.ArtistName == album.ArtistName).Select(_ => new { _.ArtistID })
-                        .SingleOrDefault();
-                    if (_artist != null)
-                    {
-                        //Saving the new album
-                        album.ArtistId = _artist.ArtistID;
-                        await _context.Albums.AddAsync(album);
-                        await _context.SaveChangesAsync();
-                        return RedirectToAction("Details", new { id = album.AlbumId });
-                    }
-                    else
-                    {
-                        //Generating a new artist if not existed
-                        var newArtist = new Artist(album.ArtistName, "Unknown", album.Genre);
-                        await _context.Artists.AddAsync(newArtist);
-                        await _context.SaveChangesAsync();
 
-                        //Saving the new album
-                        album.Artist = newArtist;
-                        album.ArtistId = newArtist.ArtistID;
-                        await _context.Albums.AddAsync(album);
-                        await _context.SaveChangesAsync();
-                        return RedirectToAction("Details", new { id = album.AlbumId });
-                    }
+                //Check if the album's artist already exist in the DB
+                var _artist = _context.Artists.Where(_ => _.ArtistName == album.ArtistName).Select(_ => new { _.ArtistID })
+                    .SingleOrDefault();
+                if (_artist != null)
+                {
+                    //Saving the new album
+                    album.ArtistId = _artist.ArtistID;
+                    await _context.Albums.AddAsync(album);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Details", new { id = album.AlbumId });
                 }
+
+                //Generating a new artist if not existed
+                var newArtist = new Artist(album.ArtistName, "Unknown", album.Genre);
+                await _context.Artists.AddAsync(newArtist);
+                await _context.SaveChangesAsync();
+
+                //Saving the new album
+                album.OwnerID = _userManager.GetUserId(User);
+                var isAuthorized = await _authorizationService.AuthorizeAsync(
+                    User, album,
+                    Operations.Create);
+                if (!isAuthorized.Succeeded)
+                {
+                    return Forbid();
+                }
+                album.Artist = newArtist;
+                album.ArtistId = newArtist.ArtistID;
+                await _context.Albums.AddAsync(album);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Details", new { id = album.AlbumId });
             }
             return View(album);
         }
@@ -132,6 +199,14 @@ namespace RecordReviews.Controllers
             {
                 return NotFound();
             }
+
+            var isAuthorized = await _authorizationService.AuthorizeAsync(
+                User, album,
+                Operations.Update);
+            if (!isAuthorized.Succeeded)
+            {
+                return Forbid();
+            }
             ViewData["ArtistId"] = new SelectList(_context.Artists, "ArtistID", "ArtistName", album.ArtistId);
             return View(album);
         }
@@ -141,18 +216,60 @@ namespace RecordReviews.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AlbumId,AlbumTitle,ArtistName,ArtistId,ReleaseDate,Genre,AvgRate,PageViews")] Album album)
+        public async Task<IActionResult> Edit(int id, [Bind("AlbumId,AlbumTitle,ArtistName,ArtistId,ReleaseDate,Genre,AvgRate,PageViews")] Album editedAlbum)
         {
-            if (id != album.AlbumId)
+            if (id != editedAlbum.AlbumId)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                var album = await _context
+                    .Albums.AsNoTracking()
+                    .FirstOrDefaultAsync(m => m.AlbumId == id);
+
+                if (album == null)
+                {
+                    return NotFound();
+                }
                 try
                 {
+                    album.AlbumTitle = editedAlbum.AlbumTitle;
+                    album.ArtistName = editedAlbum.ArtistName;
+                    album.ReleaseDate = editedAlbum.ReleaseDate;
+                    album.Genre = editedAlbum.Genre;
+
+                    var isAuthorized = await _authorizationService.AuthorizeAsync(
+                        User, album,
+                        Operations.Update);
+
+                    if (!isAuthorized.Succeeded)
+                    {
+                        return Forbid();
+                    }
+
+                    _context.Attach(album).State = EntityState.Modified;
+
+                    if (album.Status == AlbumStatus.Approved)
+                    {
+                        // If the contact is updated after approval, 
+                        // and the user cannot approve,
+                        // set the status back to submitted so the update can be
+                        // checked and approved.
+                        var canApprove = await _authorizationService.AuthorizeAsync(User,
+                            album,
+                            Operations.Approve);
+
+                        if (!canApprove.Succeeded)
+                        {
+                            album.Status = AlbumStatus.Submitted;
+                        }
+                    }
+
+
                     _context.Update(album);
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -168,8 +285,8 @@ namespace RecordReviews.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ArtistId"] = new SelectList(_context.Artists, "ArtistID", "ArtistName", album.ArtistId);
-            return View(album);
+            ViewData["ArtistId"] = new SelectList(_context.Artists, "ArtistID", "ArtistName", editedAlbum.ArtistId);
+            return View();
         }
 
         // GET: Albums/Delete/5
@@ -187,6 +304,14 @@ namespace RecordReviews.Controllers
             {
                 return NotFound();
             }
+            var isAuthorized = await _authorizationService.AuthorizeAsync(
+                User, album,
+                Operations.Delete);
+            if (!isAuthorized.Succeeded)
+            {
+                return Forbid();
+            }
+
 
             return View(album);
         }
@@ -197,6 +322,18 @@ namespace RecordReviews.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var album = await _context.Albums.Where(a=> a.AlbumId == id).Include(a=>a.Artist).Include(a=>a.Reviews).FirstOrDefaultAsync();
+            if (album == null)
+            {
+                return NotFound();
+            }
+            var isAuthorized = await _authorizationService.AuthorizeAsync(
+                User, album,
+                Operations.Delete);
+            if (!isAuthorized.Succeeded)
+            {
+                return Forbid();
+            }
+
             foreach (var review in album.Reviews)
             {
                 _context.Reviews.Remove(review);

@@ -48,7 +48,7 @@ namespace RecordReviews.Controllers
             var applicationDbContext = _context.Reviews.Include(r => r.Album).ThenInclude(a => a.Artist).Select(r=>r);
             if (!String.IsNullOrEmpty(searchString))
             {
-                applicationDbContext = applicationDbContext.Where(a => a.Album.Artist.ArtistName.Contains(searchString));
+                reviews = applicationDbContext.Where(a => a.Album.Artist.ArtistName.Contains(searchString));
                 TempData["searchString"] = searchString;
             }
             var mostReviewedAlbum = _context.Reviews.Include(r => r.Album).ThenInclude(a => a.Artist).Select(r => r).GroupBy(r => r.AlbumId)
@@ -60,15 +60,7 @@ namespace RecordReviews.Controllers
                 .GroupBy(a => a.ArtistID)
                 .Select(r => new { ArtistID = r.Key, Count = r.Count() })
                 .OrderByDescending(x => x.Count).Take(1).SingleOrDefault();
-            var mostReviewedGenre = _context.Reviews.Include(r => r.Album).ThenInclude(a => a.Artist).Select(r => r)
-                .Join(_context.Albums, review => review.AlbumId, album => album.AlbumId, (review, album) => album)
-                .Join(_context.Artists, album => album.ArtistId, artist => artist.ArtistID, (album, artist) => artist)
-                .GroupBy(a => a.Genre)
-                .Select(r => new { Genre = r.Key, Count = r.Count() })
-                .OrderByDescending(x => x.Count).Take(1).SingleOrDefault();
             ViewBag.MostReviewedArtist = _context.Artists.FirstOrDefault(a=>a.ArtistID == mostReviewedArtist.ArtistID);
-            ViewBag.MostReviewedGenre = mostReviewedGenre.Genre;
-            ViewBag.MostReviewedGenreAlbums = _context.Albums.Where(a => a.Genre == mostReviewedGenre.Genre).OrderByDescending(a=>a.AvgRate).Take(2).ToList();
             ViewBag.MostReviewedAlbum = _context.Albums.FirstOrDefault(a => a.AlbumId == mostReviewedAlbum.AlbumID);
             return View(await reviews.OrderByDescending(r => r.CreationTime).ToListAsync());
         }
@@ -213,20 +205,24 @@ namespace RecordReviews.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditConfirmed(int id, [Bind("ReviewId,AlbumId,Comment,Rate,CreationTime")] Review editReview)
         {
+            if (id != editReview.ReviewId)
+            {
+                return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
                 var review = await _context
                     .Reviews.AsNoTracking()
                     .FirstOrDefaultAsync(m => m.ReviewId == id);
+                if (review == null)
+                {
+                    return NotFound();
+                }
+
                 try
                 {
                     
-                    if (review == null)
-                    {
-                        return NotFound();
-                    }
-
                     review.Rate = editReview.Rate;
                     review.Comment = editReview.Comment;
                     review.CreationTime = DateTime.Now;

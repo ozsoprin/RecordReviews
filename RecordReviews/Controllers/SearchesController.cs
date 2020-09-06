@@ -41,6 +41,7 @@ namespace RecordReviews.Controllers
         {
             if (ModelState.IsValid)
             {
+                TempData["type"] = search.type;
                 switch (search.type)
                 {
                     case "Album":
@@ -147,7 +148,7 @@ namespace RecordReviews.Controllers
                             resultsAsAlbums.Add(a);
                         });
 
-                        TempData["results"] = resultsAsAlbums;
+                        TempData["Results"] = resultsAsAlbums;
                         break;
 
                     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -239,7 +240,7 @@ namespace RecordReviews.Controllers
                             resultsAsArtist.Add(a);
                         });
 
-                        TempData["results2"] = resultsAsArtist;
+                        TempData["Results"] = resultsAsArtist;
                         break;
 
                     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -324,7 +325,7 @@ namespace RecordReviews.Controllers
 
                         }
 
-                        TempData["results3"] = reviewResults;
+                        TempData["Results"] = reviewResults;
                         break;
 
                     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

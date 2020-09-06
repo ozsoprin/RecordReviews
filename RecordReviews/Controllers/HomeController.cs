@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -24,16 +25,22 @@ namespace RecordReviews.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
-            var aList = _context.Artists.ToList();
-            var countryList = new HashSet<string>();
-            foreach (var artist in aList)
+
+            ViewBag.Top10Artists = _context.Artists.OrderByDescending(a => a.AvgRate).Take(10).ToList();
+            ViewBag.Top10Albums = _context.Albums.OrderByDescending(a => a.AvgRate).Take(10).ToList();
+            var topUsers = _context.Reviews.GroupBy(r => r.User.Id)
+                .Select(r => new { UserId = r.Key, Count = r.Count() })
+                .OrderByDescending(x => x.Count).Take(10).ToList();
+            var Top10UserList = new List<IdentityUser>();
+            foreach (var userPair in topUsers)
             {
-                countryList.Add(artist.BirthPlace);
+                var user = _context.Users.SingleOrDefault(u => u.Id == userPair.UserId);
+                Top10UserList.Add(user);
             }
 
-            ViewBag.ReviewStatistic = _context.Reviews.GroupBy(r => r.CreationTime.Month)
-                .Select(r => new {Month = r.Key, Count = r.Count()}).OrderBy(x => x.Month).ToList();
-            return View(countryList.ToArray());
+            ViewBag.Top10Users = Top10UserList;
+
+            return View();
         }
 
         public IActionResult Privacy()
