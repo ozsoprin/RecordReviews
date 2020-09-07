@@ -252,7 +252,7 @@ namespace RecordReviews.Controllers
                             if (album != null)
                             {
                                 var reviews = _context.Reviews.Where(r => r.AlbumId == album.AlbumId).ToList();
-                                TempData["results3"] = reviews;
+                                TempData["Results"] = reviews;
                                 return RedirectToAction("SearchResult", search.type);
                             }
 

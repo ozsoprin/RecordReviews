@@ -1,32 +1,26 @@
 ﻿@model IEnumerable<String>
 @{
     ViewData["Title"] = "Home Page";
-    //Initialize "just for you" albums
-
-    Album album1 = new Album();
-    album1.AlbumTitle = "Chances Are";
-    album1.ArtistName = "Bob Marley";
-    Album album2 = new Album();
-    album2.AlbumTitle = "This Is Acting";
-    album2.ArtistName = "Sia";
-    Album album3 = new Album();
-    album3.AlbumTitle = "25";
-    album3.ArtistName = "Adele";
-    Album album4 = new Album();
-    album4.AlbumTitle = "Unplugged";
-    album4.ArtistName = "Eric Clapton";
-    List<Album> list = new List<Album>();
-    list.Add(album1);
-    list.Add(album2);
-    list.Add(album3);
-    list.Add(album4);
-
-    ViewData["Albums"] = list;
 }
 
-<!--scripts for img(last.fm) start-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
+    async function creatArtistImg(element) {
+        var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+        var name = $(element).attr('alt');
+        var url = await encodeURI("https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=" +
+            name +
+            "&api_key=" +
+            LastFmKey +
+            "&autocorrect=1&limit=10&format=json");
+        $.getJSON(url,
+            function (json) {
+                //var i = Math.floor(Math.random() * 10) % 10;
+                var src = json.topalbums.album[1].image[3]["#text"];
+                $(element).attr("src", src);
+            });
+    }
+
     async function creatAlbumImg(element) {
         var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
         var artist = $(element).attr('alt');
@@ -42,75 +36,84 @@
     }
 </script>
 
-<!--scripts for google map start-->
-@*<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c&callback=initMap&libraries=&v=weekly"
-        async defer>
-</script>
-<script>
 
-    var GoogleKey = 'AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c';
-     function initMap() {
-          var options = {
-              zoom: 1,
-               center: { lat: 0, lng: 1 }
-          };
-         var map = new google.maps.Map(document.getElementById("google-map"), options);
-         var locations = @Html.Raw(Json.Serialize(Model));
-
-         locations.forEach(element => {
-
-             $.getJSON("https://maps.googleapis.com/maps/api/geocode/json?address=" + element + "&key=" + GoogleKey,
-                 function (json) {
-                     if (json.status === 'OK') {
-                         var marker = new google.maps.Marker({ position: json.results[0].geometry.location, map: map });
-                         map.setCenter(marker.getPosition());
-                     }
-                 });
-         }
-         );
-     }
-
-</script>*@
-
-<!--script for google map end-->
 
 <script>
     $(document).ready(async function () {
-        $("img").each(async function (index, element) {
+        $(".artistImg").each(async function (index, element) {
+            await creatArtistImg(element);
+        });
+    });
+
+    $(document).ready(async function () {
+        $(".albumImg").each(async function (index, element) {
             await creatAlbumImg(element);
         });
     });
 </script>
 
-<!--just for you section start-->
-<section id="just-for-you">
+
+<!--Top-10 Artists section start-->
+<section id="Top-10-Artists">
 
     <div class="container-fluid">
         <header class="header">
             <div class="row top-heading mt-5">
-                <p class="col-md-12 font-weight-bold">Just For You</p>
-                <p class="text">
-                    Check out your recommendations below and start listening.<br />
-                    The more you listen, the better your recommendations will get!
-                </p>
+                <p class="top-10-title col-md-12 font-weight-bold mt-4">Top 10 Artists</p>
             </div>
         </header>
 
+        <div class="container">
+
+            <div class="row mt-3 mb-5 pl-5 mr-4">
+                @for (var i = 0; i < ViewBag.Top10Artists.Count; i++)
+                {
+
+                    <div class="col-md-5ths ">
+                        <div class="mb-5 mr-4 w-100">
+                            @{ var index = i + 1;}
+                            <p class="index">@index</p>
+                            <a class="img-link" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.Top10Artists[i].ArtistID">
+                                <img class="artistImg rounded-circle z-depth-2 w-100 shadow mb-2" alt="@ViewBag.Top10Artists[i].ArtistName" src=""
+                                     data-holder-rendered="true">
+                            </a>
+                            <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.Top10Artists[i].ArtistID">@ViewBag.Top10Artists[i].ArtistName</a><br />
+                            <a class="rate-link min-font-muted text-muted" href=""><span>Rated @ViewBag.Top10Artists[i].AvgRate</span></a>
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+</section>
+<!--Top-10 Artists section end-->
+<!--Top-10 Albums section start-->
+<section id="Top-10-Albums">
+
+    <div class="container-fluid">
+        <header class="header">
+            <div class="row top-heading mt-5">
+                <p class="top-10-title col-md-12 font-weight-bold mt-4">Top 10 Albums</p>
+            </div>
+        </header>
 
         <div class="container">
 
-            <div class="row mt-5 mb-5">
-                @foreach (var item in (List<Album>)ViewData["Albums"])
+            <div class="row mt-3 mb-5 pl-5 mr-4">
+                @for (var i = 0; i < ViewBag.Top10Albums.Count; i++)
                 {
-                    <div class="col-md-3">
-                        <div class="mb-5 mr-4">
-                            <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">
-                                <img class="w-100 mb-2 shadow" alt="@item.ArtistName" title="@item.AlbumTitle" src=""
+                    <div class="col-md-5ths">
+                        <div class="mb-5 mr-4 w-100">
+                            @{ var index = i + 1;}
+                            <p class="index">@index</p>
+                            <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@ViewBag.Top10Albums[i].AlbumId">
+                                <img class="albumImg w-100 mb-2 shadow" alt="@ViewBag.Top10Albums[i].ArtistName" title="@ViewBag.Top10Albums[i].AlbumTitle" src=""
                                      data-holder-rendered="true">
                             </a>
-                            <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">@item.AlbumTitle</a><br />
-                            <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistId">@item.ArtistName</a><br />
-                            <a class="rate-link min-font-muted text-muted" href=""><span>Rated @item.AvgRate</span></a>
+                            <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@ViewBag.Top10Albums[i].AlbumId">@ViewBag.Top10Albums[i].AlbumTitle</a><br />
+                            <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.Top10Albums[i].ArtistId">@ViewBag.Top10Albums[i].ArtistName</a><br />
+                            <a class="rate-link min-font-muted text-muted" href=""><span>Rated @ViewBag.Top10Albums[i].AvgRate</span></a>
                         </div>
                     </div>
                 }
@@ -118,28 +121,33 @@
         </div>
     </div>
 </section>
-<!--just for you section end-->
-<!--music news section start-->
-<section id="news">
-</section>
-<!--music news section end-->
-<!--map + graph section start-->
-<section id="map&graph">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="row top-heading mt-5">
-                <p>All Artist's Locations</p>
-            </div>
-            <div id="google-map" class="mx-auto"></div>
-        </div>
+<!--Top-10 Albums section end-->
+<!--Top-10 Users section start-->
+<section id="Top-10-Users">
 
-        <div class="col-md-6">
+    <div class="container-fluid">
+        <header class="header">
             <div class="row top-heading mt-5">
-                <p>Statistics</p>
+                <p class="top-10-title col-md-12 font-weight-bold mt-4">Top 10 Users</p>
             </div>
-            <div id="graph"></div>
+        </header>
+
+        <div class="container pl-5">
+            <div class="row mt-3 mb-5 pl-5 mr-4">
+                @for (var i = 0; i < ViewBag.Top10Users.Count; i++)
+                {
+                    <div class="col-md-5ths">
+                        <div class="mb-5 mr-4 w-100">
+                            @{ var index = i + 1;}
+                            <p class="index">@index</p>
+                            <a class="font-weight-bold text-decoration-none text-dark">@ViewBag.Top10Users[i].UserName</a><br />
+                            <a class="min-font-muted font-weight-bold text-muted">@ViewBag.Top10Users[i].Email</a>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     </div>
-
 </section>
-<!--map + graph section end-->
+
+<!--Top-10 Users section end-->

@@ -56,11 +56,45 @@
 </div>
 
 <section id="write-review">
-    @Html.ActionLink("Write a Review", "Create", "Reviews", new { albumId = Model.AlbumId }, new { @class = "btn btn-outline-primary btn-lg btn-block" })
+    @Html.ActionLink("Write a Review", "Create", "Reviews", new { albumId = Model.AlbumId }, new { @class = "btn" ,@id = "review-btn" })
 
 </section>
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.AlbumId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    @if ((await AuthorizationService.AuthorizeAsync(
+  User, Model,
+  Operations.Update)).Succeeded)
+    {
+        <a class="text-muted" asp-action="Edit" asp-route-id="@Model.AlbumId">Edit</a>
+        <text> | </text>
+    }
+    <a class="text-muted" asp-action="Index">Back to Albums</a>
+</div>
+
+<div>
+    @if (Model.Status != AlbumStatus.Approved)
+    {
+        @if ((await AuthorizationService.AuthorizeAsync(
+      User, Model, Operations.Approve)).Succeeded)
+        {
+            <form style="display:inline;" method="post">
+                <input type="hidden" name="id" value="@Model.AlbumId" />
+                <input type="hidden" name="status" value="@AlbumStatus.Approved" />
+                <button type="submit" class="btn btn-xs btn-success">Approve</button>
+            </form>
+        }
+    }
+
+    @if (Model.Status != AlbumStatus.Rejected)
+    {
+        @if ((await AuthorizationService.AuthorizeAsync(
+      User, Model, Operations.Reject)).Succeeded)
+        {
+            <form style="display:inline;" method="post">
+                <input type="hidden" name="id" value="@Model.AlbumId" />
+                <input type="hidden" name="status" value="@ReviewStatus.Rejected" />
+                <button type="submit" class="btn btn-xs btn-danger">Reject</button>
+            </form>
+        }
+    }
 </div>

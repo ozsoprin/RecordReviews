@@ -1,186 +1,214 @@
 ﻿@model object
 
 @{
-    ViewBag.Title = "Top 10";
+    ViewBag.Title = "Trends";
     Layout = "_Layout";
 }
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
-        async function creatArtistImg(element) {
-            var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
-            var name = $(element).attr('alt');
-            var url = await encodeURI("https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=" +
-                name +
-                "&api_key=" +
-                LastFmKey +
-                "&autocorrect=1&limit=10&format=json");
-            $.getJSON(url,
-                function (json) {
-                    //var i = Math.floor(Math.random() * 10) % 10;
-                    var src = json.topalbums.album[1].image[3]["#text"];
-                    $(element).attr("src", src);
-                });
-        }
-
-        async function creatAlbumImg(element) {
-            var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
-            var artist = $(element).attr('alt');
-            var title = $(element).attr('title');
-            var url = encodeURI("https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key="
-                + LastFmKey + "&artist=" + artist + "&album=" + title + "&autocorrect=1&format=json");
-            $.getJSON(url,
-                function (json) {
-                    //var i = Math.floor(Math.random() * 10) % 10;
-                    var src = json.album.image[4]["#text"];
-                    $(element).attr("src", src);
-                });
-        }
-</script>
-
-
-
-<script>
-        $(document).ready(async function () {
-            $(".artistImg").each(async function (index, element) {
-                await creatArtistImg(element);
+    async function creatAlbumImg(element) {
+        var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+        var artist = $(element).attr('alt');
+        var title = $(element).attr('title');
+        var url = encodeURI("https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key="
+            + LastFmKey + "&artist=" + artist + "&album=" + title + "&autocorrect=1&format=json");
+        $.getJSON(url,
+            function (json) {
+                //var i = Math.floor(Math.random() * 10) % 10;
+                var src = json.album.image[4]["#text"];
+                $(element).attr("src", src);
             });
-        });
-
+    }
+</script>
+<script>
     $(document).ready(async function () {
-        $(".albumImg").each(async function (index, element) {
+        $("img").each(async function (index, element) {
             await creatAlbumImg(element);
+            
         });
+        creatPieChart();
+        createDensityGraph();
     });
 </script>
 
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script>
+    function creatPieChart(){
+        // set the dimensions and margins of the graph
+        var width = 450
+        height = 450
+        margin = 40
 
-    <!--Top-10 Artists section start-->
-    <section id="Top-10-Artists">
+        // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+        var radius = Math.min(width, height) / 2 - margin
 
-        <div class="container-fluid">
-            <header class="header">
-                <div class="row top-heading mt-5">
-                    <p class="top-10-title col-md-12 font-weight-bold mt-4">Top 10 Artists</p>
-                </div>
-            </header>
+        // append the svg object to the div called 'my_dataviz'
+        var svg = d3.select("#reviews-genre-graph")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-            <div class="container">
+        // Create dummy data
 
-                <div class="row mt-3 mb-5 pl-5 mr-4">
-                    @for (var i=0; i< ViewBag.Top10Artists.Count; i++)
-                    {
+        var data = { a: 9, b: 20, c: 30, d: 8, e: 12 }
+        // set the color scale
+        var color = d3.scaleOrdinal()
+            .domain(data)
+            .range(d3.schemeSet2);
 
-                        <div class="col-md-5ths ">
-                            <div class="mb-5 mr-4 w-100">
-                                @{ var index = i + 1;}
-                                <p class="index">@index</p>
-                                <a class="img-link" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.Top10Artists[i].ArtistID">
-                                    <img class="artistImg rounded-circle z-depth-2 w-100 shadow mb-2" alt="@ViewBag.Top10Artists[i].ArtistName" src=""
-                                         data-holder-rendered="true">
-                                </a>
-                                <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.Top10Artists[i].ArtistID">@ViewBag.Top10Artists[i].ArtistName</a><br />
-                                <a class="rate-link min-font-muted text-muted" href=""><span>Rated @ViewBag.Top10Artists[i].AvgRate</span></a>
-                            </div>
-                        </div>
+        // Compute the position of each group on the pie:
+        var pie = d3.pie()
+            .value(function (d) { return d.value; })
+        var data_ready = pie(d3.entries(data))
+        // Now I know that group A goes from 0 degrees to x degrees and so on.
 
-                    }
-                </div>
-            </div> 
+        // shape helper to build arcs:
+        var arcGenerator = d3.arc()
+            .innerRadius(0)
+            .outerRadius(radius)
+
+        // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+        svg
+            .selectAll('mySlices')
+            .data(data_ready)
+            .enter()
+            .append('path')
+            .attr('d', arcGenerator)
+            .attr('fill', function (d) { return (color(d.data.key)) })
+            .attr("stroke", "black")
+            .style("stroke-width", "2px")
+            .style("opacity", 0.7)
+
+        // Now add the annotation. Use the centroid method to get the best coordinates
+        svg
+            .selectAll('mySlices')
+            .data(data_ready)
+            .enter()
+            .append('text')
+            .text(function (d) { return d.data.key })
+            .attr("transform", function (d) { return "translate(" + arcGenerator.centroid(d) + ")"; })
+            .style("text-anchor", "middle")
+            .style("font-size", 17)
+    }
+</script>
+
+<script>
+    function createDensityGraph() {
+        const data = [
+            { name: 'John', score: 80 },
+            { name: 'Simon', score: 76 },
+            { name: 'Samantha', score: 90 },
+            { name: 'Patrick', score: 82 },
+            { name: 'Mary', score: 90 },
+            { name: 'Christina', score: 75 },
+            { name: 'Michael', score: 86 },
+        ];
+
+        const width = 900;
+        const height = 450;
+        const margin = { top: 50, bottom: 50, left: 50, right: 50 };
+
+        const svg = d3.select('#reviews-month-graph')
+            .append('svg')
+            .attr('width', width - margin.left - margin.right)
+            .attr('height', height - margin.top - margin.bottom)
+            .attr("viewBox", [0, 0, width, height]);
+
+        const x = d3.scaleBand()
+            .domain(d3.range(data.length))
+            .range([margin.left, width - margin.right])
+            .padding(0.1)
+
+        console.log(typeof x)
+
+        const y = d3.scaleLinear()
+            .domain([0, 100])
+            .range([height - margin.bottom, margin.top])
+
+        svg
+            .append("g")
+            .attr("fill", 'WhiteSmoke')
+            .selectAll("rect")
+            .data(data.sort((a, b) => d3.descending(a.score, b.score)))
+            .join("rect")
+            .attr("x", (d, i) => x(i))
+            .attr("y", d => y(d.score))
+            .attr('title', (d) => d.score)
+            .attr("class", "rect")
+            .attr("height", d => y(0) - y(d.score))
+            .attr("width", x.bandwidth());
+
+        function yAxis(g) {
+            g.attr("transform", `translate(${margin.left}, 0)`)
+                .call(d3.axisLeft(y).ticks(null, data.format))
+                .attr("font-size", '20px')
+        }
+
+        function xAxis(g) {
+            g.attr("transform", `translate(0,${height - margin.bottom})`)
+                .call(d3.axisBottom(x).tickFormat(i => data[i].name))
+                .attr("font-size", '20px')
+        }
+
+        svg.append("g").call(xAxis);
+        svg.append("g").call(yAxis);
+        svg.node();
+    }
+
+</script>
+
+
+<div class="container-fluid">
+    <header class="header">
+        <div class="row top-heading mt-5">
+            <p class="col-md-12 font-weight-bold">Trends</p>
         </div>
-    </section>
-    <!--Top-10 Artists section end-->
-    <!--Top-10 Albums section start-->
-    <section id="Top-10-Albums">
+    </header>
 
-        <div class="container-fluid">
-            <header class="header">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
                 <div class="row top-heading mt-5">
-                    <p class="top-10-title col-md-12 font-weight-bold mt-4">Top 10 Albums</p>
+                    <h2 class="font-weight-bold w-100">Most Reviewed Genre is: </h2>
                 </div>
-            </header>
-
-            <div class="container">
-
-                <div class="row mt-3 mb-5 pl-5 mr-4">
-                    @for (var i = 0; i < ViewBag.Top10Albums.Count; i++)
+                <a class="row most-reviewed-genre-link font-weight-bold text-muted w-100"><span>@ViewBag.MostReviewedGenre</span></a>
+                <div class="row mt-4">
+                    <h5 class="font-weight-bold w-100 mb-3">Most reviewed @ViewBag.MostReviewedGenre albums are:</h5>
+                    @foreach (var item in (List<Album>)ViewBag.MostReviewedGenreAlbums)
                     {
-                        <div class="col-md-5ths">
+                        <div class="row col-md-5">
                             <div class="mb-5 mr-4 w-100">
-                                @{ var index = i + 1;}
-                                <p class="index">@index</p>
-                                <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@ViewBag.Top10Albums[i].AlbumId">
-                                    <img class="albumImg w-100 mb-2 shadow" alt="@ViewBag.Top10Albums[i].ArtistName" title="@ViewBag.Top10Albums[i].AlbumTitle" src=""
+                                <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">
+                                    <img class="albumImg w-100 mb-2 shadow" alt="@item.ArtistName" title="@item.AlbumTitle" src=""
                                          data-holder-rendered="true">
                                 </a>
-                                <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@ViewBag.Top10Albums[i].AlbumId">@ViewBag.Top10Albums[i].AlbumTitle</a><br />
-                                <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.Top10Albums[i].ArtistId">@ViewBag.Top10Albums[i].ArtistName</a><br />
-                                <a class="rate-link min-font-muted text-muted" href=""><span>Rated @ViewBag.Top10Albums[i].AvgRate</span></a>
+                                <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">@item.AlbumTitle</a><br />
+                                <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistId">@item.ArtistName</a><br />
+                                <a class="rate-link min-font-muted text-muted" href=""><span>Rated @item.AvgRate</span></a>
                             </div>
                         </div>
                     }
                 </div>
             </div>
-        </div>
-    </section>
-    <!--Top-10 Albums section end-->
-    <!--Top-10 Users section start-->
-    <section id="Top-10-Users">
 
-        <div class="container-fluid">
-            <header class="header">
+            <div class="col-md-6">
                 <div class="row top-heading mt-5">
-                    <p class="top-10-title col-md-12 font-weight-bold mt-4">Top 10 Users</p>
-                </div>
-            </header>
-
-            <div class="container pl-5">
-
-
-                <div class="row mt-3 mb-5 pl-5 mr-4">
-                    @for (var i = 0; i < ViewBag.Top10Users.Count; i++)
-                    {
-                        <div class="col-md-5ths">
-                            <div class="mb-5 mr-4 w-100">
-                                @{ var index = i + 1;}
-                                <p class="index">@index</p>
-                                <a class="font-weight-bold text-decoration-none text-dark" >@ViewBag.Top10Users[i].UserName</a><br />
-                                <a class="min-font-muted font-weight-bold text-muted" >@ViewBag.Top10Users[i].Email</a>
-                            </div>
-                        </div>
-                    }
-                </div>
-
-
-                @*<div class="table-responsive-md">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">
-                                    User Name
-                                </th>
-                                <th scope="col">
-                                    Email
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for (var i = 0; i < ViewBag.Top10Users.Count; i++)
-                            {
-                                <tr>
-                                    <td>
-                                        @ViewBag.Top10Users[i].UserName
-                                    </td>
-                                    <td>
-                                        @ViewBag.Top10Users[i].Email
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>*@
+                    <h2 class="font-weight-bold w-100">Statistics: </h2>
+                </div> 
+                <div class="row" id="reviews-genre-graph"></div>
             </div>
         </div>
-    </section>
 
-    <!--Top-10 Users section end-->
+        <div>
+            <div class="top-heading mt-5">
+                <h2 class="font-weight-bold w-100">Statistics: </h2>
+            </div><br />
+            <div id="reviews-month-graph"></div>
+        </div>
+
+    </div>
+</div>*@

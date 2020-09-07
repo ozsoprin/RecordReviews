@@ -60,8 +60,20 @@
                         <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistId">@item.ArtistName</a><br />
                         <a class="rate-link min-font-muted text-muted" href=""><span>Rated @item.AvgRate</span></a>
                         <div>
-                            <a class="min-font-muted text-muted" asp-action="Edit" asp-route-id="@item.AlbumId">Edit |</a>
-                            <a class="min-font-muted text-muted" asp-action="Delete" asp-route-id="@item.AlbumId"> Delete</a>
+                            @if ((await AuthorizationService.AuthorizeAsync(
+                                   User, item,
+                                   Operations.Update)).Succeeded)
+                            {
+                                <a class="min-font-muted text-muted" asp-action="Edit" asp-route-id="@item.AlbumId">Edit</a>
+                                <text> | </text>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(
+                                  User, item,
+                                  Operations.Delete)).Succeeded)
+                            {
+                                <a class="min-font-muted text-muted" asp-action="Delete" asp-route-id="@item.AlbumId">Delete</a>
+                            }
                         </div>
 
                     </div>

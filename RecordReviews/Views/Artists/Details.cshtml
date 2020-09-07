@@ -43,6 +43,40 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.ArtistID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    @if ((await AuthorizationService.AuthorizeAsync(
+   User, Model,
+   Operations.Update)).Succeeded)
+    {
+        <a class="text-muted" asp-action="Edit" asp-route-id="@Model.ArtistID">Edit</a>
+        <text> | </text>
+    }
+    <a class="text-muted" asp-action="Index">Back to Artists</a>
+</div>
+
+<div>
+    @if (Model.Status != ArtistStatus.Approved)
+    {
+        @if ((await AuthorizationService.AuthorizeAsync(
+        User, Model, Operations.Approve)).Succeeded)
+        {
+            <form style="display:inline;" method="post">
+                <input type="hidden" name="id" value="@Model.ArtistID" />
+                <input type="hidden" name="status" value="@ArtistStatus.Approved" />
+                <button type="submit" class="btn btn-xs btn-success">Approve</button>
+            </form>
+        }
+    }
+
+    @if (Model.Status != ArtistStatus.Rejected)
+    {
+        @if ((await AuthorizationService.AuthorizeAsync(
+        User, Model, Operations.Reject)).Succeeded)
+        {
+            <form style="display:inline;" method="post">
+                <input type="hidden" name="id" value="@Model.ArtistID" />
+                <input type="hidden" name="status" value="@ArtistStatus.Rejected" />
+                <button type="submit" class="btn btn-xs btn-danger">Reject</button>
+            </form>
+        }
+    }
 </div>

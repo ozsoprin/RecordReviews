@@ -3,70 +3,128 @@
 @{
     ViewData["Title"] = "Artists";
 }
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script>
-        async function creatArtistImg(element) {
-            var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
-            var name = $(element).attr('alt');
-            var url = await encodeURI("https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=" +
-                name +
-                "&api_key=" +
-                LastFmKey +
-                "&autocorrect=1&limit=10&format=json");
-            $.getJSON(url,
-                function (json) {
-                    //var i = Math.floor(Math.random() * 10) % 10;
-                    var src = json.topalbums.album[1].image[3]["#text"];  
-                    $(element).attr("src", src);
-                });
-        }
-    </script>
-    <script>
-        $(document).ready(async function () {
-            $("img").each(async function (index, element) {
-                await creatArtistImg(element);
+<!--script for img (last.fm) start-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    async function creatArtistImg(element) {
+        var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+        var name = $(element).attr('alt');
+        var url = await encodeURI("https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=" +
+            name +
+            "&api_key=" +
+            LastFmKey +
+            "&autocorrect=1&limit=10&format=json");
+        $.getJSON(url,
+            function (json) {
+                //var i = Math.floor(Math.random() * 10) % 10;
+                var src = json.topalbums.album[1].image[3]["#text"];
+                $(element).attr("src", src);
             });
+    }
+</script>
+<!--script for img (last.fm) end-->
+<!--scripts for google map start-->
+@*<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c&callback=initMap&libraries=&v=weekly"
+            async defer>
+</script>
+<script>
+    var GoogleKey = 'AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c';
+     function initMap() {
+          var options = {
+                 zoom: 1,
+                   center: { lat: 0, lng: 1 }
+          };
+          var map = new google.maps.Map(document.getElementById("google-map"), options);
+          var locations = @Html.Raw(Json.Serialize(ViewBag.ArtistsCountry));
+
+          locations.forEach(element => {
+
+              $.getJSON("https://maps.googleapis.com/maps/api/geocode/json?address=" + element + "&key=" + GoogleKey,
+                  function (json) {
+                      if (json.status === 'OK') {
+                          var marker = new google.maps.Marker({ position: json.results[0].geometry.location, map: map });
+                          map.setCenter(marker.getPosition());
+                      }
+                  });
+          });
+     }
+
+</script>*@
+
+
+<!--script for google map end-->
+<script>
+    $(document).ready(async function () {
+        $("img").each(async function (index, element) {
+            await creatArtistImg(element);
         });
-    </script>
+    });
+</script>
 
-    <div class="container-fluid">
-        <header class="=header">
-            <div class="row top-heading mt-5">
-                <p class="col-md-12 font-weight-bold">Artists</p>
+<div class="container-fluid">
+    <header class="=header">
+        <div class="row top-heading mt-5">
+            <p class="col-md-12 font-weight-bold">Artists</p>
+        </div>
+    </header>
+    <!--map section start-->
+
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="row top-heading">
+                <p id="locations-heading">All Artist's Locations</p>
             </div>
-        </header>
-        
+            <div id="google-map" class="mx-auto"></div>
+        </div>
+     </div>
+    <!--map section end-->
 
-        <div class="container">
-            <p>
-                <a class="row text-dark" asp-action="Create">Create New</a>
-            </p>
-            <form class="row form-inline d-flex md-form form-sm mt-0" asp-controller="Artists" asp-action="Index">
-                <button type="submit" class="fabutton pl-3"><i class="fa fa-search" aria-hidden="true"></i></button>
-                <input class="col-md-11 form-control form-control-sm ml-3 w-75" type="text" name="searchString" placeholder="Search by Artist's Name"
-                       aria-label="Search">
-            </form>
 
-            <div class="row mt-5 mb-5">
-                @foreach (var item in Model)
-                {
-                    <div class="col-md-3">
-                        <div class="mb-5 mr-4">
-                            <a class="img-link" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistID">
-                                <img class="rounded-circle z-depth-2 w-100 shadow" alt="@item.ArtistName" src=""
-                                     data-holder-rendered="true">
-                            </a>
-                            <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistID">@item.ArtistName</a><br />
-                            <a class="rate-link min-font-muted text-muted" href=""><span>Rated @item.AvgRate</span></a>
-                            <div>
-                                <a class="min-font-muted text-muted" asp-action="Edit" asp-route-id="@item.ArtistID">Edit |</a>
-                                <a class="min-font-muted text-muted" asp-action="Delete" asp-route-id="@item.ArtistID"> Delete</a>
-                            </div>
 
+    <div class="container">
+        <p>
+            <a class="row text-dark" asp-action="Create">Create New</a>
+        </p>
+        <form class="row form-inline d-flex md-form form-sm mt-0" asp-controller="Artists" asp-action="Index">
+            <button type="submit" class="fabutton pl-3"><i class="fa fa-search" aria-hidden="true"></i></button>
+            <input class="col-md-11 form-control form-control-sm ml-3 w-75" type="text" name="searchString" placeholder="Search by Artist's Name"
+                   aria-label="Search">
+        </form>
+
+        <div class="row mt-5 mb-5">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-3">
+                    <div class="mb-5 mr-4">
+                        <a class="img-link" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistID">
+                            <img class="rounded-circle z-depth-2 w-100 shadow" alt="@item.ArtistName" src=""
+                                 data-holder-rendered="true">
+                        </a>
+                        <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistID">@item.ArtistName</a><br />
+                        <a class="rate-link min-font-muted text-muted" href=""><span>Rated @item.AvgRate</span></a>
+                        <div>
+
+                            @if ((await AuthorizationService.AuthorizeAsync(
+                                     User, item,
+                                     Operations.Update)).Succeeded)
+                            {
+                                <a class="min-font-muted text-muted" asp-action="Edit" asp-route-id="@item.ArtistID">Edit</a>
+                                <text> | </text>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(
+                                   User, item,
+                                   Operations.Delete)).Succeeded)
+                            {
+                                <a class="min-font-muted text-muted" asp-action="Delete" asp-route-id="@item.ArtistID">Delete</a>
+                            }
+ 
                         </div>
+
                     </div>
-                }
-            </div>
+                </div>
+            }
         </div>
     </div>
+</div>
 
