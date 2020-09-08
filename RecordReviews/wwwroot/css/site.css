@@ -252,3 +252,22 @@ tr {
 #a-icon{
     padding:0;
 }
+.bar {
+    fill: paleturquoise;
+}
+rect:hover {
+    opacity: 0.7;
+}
+
+.arc text {
+    font-size: 15px;
+    text-anchor: middle;
+}
+
+.arc:hover {
+    opacity: 0.7;
+}
+
+.arc path {
+    stroke: #fff;
+}
