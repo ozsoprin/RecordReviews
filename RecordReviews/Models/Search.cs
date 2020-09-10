@@ -11,8 +11,10 @@ namespace RecordReviews.Models
         [Key] public string type { get; set; }
 
         public string PrimaryKey { get; set; }
+        
         public string SecondaryKey { get; set; } // for album (the artist); for review (username); 
 
+        public string ArtistName { get; set; }
         [Range(0, 10)] public double? MinRate { get; set; }
 
         [Range(0, 10)] public double? MaxRate { get; set; }

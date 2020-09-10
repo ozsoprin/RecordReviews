@@ -84,7 +84,7 @@ namespace RecordReviews.Controllers
             {
                 return Forbid();
             }
-            
+            ViewBag.ArtistsYouMightLike = _context.Artists.OrderByDescending(a => a.AvgRate).ToList();
             artist.PageViews++;
             
             return View(artist);
