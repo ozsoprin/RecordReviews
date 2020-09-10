@@ -41,10 +41,10 @@
             .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
 
-        //var color = d3.scaleOrdinal(['#4daf4a', '#377eb8', '#ff7f00', '#984ea3', '#e41a1c']);
-        var color = d3.scaleOrdinal()
-            .domain(data)
-            .range(d3.schemeSet2);
+        var color = d3.scaleOrdinal(['#ff99c8', '#fcf6bd', '#d0f4de', '#a9def9', '#e4c1f9']);
+        //var color = d3.scaleOrdinal()
+        //    .domain(data)
+        //    .range(d3.schemeSet2);
 
         var pie = d3.pie().value(function (d) {
             return d.count;
@@ -164,12 +164,12 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="row top-heading mt-5">
-                    <h2 class="font-weight-bold w-100">Most Reviewed Genre is: </h2>
+                    <h2 class="font-weight-bold w-100">Most Reviewed Genre is :</h2>
                 </div>
-                <a class="row most-reviewed-genre-link font-weight-bold text-muted w-100"><span>@ViewBag.MostReviewedGenreName</span></a>
+                <a class="row most-reviewed-genre-link font-weight-bold text-muted w-100 text-center"><span>@ViewBag.MostReviewedGenreName</span></a>
 
                 <div class="row mt-4">
-                    <h5 class="font-weight-bold w-100 mb-3">Top Rated @ViewBag.MostReviewedGenreName Albums:</h5>
+                    <h5 class="font-weight-bold w-100 mb-3">Top Rated @ViewBag.MostReviewedGenreName Album</h5>
                     @for (var i=0;i< 4;i++)
                     {
                         <div class="row col-md-5">
@@ -189,14 +189,14 @@
 
             <div class="col-md-6">
                 <div class="row top-heading mt-5">
-                    <h2 class="font-weight-bold w-100">Number Of Reviews per Genre: </h2>
+                    <h2 class="font-weight-bold w-100">Number Of Reviews per Genre</h2>
                 </div>
                 <div class="row mt-5" id="reviews-genre-graph"></div>
             </div>
         </div>
 
         <div class="row">
-            <h2 class="top-heading mt-5 font-weight-bold w-100 text-center">Number Of Reviews per Month: </h2>
+            <h2 class="top-heading mt-5 font-weight-bold w-100 text-center">Number Of Reviews per Month</h2>
             <div class="mx-auto" id="reviews-month-graph"></div>
         </div>
 
