@@ -34,7 +34,7 @@ namespace RecordReviews.Controllers
                 .OrderByDescending(x => x.Count);
             ViewBag.GenreStatistic = genreStatistic.ToList();
             ViewBag.TotalReviewNumber = _context.Reviews.Select(r => r).Count();
-            ViewBag.MostReviewedGenreAlbums = _context.Albums.Where(a => a.Genre == genreStatistic.Take(1).SingleOrDefault().Genre).OrderByDescending(a => a.AvgRate).Take(2).ToList();
+            ViewBag.MostReviewedGenreAlbums = _context.Albums.Where(a => a.Genre == genreStatistic.Take(1).SingleOrDefault().Genre).OrderByDescending(a => a.AvgRate).ToList();
             ViewBag.MostReviewedGenreName = genreStatistic.Take(1).SingleOrDefault().Genre;
             return View();
         }
