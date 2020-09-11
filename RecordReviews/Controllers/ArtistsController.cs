@@ -128,7 +128,7 @@ namespace RecordReviews.Controllers
                 HttpContext.Session.SetString("LastArtists", JsonConvert.SerializeObject(lastArtists));
             }
 
-            ViewBag.ArtistsYouMightLike = GetRecommended();
+            ViewBag.ArtistsYouMightLike = GetRecommended().ToArray();
             return View(artist);
         }
 
@@ -368,7 +368,9 @@ namespace RecordReviews.Controllers
                     .OrderByDescending(group => group.Count())
                     .First().Key;
 
-                var recommendedArtist = _context.Artists.Where(artist => artist.Genre == Genre).OrderBy(album => Guid.NewGuid())
+                var lastartist = artistList[0];
+
+                var recommendedArtist = _context.Artists.Where(a => a.Genre == Genre && a.ArtistID != lastartist.ArtistID).OrderBy(album => Guid.NewGuid())
                     .AsEnumerable();
 
                 return recommendedArtist;

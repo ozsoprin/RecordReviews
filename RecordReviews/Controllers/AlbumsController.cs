@@ -130,7 +130,7 @@ namespace RecordReviews.Controllers
                 HttpContext.Session.SetString("LastAlbums", JsonConvert.SerializeObject(lastAlbums));
             }
 
-            ViewBag.AlbumYouMightLike = GetRecommended();
+            ViewBag.AlbumYouMightLike = GetRecommended().ToArray();
 
             return View(album);
         }
@@ -409,8 +409,17 @@ namespace RecordReviews.Controllers
                     .OrderByDescending(group => group.Count())
                     .First().Key;
 
-                var recommendedAlbums = _context.Albums.Where(a => a.Genre == Genre).OrderBy(album => Guid.NewGuid())
+                List<int> albumIds = new List<int>();
+                foreach (var album in albumList)
+                {
+                    albumIds.Add(album.AlbumId);
+                }
+
+                var recommendedAlbums = _context.Albums.Where(a => a.Genre == Genre && !albumIds.Contains(a.AlbumId)).OrderBy(album => Guid.NewGuid())
                     .AsEnumerable();
+
+                
+
 
                 return recommendedAlbums;
             }
