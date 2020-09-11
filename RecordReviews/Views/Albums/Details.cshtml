@@ -1,100 +1,579 @@
 ﻿@model RecordReviews.Models.Album
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Album";
 }
 
-<h1>Details</h1>
+@using System.Globalization
 
-<div>
-    <h4>Album</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AlbumTitle)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AlbumTitle)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ArtistName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ArtistName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ReleaseDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ReleaseDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Genre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Genre)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Artist)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Artist.ArtistName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AvgRate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AvgRate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PageViews)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PageViews)
-        </dd>
-    </dl>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    async function creatAlbumImg(element) {
+        var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+        var artist = $(element).attr('alt');
+        var title = $(element).attr('title');
+        var url = encodeURI("https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key="
+            + LastFmKey + "&artist=" + artist + "&album=" + title + "&autocorrect=1&format=json");
+        $.getJSON(url,
+            function (json) {
+                //var i = Math.floor(Math.random() * 10) % 10;
+                var src = json.album.image[4]["#text"];
+                $(element).attr("src", src);
+            });
+    }
+</script>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    function getBioAlbum() {
+        var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+        var artist = $("#bio").attr('alt');
+        var title = $("#bio").attr('title');
+
+        $.getJSON("https://ws.audioscrobbler.com/2.0/?method=album.getinfo&artist=" +
+            artist +
+            "&album=" +
+            title +
+            "&api_key=" +
+            LastFmKey +
+            "&autocorrect=1&format=json",
+            function (json) {
+                var summary = json.album.wiki != null ? json.album.wiki.summary : "The Synopsis for this Album is Unavailable on Last.Fm";
+                $("#bio").html(summary);     
+            });
+    }
+</script>
+
+@*<script>
+        function getVideo() {
+            var artist = $(".youtube-video").attr('alt');
+            var title = $(".youtube-video").attr('title');
+            var keyword = title + " " + artist;
+            var GoogleKey = 'AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c';
+            var url = encodeURI("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&type=video&q=" +
+                keyword +
+                "&key=" +
+                GoogleKey);
+            $.getJSON(url,
+                function (json) {
+                    var videoId = json.items[0].id.videoId;
+                    var embed = "https://www.youtube.com/embed/" + videoId;
+
+                    var iframe = "<iframe width='520px' height='293px' src='" +
+                        embed +
+                        "' frameborder='0' allow='accelerometer; autoplay; encrrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+
+                    $(".youtube-video").html(iframe);
+                });
+
+        }
+</script>*@
+<script>
+    function strPadLeft(string, padding, length) {
+        return (new Array(length + 1).join(padding) + string).slice(-length);
+    }
+</script>
+<script>
+    function secondsToTime(seconds) {
+        var minutes = Math.floor(seconds / 60);
+        return "" + Math.floor(seconds / 60) + ":" + strPadLeft(seconds - minutes * 60, "0", 2);
+    }
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    function getTracks() {
+        var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+        var artist = $("#tracklist").attr('alt');
+        var title = $("#tracklist").attr('title');
+        console.log(artist);
+        console.log(title);
+
+        var util = { sum: 0 };
+
+        $.getJSON("https://ws.audioscrobbler.com/2.0/?method=album.getinfo&artist=" +
+            artist +
+            "&album=" +
+            title +
+            "&api_key=" +
+            LastFmKey +
+            "&autocorrect=1&format=json",
+            function (json) {
+                json.album.tracks.track.forEach(function (song) {
+                    this.sum += Number(song.duration);
+                    $("#tracklist").append("<tr><td>" + song.name + "</td><td>" + secondsToTime(song.duration) + "</td></tr>");
+                }, util);
+                $("#totalDuration").append("<tr class=table-secondary><td><b>Total Duration<b></td>" +
+                    "<td>" +
+                    "<b>" +
+                    secondsToTime(util.sum) +
+                    "</b>" +
+                    "</td>" +
+                    "</tr>");
+            });
+    }
+
+</script>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+        async function creatArtistImg(element) {
+            var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+            var name = $(element).attr('alt');
+            var url = await encodeURI("https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=" +
+                name +
+                "&api_key=" +
+                LastFmKey +
+                "&autocorrect=1&limit=10&format=json");
+            $.getJSON(url,
+                function (json) {
+                    //var i = Math.floor(Math.random() * 10) % 10;
+                    var src = json.topalbums.album[1].image[3]["#text"];
+                    $(element).attr("src", src);
+                });
+        }
+</script>
+
+<script>
+        $(document).ready(async function () {
+            $("#albumImg").each(async function (index, element) {
+                 await creatAlbumImg(element);
+            });
+            getBioAlbum();
+            getVideo();
+            getTracks();
+        });
+</script>
+
+<div class="row mt-5">
+    <div class="col-md-5 mt-3">
+        <div class="mb-5 mr-4">
+            <a class="img-link" asp-controller="Artists" asp-action="Details" asp-route-id="@Model.AlbumId">
+                <img id="albumImg" class="rounded-circle z-depth-2 shadow" alt="@Model.ArtistName" title="@Model.AlbumTitle" src=""
+                     data-holder-rendered="true">
+            </a>
+        </div>
+
+    </div>
+    <div class="col-md-7 mt-3">
+        <h1 class="font-weight-bold">
+            @Model.AlbumTitle -
+            <a class="font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@Model.ArtistId">@Model.ArtistName</a>
+        </h1>
+        <div class="row">
+            <div class="col-md-4 mt-4">
+                <h3 class="font-weight-bold">Genre</h3>
+                <h3 class="font-weight-bold">Rated</h3>
+                <h3 class="font-weight-bold">Release Date</h3>
+            </div>
+            <div class="col-md-6 mt-4">
+                <h3>@Model.Genre</h3>
+                <h3>@Model.AvgRate</h3>
+                @{
+                    var time = Model.ReleaseDate.ToString("d", CultureInfo.CreateSpecificCulture("en-us"));
+                }
+                <h3>@time</h3>
+            </div>
+        </div>
+    </div>
 </div>
 
-<section id="write-review">
-    @Html.ActionLink("Write a Review", "Create", "Reviews", new { albumId = Model.AlbumId }, new { @class = "btn" ,@id = "review-btn" })
+<div class="row mb-5">
+    <div class="col-md-8 mt-5" id="bio" alt="@Model.ArtistName" title="@Model.AlbumTitle"></div>
+    <div class="youtube-video col-md-4 w-100" alt="@Model.ArtistName" title="@Model.AlbumTitle"></div>
+</div>
 
+<h3>Track List</h3>
+<section>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Track Name</th>
+                <th>Length</th>
+            </tr>
+        </thead>
+        <tbody id="tracklist" alt="@Model.ArtistName" title="@Model.AlbumTitle"></tbody>
+        <tfoot id="totalDuration"></tfoot>
+    </table>
 </section>
 
-<div>
-    @if ((await AuthorizationService.AuthorizeAsync(
-  User, Model,
-  Operations.Update)).Succeeded)
-    {
-        <a class="text-muted" asp-action="Edit" asp-route-id="@Model.AlbumId">Edit</a>
-        <text> | </text>
-    }
-    <a class="text-muted" asp-action="Index">Back to Albums</a>
-</div>
 
-<div>
-    @if (Model.Status != AlbumStatus.Approved)
-    {
-        @if ((await AuthorizationService.AuthorizeAsync(
-      User, Model, Operations.Approve)).Succeeded)
-        {
-            <form style="display:inline;" method="post">
-                <input type="hidden" name="id" value="@Model.AlbumId" />
-                <input type="hidden" name="status" value="@AlbumStatus.Approved" />
-                <button type="submit" class="btn btn-xs btn-success">Approve</button>
-            </form>
-        }
-    }
 
-    @if (Model.Status != AlbumStatus.Rejected)
-    {
-        @if ((await AuthorizationService.AuthorizeAsync(
-      User, Model, Operations.Reject)).Succeeded)
-        {
-            <form style="display:inline;" method="post">
-                <input type="hidden" name="id" value="@Model.AlbumId" />
-                <input type="hidden" name="status" value="@ReviewStatus.Rejected" />
-                <button type="submit" class="btn btn-xs btn-danger">Reject</button>
-            </form>
+
+
+
+
+@*getting the image from the album
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        async function creatAlbumImg(element) {
+            var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+            var artist = $("#AlbumImg").attr('alt').split(" _ ")[1];
+            var title = $("#AlbumImg").attr('alt').split(" _ ")[0];
+            var url = encodeURI("https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key="
+                + LastFmKey + "&artist=" + artist + "&album=" + title + "&autocorrect=1&format=json");
+            $.getJSON(url,
+                function (json) {
+                    //var i = Math.floor(Math.random() * 10) % 10;
+                    var src = json.album.image[4]["#text"];
+                    $("#AlbumImg").attr("src", src);
+                });
         }
-    }
-</div>
+    </script>
+
+    gettig the list of songs from the album
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        async function getSongs(element) {
+            var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+            var artist = $(element).attr('alt');
+            var title = $(element).attr('title');
+            var url = encodeURI("https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key="
+                + LastFmKey + "&artist=" + artist + "&album=" + title + "&autocorrect=1&format=json");
+            $.getJSON(url,
+                function (json) {
+                    //var i = Math.floor(Math.random() * 10) % 10;
+                    var src = json.album.image[4]["#text"];
+                    $(element).attr("src", src);
+                });
+        }
+    </script>
+
+
+    getting from youtube the clip
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function getVideo() {
+            var keyword = $(".youtube-video").attr('alt');
+            var GoogleKey = 'AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c';
+            var url = encodeURI("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&type=video&q=" +
+                keyword +
+                "&key=" +
+                GoogleKey);
+            $.getJSON(url,
+                function (json) {
+                    var videoId = json.items[0].id.videoId;
+                    var embed = "https://www.youtube.com/embed/" + videoId;
+                    var iframe = "<iframe class='w-100' width='300' height='300' src='" +
+                        embed +
+                        "' frameborder='0' allow='accelerometer; autoplay; encrrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+                    $(".youtube-video").html(iframe);
+                });
+        }
+    </script>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script>
+            async function creatArtistImg(element) {
+                var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+                var name = $(element).attr('alt');
+                var url = await encodeURI("https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=" +
+                    name +
+                    "&api_key=" +
+                    LastFmKey +
+                    "&autocorrect=1&limit=10&format=json");
+                $.getJSON(url,
+                    function (json) {
+                        //var i = Math.floor(Math.random() * 10) % 10;
+                        var src = json.topalbums.album[1].image[3]["#text"];
+                        $(element).attr("src", src);
+                    });
+            }
+        </script>
+
+
+
+    getting all the things that i want to the page
+    <script>
+        $(document).ready(async function () {
+            $("#AlbumImg").each(async function (index, element) {
+                await creatArtistImg(element);
+            });
+            getVideo();
+            $("img").each(async function (index, element) {
+                await creatAlbumImg(element);
+            });
+
+        });
+    </script>
+
+    row one
+    <div class="row">
+        <div class="col-md-4">
+            <div class="mb-5 mr-4">
+                <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@Model.AlbumId">
+                    <img id="AlbumImg" class="rounded-circle z-depth-2 w-100 shadow" alt="@Model.AlbumTitle _ @Model.ArtistName" src=""
+                         data-holder-rendered="true">
+                </a>
+                <div>
+                      <a class="min-font-muted text-muted" asp-action="Edit" asp-route-id="@Model.AlbumId">Edit |</a>
+                    <a class="min-font-muted text-muted" asp-action="Delete" asp-route-id="@Model.AlbumId"> Delete</a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-8">
+            <section id="details">
+                <h2 class="text-center">Name: @Model.AlbumId</h2>
+                <h2 class="text-center">Genre: @Model.Genre</h2>
+                <h2 class="text-center"> Date: @Model.ReleaseDate</h2>
+                <h2 class="text-center">Score: @Model.AvgRate</h2>
+            </section>
+            <br />
+        </div>
+    </div>
+
+
+
+    row two
+    <div class="row">
+
+        <div class="col-md-4 w-100">
+            <section class="youtube-video" alt="@Model.AlbumTitle @Model.ArtistName">
+            </section>
+        </div>
+        <div class="col-md-8 text-center">
+            <section id="review">
+                <div class="container-fluid">
+                    <div class="container">
+                        <header class="header">
+                            <div class="row top-heading mt-5">
+                                @if ((string)TempData["searchString"] != null)
+                                {
+                                    <p id="title" class="col-md-12 font-weight-bold">Reviews Written About @TempData["searchString"] </p>
+                                }
+                                else
+                                {
+                                    <p id="title" class="col-md-12 font-weight-bold">Last 10 Reviews </p>
+                                }
+                                <p id="title" class="col-md-12 font-weight-bold">Last 10 Reviews </p>
+                            </div>
+                        </header>
+                        <p>
+                            <a class="text-dark" asp-action="Create">Create New</a>
+                        </p>
+                        <form class="row form-inline d-flex md-form form-sm mb-4" asp-controller="Reviews" asp-action="Index">
+                            <button type="submit" class="fabutton pl-3"><i class="fa fa-search" aria-hidden="true"></i></button>
+                            <input class="col-md-11 form-control form-control-sm ml-3 w-75" type="text" name="searchString" placeholder="Search by Artist's Name"
+                                   aria-label="Search">
+                        </form>
+                        <div class="table-responsive-md">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">
+                                            @Html.DisplayNameFor(model => model.AlbumTitle)
+                                        </th>
+                                        <th scope="col">
+                                            @Html.DisplayNameFor(model => model.Reviews)
+                                        </th>
+                                        <th scope="col">
+                                            @Html.DisplayNameFor(model => model.AvgRate)
+                                        </th>
+                                        <th scope="col">
+                                            @Html.DisplayNameFor(model => model.ReleaseDate)
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (var i = 0; i < 10; i++)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => Model.ElementAt(i).Album.AlbumTitle)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => Model.ElementAt(i).Comment)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => Model.ElementAt(i).Rate)
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var time = Model.ElementAt(i).CreationTime.ToString("g", CultureInfo.CreateSpecificCulture("en-us"));
+                                                }
+                                                @Html.DisplayFor(modelItem => time)
+                                            </td>
+                                            <td>
+                                                @if ((await AuthorizationService.AuthorizeAsync(
+                                             User, Model.ElementAt(i),
+                                             Operations.Update)).Succeeded)
+                                                {
+                                                    <a class="text-muted" asp-action="Edit" asp-route-id="@Model.ElementAt(i).ReviewId">Edit</a>
+                                                    <text> | </text>
+                                                }
+
+                                                <a class="text-muted" asp-action="Details" asp-route-id="@Model.ElementAt(i).ReviewId">Details</a>
+
+                                                @if ((await AuthorizationService.AuthorizeAsync(
+                                             User, Model.ElementAt(i),
+                                             Operations.Delete)).Succeeded)
+                                                {
+                                                    <text> | </text>
+                                                    <a class="text-muted" asp-action="Delete" asp-route-id="@Model.ElementAt(i).ReviewId">Delete</a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="write-review">
+                @Html.ActionLink("Write a Review", "Create", "Reviews", new { albumId = Model.AlbumId }, new { @class = "btn", @id = "review-btn" })
+            </section>
+        </div>
+    </div>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-12">
+            <h4 class="text-center">Albums You May Like</h4>
+        </div>
+    </div>*@
+
+
+
+
+
+@*<div>
+        @if ((await AuthorizationService.AuthorizeAsync(
+      User, Model,
+      Operations.Update)).Succeeded)
+        {
+            <a class="text-muted" asp-action="Edit" asp-route-id="@Model.AlbumId">Edit</a>
+            <text> | </text>
+        }
+        <a class="text-muted" asp-action="Index">Back to Albums</a>
+    </div>
+
+    <div>
+        @if (Model.Status != AlbumStatus.Approved)
+        {
+            @if ((await AuthorizationService.AuthorizeAsync(
+          User, Model, Operations.Approve)).Succeeded)
+            {
+                <form style="display:inline;" method="post">
+                    <input type="hidden" name="id" value="@Model.AlbumId" />
+                    <input type="hidden" name="status" value="@AlbumStatus.Approved" />
+                    <button type="submit" class="btn btn-xs btn-success">Approve</button>
+                </form>
+            }
+        }
+
+        @if (Model.Status != AlbumStatus.Rejected)
+        {
+            @if ((await AuthorizationService.AuthorizeAsync(
+          User, Model, Operations.Reject)).Succeeded)
+            {
+                <form style="display:inline;" method="post">
+                    <input type="hidden" name="id" value="@Model.AlbumId" />
+                    <input type="hidden" name="status" value="@ReviewStatus.Rejected" />
+                    <button type="submit" class="btn btn-xs btn-danger">Reject</button>
+                </form>
+            }
+        }
+    </div>*@
+
+
+@*<h1>Details</h1>
+
+    <div>
+        <h4>Album</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.AlbumTitle)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.AlbumTitle)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.ArtistName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.ArtistName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.ReleaseDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.ReleaseDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Genre)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Genre)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Artist)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Artist.ArtistName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.AvgRate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.AvgRate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.PageViews)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.PageViews)
+            </dd>
+        </dl>
+    </div>
+
+    <section id="write-review">
+        @Html.ActionLink("Write a Review", "Create", "Reviews", new { albumId = Model.AlbumId }, new { @class = "btn", @id = "review-btn" })
+
+    </section>
+
+    <div>
+        @if ((await AuthorizationService.AuthorizeAsync(
+     User, Model,
+     Operations.Update)).Succeeded)
+        {
+            <a class="text-muted" asp-action="Edit" asp-route-id="@Model.AlbumId">Edit</a>
+            <text> | </text>
+        }
+        <a class="text-muted" asp-action="Index">Back to Albums</a>
+    </div>
+
+    <div>
+        @if (Model.Status != AlbumStatus.Approved)
+        {
+            @if ((await AuthorizationService.AuthorizeAsync(
+         User, Model, Operations.Approve)).Succeeded)
+            {
+                <form style="display:inline;" method="post">
+                    <input type="hidden" name="id" value="@Model.AlbumId" />
+                    <input type="hidden" name="status" value="@AlbumStatus.Approved" />
+                    <button type="submit" class="btn btn-xs btn-success">Approve</button>
+                </form>
+            }
+        }
+
+        @if (Model.Status != AlbumStatus.Rejected)
+        {
+            @if ((await AuthorizationService.AuthorizeAsync(
+         User, Model, Operations.Reject)).Succeeded)
+            {
+                <form style="display:inline;" method="post">
+                    <input type="hidden" name="id" value="@Model.AlbumId" />
+                    <input type="hidden" name="status" value="@ReviewStatus.Rejected" />
+                    <button type="submit" class="btn btn-xs btn-danger">Reject</button>
+                </form>
+            }
+        }
+    </div>*@

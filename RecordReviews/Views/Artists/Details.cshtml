@@ -1,51 +1,377 @@
 ﻿@model RecordReviews.Models.Artist
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Artist";
 }
 
-<h1>Details</h1>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    async function creatAlbumImg(element) {
+        var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+        var artist = $(element).attr('alt');
+        var title = $(element).attr('title');
+        var url = encodeURI("https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key="
+            + LastFmKey + "&artist=" + artist + "&album=" + title + "&autocorrect=1&format=json");
+        $.getJSON(url,
+            function (json) {
+                //var i = Math.floor(Math.random() * 10) % 10;
+                var src = json.album.image[4]["#text"];
+                $(element).attr("src", src);
+            });
+    }
+</script>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+@*<script>
+        function getVideo() {
+            var keyword = $(".youtube-video").attr('alt');
+            var GoogleKey = 'AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c';
+            var url = encodeURI("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&type=video&q=" +
+                keyword +
+                "&key=" +
+                GoogleKey);
+            $.getJSON(url,
+                function (json) {
+                    var videoId = json.items[0].id.videoId;
+                    var embed = "https://www.youtube.com/embed/" + videoId;
+
+                    var iframe = "<iframe width='520px' height='293px' src='" +
+                        embed +
+                        "' frameborder='0' allow='accelerometer; autoplay; encrrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+
+                    $(".youtube-video").html(iframe);
+                });
+
+        }
+    </script>*@
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    async function creatArtistImg(element) {
+        var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+        var name = $(element).attr('alt');
+        var url = await encodeURI("https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=" +
+            name +
+            "&api_key=" +
+            LastFmKey +
+            "&autocorrect=1&limit=10&format=json");
+        $.getJSON(url,
+            function (json) {
+                //var i = Math.floor(Math.random() * 10) % 10;
+                var src = json.topalbums.album[1].image[3]["#text"];
+                $(element).attr("src", src);
+            });
+    }
+</script>
+
+<script>
+    function getBioArtist() {
+        var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+        var name = $("#bio").attr('alt');
+
+        $.getJSON("https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=" +
+            name +
+            "&api_key=" +
+            LastFmKey +
+            "&autocorrect=1&format=json",
+            function (json) {
+                $("#bio").html(json.artist.bio.summary);
+            });
+    }
+</script>
+
+<!--scripts for google map start-->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c&callback=initMap&libraries=&v=weekly"
+            async defer></script>
+    @*<script>
+        var GoogleKey = 'AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c';
+        function initMap() {
+                  var options = {
+                         zoom: 1,
+                         center: { lat: 0, lng: 1 }
+                  };
+                  var map = new google.maps.Map(document.getElementById("google-map"), options);
+                 $.getJSON("https://maps.googleapis.com/maps/api/geocode/json?address=@Model.BirthPlace&key=" + GoogleKey,
+                    function(json) {
+                        if (json.status === 'OK') {
+                            var marker = new google.maps.Marker({ position: json.results[0].geometry.location, map: map });
+                            map.setCenter(marker.getPosition());
+                        }
+                    });
+        }
+    </script>*@
+<!--script for google map end-->
+<!--omer-->
+@*<script>
+    function getImages() {
+        var key = "e178f40cea3ee8e7deaaa8b69128089f";
+        var name = "The Strokes";
+        var url = encodeURI("https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=" +
+            name +
+            "&api_key=" +
+            key +
+            "&autocorrect=1&limit=4&format=json");
+        $.getJSON(url, function (json) {
+            var albums = json.topalbums.album;
+            var i = 0;
+            albums.forEach(element => {
+                var src = element.image[3]["#text"];
+                $("#slide-" + i).attr("src", src);
+                $("#slide-bg-" + i).attr("style", "background-image: url('" + src + "');");
+                $("#title-" + i).html(element.name);
+
+                i++;
+            });
+        });
+    }
+</script>*@
+<!--omer-->
+
+<script>
+    $(document).ready(async function () {
+        $("#ArtistImg").each(async function (index, element) {
+            await creatArtistImg(element);
+        });
+        getBioArtist();
+        //getVideo();
+        $(".albumImg").each(async function (index, element) {
+            await creatAlbumImg(element);
+        });
+        $(".artistImg").each(async function (index, element) {
+            await creatArtistImg(element);
+        });
+        //getImages();
+    });
+</script>
+
+
+<div class="row mt-5">
+    <div class="col-md-5 mt-3">
+        <div class="mb-5 mr-4">
+            <a class="img-link" asp-controller="Artists" asp-action="Details" asp-route-id="@Model.ArtistID">
+                <img id="ArtistImg" class="rounded-circle z-depth-2 shadow" alt="@Model.ArtistName" src=""
+                     data-holder-rendered="true">
+            </a>
+        </div>
+
+    </div>
+    <div class="col-md-7 mt-3">
+        <h1 class="font-weight-bold">@Model.ArtistName</h1>
+        <div class="row">
+            <div class="col-md-3 mt-4">
+                <h3 class="font-weight-bold">Genre</h3>
+                <h3 class="font-weight-bold">Rated</h3>
+                <h3 class="font-weight-bold">Born in</h3>
+            </div>
+            <div class="col-md-8 mt-4">
+                <h3>@Model.Genre</h3>
+                <h3>@Model.AvgRate</h3>
+                <h3>@Model.BirthPlace</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-8 mt-5" id="bio" alt="@Model.ArtistName"></div>
+    <div class="youtube-video col-md-4 w-100" alt="@Model.ArtistName"></div>
+</div>
+
+<!--omer-->
+@*<div class=row>
+        <div class="col-md-8">
+            <div id="demo" class="carousel slide" data-ride="carousel">
+                 Left and right controls
+                <a class="carousel-control-prev" href="#demo" data-slide="prev" style="z-index: 2000;">
+                    <span class="carousel-control-prev-icon"></span>
+                </a>
+                <a class="carousel-control-next" href="#demo" data-slide="next" style="z-index: 2000;">
+                    <span class="carousel-control-next-icon"></span>
+                </a>
+                 Indicators
+                <ul class="carousel-indicators">
+                    <li data-target="#demo" data-slide-to="0" class="active indicator"></li>
+                    <li data-target="#demo" data-slide-to="1" class="indicator"></li>
+                    <li data-target="#demo" data-slide-to="2" class='indicator'></li>
+                    <li data-target="#demo" data-slide-to="3" class='indicator'></li>
+                </ul>
+
+                 The slideshow
+                <div class="carousel-inner slideshow-box">
+                    <div class="carousel-item active album-div">
+                        <div class="background" id="slide-bg-0"></div>
+                        <div class='content'>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-4">
+                                    <img class='album-img' id="slide-0">
+                                </div>
+                                <div class="col-md-6 info">
+                                    <p class='album-title' id="title-0">Is This It</p>
+                                    <p class="additional-info" id="add-0">Rock, 2001</p>
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item album-div">
+                        <div class="background" id="slide-bg-1"></div>
+                        <div class='content'>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-4">
+                                    <img class='album-img' id="slide-1">
+                                </div>
+                                <div class="col-md-6 info">
+                                    <p class='album-title' id="title-1">Room on Fire</p>
+                                    <p class="additional-info">Rock, 2003</p>
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item album-div">
+                        <div class="background" id="slide-bg-2"></div>
+                        <div class='content'>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-4">
+                                    <img class='album-img' id="slide-2">
+                                </div>
+                                <div class="col-md-6 info">
+                                    <p class='album-title' id="title-2">First Impressions of Earth</p>
+                                    <p class="additional-info">Rock, 2005</p>
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item album-div">
+                        <div class="background" id="slide-bg-3"></div>
+                        <div class='content'>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-4">
+                                    <img class='album-img' id="slide-3">
+                                </div>
+                                <div class="col-md-6 info">
+                                    <p class='album-title' id="title-3">Angles</p>
+                                    <p class="additional-info">Rock, 2011</p>
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+<!--omer-->
+<h2 class="font-weight-bold mb-5 ">Albums</h2>
+<div class="row">
+    <div class="col-md-7 w-100 mx-auto">
+        <section id="albums">
+            <div id="demo" class="carousel slide" data-ride="carousel">
+
+                @*Indicators*@
+
+                <ul class="carousel-indicators">
+
+                    @for (int i = 0; i < 4; i++)
+                    {
+                        if (i == 0)
+                        {
+                            <li data-target="#demo" data-slide-to="0" class="active"></li>
+
+                        }
+                        else
+                        {
+                            <li data-target="#demo" data-slide-to="@i"></li>
+
+                        }
+
+                    }
+                </ul>
+                @*The slideshow*@
+                <div class="carousel-inner">
+                    @foreach (Album a in Model.Albums)
+                    {
+                        if (a.Equals(Model.Albums.First()))
+                        {
+                            <div class="carousel-item active">
+                                <img class="albumImg w-100 mb-2 shadow slideShowImg" alt="@a.ArtistName" title="@a.AlbumTitle" src=""
+                                     data-holder-rendered="true">
+
+                                <div class="carousel-caption mr-3">
+                                    <h2>"@a.AlbumTitle"</h2>
+                                    <p>@a.Genre,@a.ReleaseDate.Year</p>
+                                </div>
+                            </div>
+                        }
+                        else
+                        { <div class="carousel-item">
+                                <img class="albumImg w-100 mb-2 shadow" alt="@a.ArtistName" title="@a.AlbumTitle" src=""
+                                     data-holder-rendered="true">
+
+                                <div class="carousel-caption mr-3">
+                                    <h2>"@a.AlbumTitle"</h2>
+                                    <p>@a.Genre,@a.ReleaseDate.Year</p>
+                                </div>
+                            </div>
+                        }
+                    }
+
+                </div>
+
+                @*Left and right controls*@
+                <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </a>
+                <a class="carousel-control-next" href="#demo" data-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </a>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div class="row mt-5">
+
+    <div class="col-md-5">
+        <h2 class="font-weight-bold">Artists You Might Like</h2>
+        <div class="row mt-5 mb-5">
+            @for (var i = 0; i < 4; i++)
+            {
+                <div class="col-md-6">
+                    <div class="mb-5 mr-4">
+                        <a class="img-link" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.ArtistsYouMightLike[i].ArtistID">
+                            <img class="artistImg rounded-circle z-depth-2 w-100 shadow" alt="@ViewBag.ArtistsYouMightLike[i].ArtistName" src=""
+                                 data-holder-rendered="true">
+                        </a>
+                        <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.ArtistsYouMightLike[i].ArtistID">@ViewBag.ArtistsYouMightLike[i].ArtistName</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <aside class="map col-md-7">
+        <h2 class="font-weight-bold text-center mr-4">Artist's Location</h2>
+        <div id="google-map" class="mx-auto mt-4 "></div>
+    </aside>
+</div>
+
+
 
 <div>
-    <h4>Artist</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ArtistName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ArtistName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BirthPlace)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BirthPlace)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Genre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Genre)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AvgRate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AvgRate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PageViews)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PageViews)
-        </dd>
-    </dl>
-</div>
-<div>
     @if ((await AuthorizationService.AuthorizeAsync(
-   User, Model,
-   Operations.Update)).Succeeded)
+User, Model,
+Operations.Update)).Succeeded)
     {
         <a class="text-muted" asp-action="Edit" asp-route-id="@Model.ArtistID">Edit</a>
         <text> | </text>
@@ -57,7 +383,7 @@
     @if (Model.Status != ArtistStatus.Approved)
     {
         @if ((await AuthorizationService.AuthorizeAsync(
-        User, Model, Operations.Approve)).Succeeded)
+User, Model, Operations.Approve)).Succeeded)
         {
             <form style="display:inline;" method="post">
                 <input type="hidden" name="id" value="@Model.ArtistID" />
@@ -70,7 +396,7 @@
     @if (Model.Status != ArtistStatus.Rejected)
     {
         @if ((await AuthorizationService.AuthorizeAsync(
-        User, Model, Operations.Reject)).Succeeded)
+User, Model, Operations.Reject)).Succeeded)
         {
             <form style="display:inline;" method="post">
                 <input type="hidden" name="id" value="@Model.ArtistID" />
@@ -80,3 +406,4 @@
         }
     }
 </div>
+
