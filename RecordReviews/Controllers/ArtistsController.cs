@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Newtonsoft.Json;
 using RecordReviews.Authorization;
 using RecordReviews.Data;
 using RecordReviews.Models;
@@ -17,7 +19,7 @@ namespace RecordReviews.Controllers
     public class ArtistsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private IAuthorizationService _authorizationService;
+        private readonly IAuthorizationService _authorizationService;
         private readonly UserManager<IdentityUser> _userManager;
 
         public ArtistsController(ApplicationDbContext context,
@@ -66,7 +68,6 @@ namespace RecordReviews.Controllers
             {
                 return NotFound();
             }
-
             var artist = await _context.Artists
                 .Include(a=>a.Albums).ThenInclude(a=>a.Reviews).FirstOrDefaultAsync(m => m.ArtistID == id);
             if (artist == null)
@@ -84,9 +85,50 @@ namespace RecordReviews.Controllers
             {
                 return Forbid();
             }
-            ViewBag.ArtistsYouMightLike = _context.Artists.OrderByDescending(a => a.AvgRate).ToList();
             artist.PageViews++;
-            
+
+           
+            if (HttpContext.Session.GetString("LastArtists") != null)
+            {
+                var artistList = JsonConvert.DeserializeObject<Artist[]>(HttpContext.Session.GetString("LastArtists")).ToList();
+                if (artistList.Count == 10)
+                {
+                    artistList.RemoveAt(artistList.Count - 1);
+                }
+                artistList.Insert(0, artist);
+                var lastArtists = new Artist[artistList.Count];
+                for (int i = 0; i < artistList.Count; i++)
+                {
+                    var tmpArtist = artistList.ElementAt(i);
+                    lastArtists[i] = new Artist
+                    {
+                        ArtistName = tmpArtist.ArtistName,
+                        Genre = tmpArtist.Genre,
+                        ArtistID = tmpArtist.ArtistID,
+                        AvgRate = tmpArtist.AvgRate,
+                        BirthPlace = tmpArtist.BirthPlace,
+                        PageViews = tmpArtist.PageViews
+                    };
+                }
+                HttpContext.Session.SetString("LastArtists", JsonConvert.SerializeObject(lastArtists));
+            }
+            else
+            {
+                var lastArtists =  new []
+                {
+                    new Artist{
+                    ArtistName = artist.ArtistName,
+                    Genre = artist.Genre,
+                    ArtistID = artist.ArtistID,
+                    AvgRate = artist.AvgRate,
+                    BirthPlace = artist.BirthPlace,
+                    PageViews = artist.PageViews
+                    }
+                };
+                HttpContext.Session.SetString("LastArtists", JsonConvert.SerializeObject(lastArtists));
+            }
+
+            ViewBag.ArtistsYouMightLike = GetRecommended();
             return View(artist);
         }
 
@@ -314,6 +356,25 @@ namespace RecordReviews.Controllers
         private bool ArtistExists(int id)
         {
             return _context.Artists.Any(e => e.ArtistID == id);
+        }
+
+        public IEnumerable<Artist> GetRecommended()
+        {
+            if (HttpContext.Session.GetString("LastArtists") != null)
+            {
+                var artistList = JsonConvert.DeserializeObject<Artist[]>(HttpContext.Session.GetString("LastArtists"));
+                var visits = artistList.AsQueryable();
+                var Genre = visits.GroupBy(artist => artist.Genre)
+                    .OrderByDescending(group => group.Count())
+                    .First().Key;
+
+                var recommendedArtist = _context.Artists.Where(artist => artist.Genre == Genre).OrderBy(album => Guid.NewGuid())
+                    .AsEnumerable();
+
+                return recommendedArtist;
+            }
+
+            return null;
         }
     }
 }

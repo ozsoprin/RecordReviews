@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Newtonsoft.Json;
 using RecordReviews.Data;
 using RecordReviews.Models;
 using RecordReviews.Authorization;
@@ -17,7 +20,7 @@ namespace RecordReviews.Controllers
     public class AlbumsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private IAuthorizationService _authorizationService;
+        private readonly IAuthorizationService _authorizationService;
         private readonly UserManager<IdentityUser> _userManager;
 
         public AlbumsController(ApplicationDbContext context,
@@ -36,7 +39,6 @@ namespace RecordReviews.Controllers
             var albums = _context.Albums.Include(a => a.Artist).Select(r => r);
             var isAuthorized = User.IsInRole(Constants.ManagersRole) ||
                                User.IsInRole(Constants.AdministratorsRole);
-
             var currentUserId = _userManager.GetUserId(User);
             if (!isAuthorized)
             {
@@ -85,7 +87,51 @@ namespace RecordReviews.Controllers
                 ?.Reviews.ToList();
             ViewBag.AlbumYouMightLike = _context.Albums.OrderByDescending(a => a.AvgRate).ToList();
             album.PageViews++;
-            
+
+            if (HttpContext.Session.GetString("LastAlbums") != null)
+            {
+                var albumlist = JsonConvert.DeserializeObject<Album[]>(HttpContext.Session.GetString("LastAlbums")).ToList();
+                if (albumlist.Count == 10)
+                {
+                    albumlist.RemoveAt(albumlist.Count - 1);
+                }
+                albumlist.Insert(0, album);
+                var lastAlbums = new Album[albumlist.Count];
+                for (int i = 0; i < albumlist.Count; i++)
+                {
+                    var tmpAlbum = albumlist.ElementAt(i);
+                    lastAlbums[i] = new Album()
+                    {
+                        AlbumId = tmpAlbum.AlbumId,
+                        AlbumTitle = tmpAlbum.AlbumTitle,
+                        ArtistName = tmpAlbum.ArtistName,
+                        Genre = tmpAlbum.Genre,
+                        ArtistId = tmpAlbum.ArtistId,
+                        AvgRate = tmpAlbum.AvgRate,
+                        PageViews = tmpAlbum.PageViews
+                    };
+                }
+                HttpContext.Session.SetString("LastAlbums", JsonConvert.SerializeObject(lastAlbums));
+            }
+            else
+            {
+                var lastAlbums = new[]
+                {
+                    new Album(){
+                        AlbumId = album.AlbumId,
+                        AlbumTitle = album.AlbumTitle,
+                        ArtistName = album.ArtistName,
+                        Genre = album.Genre,
+                        ArtistId = album.ArtistId,
+                        AvgRate = album.AvgRate,
+                        PageViews = album.PageViews
+                    }
+                };
+                HttpContext.Session.SetString("LastAlbums", JsonConvert.SerializeObject(lastAlbums));
+            }
+
+            ViewBag.AlbumYouMightLike = GetRecommended();
+
             return View(album);
         }
 
@@ -351,6 +397,25 @@ namespace RecordReviews.Controllers
         private bool AlbumExists(int id)
         {
             return _context.Albums.Any(e => e.AlbumId == id);
+        }
+
+        public IEnumerable<Album> GetRecommended()
+        {
+            if (HttpContext.Session.GetString("LastAlbums") != null)
+            {
+                var albumList = JsonConvert.DeserializeObject<Album[]>(HttpContext.Session.GetString("LastAlbums"));
+                var visits = albumList.AsQueryable();
+                var Genre = visits.GroupBy(a => a.Genre)
+                    .OrderByDescending(group => group.Count())
+                    .First().Key;
+
+                var recommendedAlbums = _context.Albums.Where(a => a.Genre == Genre).OrderBy(album => Guid.NewGuid())
+                    .AsEnumerable();
+
+                return recommendedAlbums;
+            }
+
+            return null;
         }
     }
 }

@@ -25,7 +25,6 @@ namespace RecordReviews.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
-
             ViewBag.Top10Artists = _context.Artists.OrderByDescending(a => a.AvgRate).Take(10).ToList();
             ViewBag.Top10Albums = _context.Albums.OrderByDescending(a => a.AvgRate).Take(10).ToList();
             var topUsers = _context.Reviews.GroupBy(r => r.User.Id)
