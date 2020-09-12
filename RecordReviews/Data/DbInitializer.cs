@@ -197,7 +197,7 @@ namespace RecordReviews.Data
                 new Artist {ArtistName = "Drake",BirthPlace = "Canada", Genre = "Rap"},
                 new Artist {ArtistName = "Ariana Grande",BirthPlace = "United States", Genre = "Pop"},
                 new Artist {ArtistName = "Kendrick Lamar",BirthPlace = "United States", Genre = "Rap"},
-                new Artist {ArtistName = "Bruno Mars",BirthPlace = "United States", Genre = "Rap"},
+                new Artist {ArtistName = "Bruno Mars",BirthPlace = "United States", Genre = "Pop"},
                 new Artist {ArtistName = "Shakira",BirthPlace = "Colombia", Genre = "Pop"},
             };
             foreach (var artist in artists)

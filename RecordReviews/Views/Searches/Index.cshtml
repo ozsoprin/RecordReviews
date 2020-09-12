@@ -143,10 +143,10 @@
 <!--results section start-->
 <section class="mt-5">
     @{
-        if (TempData["Results"] != null)
+        if (ViewBag.Type != null)
         {
             <h2>Results</h2>
-            var type = (string)TempData["type"];
+            var type = (string)ViewBag.Type;
             if (type == "Artist")
             {
                 <div class="table-responsive-md">
@@ -166,7 +166,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in (List<Artist>)TempData["Results"])
+                            @foreach (var item in (List<Artist>)ViewBag.Results)
                             {
                                 <tr>
                                     <td>
@@ -179,9 +179,23 @@
                                         @item.AvgRate
                                     </td>
                                     <td>
-                                        <a class="text-muted" asp-action="Edit" asp-route-id="@item.ArtistID">Edit</a> |
-                                        <a class="text-muted" asp-action="Details" asp-route-id="@item.ArtistID">Details</a> |
-                                        <a class="text-muted" asp-action="Delete" asp-route-id="@item.ArtistID">Delete</a>
+                                        @if ((await AuthorizationService.AuthorizeAsync(
+                                            User, item,
+                                            Operations.Update)).Succeeded)
+                                        {
+                                            <a class="text-muted" asp-action="Edit" asp-route-id="@item.ArtistID">Edit</a>
+                                            <text> | </text>
+                                        }
+
+                                        <a class="text-muted" asp-action="Details" asp-route-id="@item.ArtistID">Details</a>
+
+                                        @if ((await AuthorizationService.AuthorizeAsync(
+                                            User, item,
+                                            Operations.Delete)).Succeeded)
+                                        {
+                                            <text> | </text>
+                                            <a class="text-muted" asp-action="Delete" asp-route-id="@item.ArtistID">Delete</a>
+                                        }
                                     </td>
                                 </tr>
                             }
@@ -214,7 +228,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in (List<Album>)TempData["Results"])
+                            @foreach (var item in (List<Album>)ViewBag.Results)
                             {
                                 <tr>
                                     <td>
@@ -236,9 +250,23 @@
                                         @item.AvgRate
                                     </td>
                                     <td>
-                                        <a class="text-muted" asp-action="Edit" asp-route-id="@item.AlbumId">Edit</a> |
-                                        <a class="text-muted" asp-action="Details" asp-route-id="@item.AlbumId">Details</a> |
-                                        <a class="text-muted" asp-action="Delete" asp-route-id="@item.AlbumId">Delete</a>
+                                        @if ((await AuthorizationService.AuthorizeAsync(
+                                           User, item,
+                                           Operations.Update)).Succeeded)
+                                        {
+                                            <a class="text-muted" asp-action="Edit" asp-route-id="@item.AlbumId">Edit</a>
+                                            <text> | </text>
+                                        }
+
+                                        <a class="text-muted" asp-action="Details" asp-route-id="@item.AlbumId">Details</a>
+
+                                        @if ((await AuthorizationService.AuthorizeAsync(
+                                           User, item,
+                                           Operations.Delete)).Succeeded)
+                                        {
+                                            <text> | </text>
+                                            <a class="text-muted" asp-action="Delete" asp-route-id="@item.AlbumId">Delete</a>
+                                        }
                                     </td>
                                 </tr>
                             }
@@ -268,7 +296,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in (List<Review>)TempData["Results"])
+                            @foreach (var item in (List<Review>)ViewBag.Results)
                             {
                                 <tr>
                                     <td>
@@ -287,9 +315,23 @@
                                         @Html.DisplayFor(modelItem => time)
                                     </td>
                                     <td>
-                                        <a class="text-muted" asp-action="Edit" asp-route-id="@item.ReviewId">Edit</a> |
-                                        <a class="text-muted" asp-action="Details" asp-route-id="@item.ReviewId">Details</a> |
-                                        <a class="text-muted" asp-action="Delete" asp-route-id="@item.ReviewId">Delete</a>
+                                        @if ((await AuthorizationService.AuthorizeAsync(
+                                            User, item,
+                                            Operations.Update)).Succeeded)
+                                        {
+                                            <a class="text-muted" asp-action="Edit" asp-route-id="@item.ReviewId">Edit</a>
+                                            <text> | </text>
+                                        }
+
+                                        <a class="text-muted" asp-action="Details" asp-route-id="@item.ReviewId">Details</a>
+
+                                        @if ((await AuthorizationService.AuthorizeAsync(
+                                            User, item,
+                                            Operations.Delete)).Succeeded)
+                                        {
+                                            <text> | </text>
+                                            <a class="text-muted" asp-action="Delete" asp-route-id="@item.ReviewId">Delete</a>
+                                        }
                                     </td>
                                 </tr>
                             }

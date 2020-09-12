@@ -27,7 +27,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-@*<script>
+<script>
         function getVideo() {
             var keyword = $(".youtube-video").attr('alt');
             var GoogleKey = 'AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c';
@@ -48,7 +48,7 @@
                 });
 
         }
-    </script>*@
+    </script>
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -89,7 +89,7 @@
 <!--scripts for google map start-->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c&callback=initMap&libraries=&v=weekly"
             async defer></script>
-    @*<script>
+    <script>
         var GoogleKey = 'AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c';
         function initMap() {
                   var options = {
@@ -105,7 +105,7 @@
                         }
                     });
         }
-    </script>*@
+    </script>
 <!--script for google map end-->
 <!--omer-->
 @*<script>
@@ -139,7 +139,7 @@
             await creatArtistImg(element);
         });
         getBioArtist();
-        //getVideo();
+        getVideo();
         $(".albumImg").each(async function (index, element) {
             await creatAlbumImg(element);
         });
@@ -346,7 +346,7 @@
     <div class="col-md-5">
         <h2 class="font-weight-bold">Artists You Might Like</h2>
         <div class="row mt-5 mb-5">
-            @for (var i = 0; i < 4; i++)
+            @for (var i = 0; i < 2; i++)
             {
                 <div class="col-md-6">
                     <div class="mb-5 mr-4">

@@ -71,6 +71,37 @@ namespace RecordReviews.Models
             AvgRate = count !=0 ? Math.Round(sum / count, 2) : 0;
         }
 
+        public DateTime FindEarliestAlbum()
+        {
+            var earliestAlbumDateTime = DateTime.MaxValue;
+            
+            foreach (var album in Albums)
+            {
+                if (album.ReleaseDate < earliestAlbumDateTime)
+                {
+                    earliestAlbumDateTime = album.ReleaseDate;
+                }
+            }
+
+            return earliestAlbumDateTime;
+        }
+
+        public DateTime FindLastAlbum()
+        {
+            var lastAlbumDateTime = DateTime.MinValue;
+
+            foreach (var album in Albums)
+            {
+                if (album.ReleaseDate > lastAlbumDateTime)
+                {
+                    lastAlbumDateTime = album.ReleaseDate;
+                }
+            }
+
+            return lastAlbumDateTime;
+        }
+
+
         public ArtistStatus Status { get; set; }
 
         public string OwnerID { get; set; }
