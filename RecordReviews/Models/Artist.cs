@@ -101,6 +101,17 @@ namespace RecordReviews.Models
             return lastAlbumDateTime;
         }
 
+        public List<Review> GetReviews()
+        {
+            var reviewList = new List<Review>();
+
+            foreach (var album in Albums)
+            {
+                reviewList.AddRange(album.Reviews);
+            }
+
+            return reviewList;
+        }
 
         public ArtistStatus Status { get; set; }
 

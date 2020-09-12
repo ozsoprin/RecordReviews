@@ -129,6 +129,8 @@ namespace RecordReviews.Controllers
             }
 
             ViewBag.ArtistsYouMightLike = GetRecommended().ToArray();
+            ViewBag.ReviewesForArtist = artist.GetReviews();
+
             return View(artist);
         }
 
