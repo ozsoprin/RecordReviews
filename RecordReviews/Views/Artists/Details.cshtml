@@ -28,27 +28,27 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 @*<script>
-    function getVideo() {
-        var keyword = $(".youtube-video").attr('alt');
-        var GoogleKey = 'AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c';
-        var url = encodeURI("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&type=video&q=" +
-            keyword +
-            "&key=" +
-            GoogleKey);
-        $.getJSON(url,
-            function (json) {
-                var videoId = json.items[0].id.videoId;
-                var embed = "https://www.youtube.com/embed/" + videoId;
+        function getVideo() {
+            var keyword = $(".youtube-video").attr('alt');
+            var GoogleKey = 'AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c';
+            var url = encodeURI("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&type=video&q=" +
+                keyword +
+                "&key=" +
+                GoogleKey);
+            $.getJSON(url,
+                function (json) {
+                    var videoId = json.items[0].id.videoId;
+                    var embed = "https://www.youtube.com/embed/" + videoId;
 
-                var iframe = "<iframe width='450px' height='293px' src='" +
-                    embed +
-                    "' frameborder='0' allow='accelerometer; autoplay; encrrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+                    var iframe = "<iframe width='450px' height='293px' src='" +
+                        embed +
+                        "' frameborder='0' allow='accelerometer; autoplay; encrrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
 
-                $(".youtube-video").html(iframe);
-            });
+                    $(".youtube-video").html(iframe);
+                });
 
-    }
-</script>*@
+        }
+    </script>*@
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -121,7 +121,7 @@
         $(".artistImg").each(async function (index, element) {
             await creatArtistImg(element);
         });
-        
+
     });
 </script>
 
@@ -130,7 +130,7 @@
     <div class="col-md-5 mt-3" style="margin: auto;">
         <div class="mb-5 mr-4">
             <img id="ArtistImg" class="rounded-circle z-depth-2 shadow" alt="@Model.ArtistName" src=""
-                 data-holder-rendered="true"> 
+                 data-holder-rendered="true">
         </div>
 
     </div>
@@ -157,98 +157,108 @@
 </div>
 
 
+
 <div class="row mb-5">
-    <div class="col-md-6 w-100 ">
-        <h2 class="font-weight-bold mb-5 ">Albums</h2>
-        <section id="albums">
-            <div id="demo" class="carousel slide" data-ride="carousel">
+    @if (Model.Albums.Count != 0)
+    {
+        <div class="col-md-6 w-100 ">
+            <h2 class="font-weight-bold mb-5 ">Albums</h2>
+            <section id="albums">
+                <div id="demo" class="carousel slide" data-ride="carousel">
 
-                @*Indicators*@
+                    @*Indicators*@
 
-                <ul class="carousel-indicators">
+                    <ul class="carousel-indicators">
 
-                    @for (int i = 0; i < 4; i++)
-                    {
-                        if (i == 0)
+                        @for (int i = 0; i < 4; i++)
                         {
-                            <li data-target="#demo" data-slide-to="0" class="active"></li>
+                            if (i == 0)
+                            {
+                                <li data-target="#demo" data-slide-to="0" class="active"></li>
+
+                            }
+                            else
+                            {
+                                <li data-target="#demo" data-slide-to="@i"></li>
+
+                            }
 
                         }
-                        else
+                    </ul>
+                    @*The slideshow*@
+                    <div class="carousel-inner">
+                        @foreach (Album a in Model.Albums)
                         {
-                            <li data-target="#demo" data-slide-to="@i"></li>
-
-                        }
-
-                    }
-                </ul>
-                @*The slideshow*@
-                <div class="carousel-inner">
-                    @foreach (Album a in Model.Albums)
-                    {
-                        if (a.Equals(Model.Albums.First()))
-                        {
-                            <div class="carousel-item active">
-                                <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@a.AlbumId">
-                                    <img class="albumImg w-100 mb-2 shadow slideShowImg" style="opacity:0.5;" alt="@a.ArtistName" title="@a.AlbumTitle" src=""
-                                         data-holder-rendered="true">
-                                </a>
-                                <div class="carousel-caption mr-3" style="color:black;">
-                                    <h2 class="font-weight-bold">"@a.AlbumTitle"</h2>
-                                    <p class="font-weight-bold">@a.Genre,@a.ReleaseDate.Year</p>
+                            if (a.Equals(Model.Albums.First()))
+                            {
+                                <div class="carousel-item active">
+                                    <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@a.AlbumId">
+                                        <img class="albumImg w-100 mb-2 shadow slideShowImg" style="opacity:0.5;" alt="@a.ArtistName" title="@a.AlbumTitle" src=""
+                                             data-holder-rendered="true">
+                                    </a>
+                                    <div class="carousel-caption mr-3" style="color:black;">
+                                        <h2 class="font-weight-bold">"@a.AlbumTitle"</h2>
+                                        <p class="font-weight-bold">@a.Genre,@a.ReleaseDate.Year</p>
+                                    </div>
                                 </div>
-                            </div>
 
-                        }
-                        else
-                        {
-                            <div class="carousel-item">
-                                <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@a.AlbumId">
-                                    <img class="albumImg w-100 mb-2 shadow slideShowImg" style="opacity:0.5;" alt="@a.ArtistName" title="@a.AlbumTitle" src=""
-                                         data-holder-rendered="true">
-                                </a>
+                            }
+                            else
+                            {
+                                <div class="carousel-item">
+                                    <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@a.AlbumId">
+                                        <img class="albumImg w-100 mb-2 shadow slideShowImg" style="opacity:0.5;" alt="@a.ArtistName" title="@a.AlbumTitle" src=""
+                                             data-holder-rendered="true">
+                                    </a>
 
-                                <div class="carousel-caption mr-3 font-weight-bold" style="color:black;">
-                                    <h2 class="font-weight-bold">"@a.AlbumTitle"</h2>
-                                    <p class="font-weight-bold">@a.Genre,@a.ReleaseDate.Year</p>
+                                    <div class="carousel-caption mr-3 font-weight-bold" style="color:black;">
+                                        <h2 class="font-weight-bold">"@a.AlbumTitle"</h2>
+                                        <p class="font-weight-bold">@a.Genre,@a.ReleaseDate.Year</p>
+                                    </div>
                                 </div>
-                            </div>
+                            }
                         }
-                    }
 
-                </div>
-
-                @*Left and right controls*@
-                <a class="carousel-control-prev" href="#demo" data-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                </a>
-                <a class="carousel-control-next" href="#demo" data-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                </a>
-            </div>
-        </section>
-    </div>
-
-    <div class="col-md-6">
-        <h2 class="font-weight-bold mb-5">Artists You Might Like</h2>
-        <div class="row mt-5 mb-5">
-            @for (var i = 0; i < 2; i++)
-            {
-                <div class="col-md-6">
-                    <div class="mb-5 mr-4">
-                        <a class="img-link" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.ArtistsYouMightLike[i].ArtistID">
-                            <img class="artistImg rounded-circle z-depth-2 w-100 shadow" alt="@ViewBag.ArtistsYouMightLike[i].ArtistName" src=""
-                                 data-holder-rendered="true">
-                        </a>
-                        <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.ArtistsYouMightLike[i].ArtistID">@ViewBag.ArtistsYouMightLike[i].ArtistName</a>
                     </div>
+
+                    @*Left and right controls*@
+                    <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </a>
+                    <a class="carousel-control-next" href="#demo" data-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </a>
                 </div>
-            }
+            </section>
         </div>
-    </div>
+    }
+    @if (ViewBag.ArtistsYouMightLike.Count != 0)
+    {
+        <div class="col-md-6">
+            <h2 class="font-weight-bold mb-5">Artists You Might Like</h2>
+            <div class="row mt-5 mb-5">
+                @for (var i = 0; i < 2; i++)
+                {
+                    <div class="col-md-6">
+                        <div class="mb-5 mr-4">
+                            <a class="img-link" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.ArtistsYouMightLike[i].ArtistID">
+                                <img class="artistImg rounded-circle z-depth-2 w-100 shadow" alt="@ViewBag.ArtistsYouMightLike[i].ArtistName" src=""
+                                     data-holder-rendered="true">
+                            </a>
+                            <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.ArtistsYouMightLike[i].ArtistID">@ViewBag.ArtistsYouMightLike[i].ArtistName</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+    }
 
 </div>
-<h2 class="font-weight-bold mb-5">Reviews on @Model.ArtistName's Albums</h2>
+
+@if (ViewBag.ReviewesForArtist.Count != 0)
+{
+    <h2 class="font-weight-bold mb-5">Reviews on @Model.ArtistName's Albums</h2>
     <div class="table-responsive-md mb-5">
         <table class="table">
             <thead>
@@ -285,52 +295,54 @@
                 }
             </tbody>
         </table>
+    </div>
+}
+
+@*<div class="row mt-5">
+        <aside class="map col-md-7">
+            <h2 class="font-weight-bold text-center mr-4">Artist's Location</h2>
+            <div id="google-map" class="mx-auto mt-4 "></div>
+        </aside>
+    </div>*@
+
+
+
+<div>
+    @if ((await AuthorizationService.AuthorizeAsync(
+User, Model,
+Operations.Update)).Succeeded)
+    {
+        <a class="text-muted" asp-action="Edit" asp-route-id="@Model.ArtistID">Edit</a>
+        <text> | </text>
+    }
+    <a class="text-muted" asp-action="Index">Back to Artists</a>
 </div>
-    @*<div class="row mt-5">
-            <aside class="map col-md-7">
-                <h2 class="font-weight-bold text-center mr-4">Artist's Location</h2>
-                <div id="google-map" class="mx-auto mt-4 "></div>
-            </aside>
-        </div>*@
 
-
-
-    <div>
+<div>
+    @if (Model.Status != ArtistStatus.Approved)
+    {
         @if ((await AuthorizationService.AuthorizeAsync(
-   User, Model,
-   Operations.Update)).Succeeded)
+User, Model, Operations.Approve)).Succeeded)
         {
-            <a class="text-muted" asp-action="Edit" asp-route-id="@Model.ArtistID">Edit</a>
-            <text> | </text>
+            <form style="display:inline;" method="post">
+                <input type="hidden" name="id" value="@Model.ArtistID" />
+                <input type="hidden" name="status" value="@ArtistStatus.Approved" />
+                <button type="submit" class="btn btn-xs btn-success">Approve</button>
+            </form>
         }
-        <a class="text-muted" asp-action="Index">Back to Artists</a>
-    </div>
+    }
 
-    <div>
-        @if (Model.Status != ArtistStatus.Approved)
+    @if (Model.Status != ArtistStatus.Rejected)
+    {
+        @if ((await AuthorizationService.AuthorizeAsync(
+User, Model, Operations.Reject)).Succeeded)
         {
-            @if ((await AuthorizationService.AuthorizeAsync(
-   User, Model, Operations.Approve)).Succeeded)
-            {
-                <form style="display:inline;" method="post">
-                    <input type="hidden" name="id" value="@Model.ArtistID" />
-                    <input type="hidden" name="status" value="@ArtistStatus.Approved" />
-                    <button type="submit" class="btn btn-xs btn-success">Approve</button>
-                </form>
-            }
+            <form style="display:inline;" method="post">
+                <input type="hidden" name="id" value="@Model.ArtistID" />
+                <input type="hidden" name="status" value="@ArtistStatus.Rejected" />
+                <button type="submit" class="btn btn-xs btn-danger">Reject</button>
+            </form>
         }
-
-        @if (Model.Status != ArtistStatus.Rejected)
-        {
-            @if ((await AuthorizationService.AuthorizeAsync(
-   User, Model, Operations.Reject)).Succeeded)
-            {
-                <form style="display:inline;" method="post">
-                    <input type="hidden" name="id" value="@Model.ArtistID" />
-                    <input type="hidden" name="status" value="@ArtistStatus.Rejected" />
-                    <button type="submit" class="btn btn-xs btn-danger">Reject</button>
-                </form>
-            }
-        }
-    </div>
+    }
+</div>
 

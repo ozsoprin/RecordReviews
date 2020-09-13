@@ -388,7 +388,7 @@ namespace RecordReviews.Data
                 var type = rand.Next() % 3;
                 foreach (var user in UserList)
                 {
-                    if(rand.Next() % 4 == 0) continue;
+                    if(rand.Next() % 4 == 0 || user.Email==null) continue;
                     ReviewGenerator.GenerateReview(context, album, user, type, adminID);
                 }
             }

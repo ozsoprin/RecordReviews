@@ -46,29 +46,29 @@
 </script>
 
 @*<script>
-    function getVideo() {
-        var artist = $(".youtube-video").attr('alt');
-        var title = $(".youtube-video").attr('title');
-        var keyword = title + " " + artist;
-        var GoogleKey = 'AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c';
-        var url = encodeURI("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&type=video&q=" +
-            keyword +
-            "&key=" +
-            GoogleKey);
-        $.getJSON(url,
-            function (json) {
-                var videoId = json.items[0].id.videoId;
-                var embed = "https://www.youtube.com/embed/" + videoId;
+        function getVideo() {
+            var artist = $(".youtube-video").attr('alt');
+            var title = $(".youtube-video").attr('title');
+            var keyword = title + " " + artist;
+            var GoogleKey = 'AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c';
+            var url = encodeURI("https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&type=video&q=" +
+                keyword +
+                "&key=" +
+                GoogleKey);
+            $.getJSON(url,
+                function (json) {
+                    var videoId = json.items[0].id.videoId;
+                    var embed = "https://www.youtube.com/embed/" + videoId;
 
-                var iframe = "<iframe width='450px' height='293px' src='" +
-                    embed +
-                    "' frameborder='0' allow='accelerometer; autoplay; encrrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+                    var iframe = "<iframe width='450px' height='293px' src='" +
+                        embed +
+                        "' frameborder='0' allow='accelerometer; autoplay; encrrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
 
-                $(".youtube-video").html(iframe);
-            });
+                    $(".youtube-video").html(iframe);
+                });
 
-    }
-</script>*@
+        }
+    </script>*@
 <script>
     function strPadLeft(string, padding, length) {
         return (new Array(length + 1).join(padding) + string).slice(-length);
@@ -100,17 +100,25 @@
             LastFmKey +
             "&autocorrect=1&format=json",
             function (json) {
-                json.album.tracks.track.forEach(function (song) {
-                    this.sum += Number(song.duration);
-                    $("#tracklist").append("<tr><td>" + song.name + "</td><td>" + secondsToTime(song.duration) + "</td></tr>");
-                }, util);
-                $("#totalDuration").append("<tr class=table-secondary><td><b>Total Duration<b></td>" +
-                    "<td>" +
-                    "<b>" +
-                    secondsToTime(util.sum) +
-                    "</b>" +
-                    "</td>" +
-                    "</tr>");
+                if (json.album.tracks.track.length != 0) {
+                    $("#reviews-full").hide();
+                    json.album.tracks.track.forEach(function (song) {
+                        this.sum += Number(song.duration);
+                        $("#tracklist").append("<tr><td>" + song.name + "</td><td>" + secondsToTime(song.duration) + "</td></tr>");
+                    }, util);
+                    $("#totalDuration").append("<tr class=table-secondary><td><b>Total Duration<b></td>" +
+                        "<td>" +
+                        "<b>" +
+                        secondsToTime(util.sum) +
+                        "</b>" +
+                        "</td>" +
+                        "</tr>");
+                }
+
+                else {
+                    $("#tracks-aside").hide();
+                    $("#reviews-aside").hide();
+                }
             });
     }
 
@@ -183,7 +191,7 @@
     <div class="youtube-video col-md-4 w-100" alt="@Model.ArtistName" title="@Model.AlbumTitle"></div>
 </div>
 
-<aside>
+<aside id="tracks-aside">
     <h2 class="font-weight-bold mb-5">Track List</h2>
     <section>
         <table class="table table-striped">
@@ -199,62 +207,113 @@
     </section>
 </aside>
 
-<h2 class="font-weight-bold mb-5">Reviews</h2>
-<div class="table-responsive-md">
-    <table class="table col-md-6">
-        <thead>
-            <tr>
-                <th scope="col">
-                    Comment
-                </th>
-                <th scope="col">
-                    Rate
-                </th>
-                <th scope="col">
-                    Created on
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (var i = 0; i < 5; i++)
-            {
-                <tr>
-                    <td>
-                        @ViewBag.AlbumReviews[i].Comment
-                    </td>
-                    <td>
-                        @ViewBag.AlbumReviews[i].Rate
-                    </td>
-                    <td>
-                        @{
-                            var t = ViewBag.AlbumReviews[i].CreationTime.ToString("d", CultureInfo.CreateSpecificCulture("es-ES"));
-                        }
-                        @t
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-<div class="col-md-6">
-    <h2 class="font-weight-bold mb-5 mt-5">Albums You Might Like</h2>
-    <div class="row mt-5 mb-5">
-        @for (var i = 0; i < 2; i++)
-        {
-            <div class="col-md-6">
-                <div class="mb-5 mr-4">
-                    <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@ViewBag.AlbumYouMightLike[i].AlbumId">
-                        <img class="albumImg w-100 mb-2 shadow" alt="@ViewBag.AlbumYouMightLike[i].ArtistName" title="@ViewBag.AlbumYouMightLike[i].AlbumTitle" src=""
-                             data-holder-rendered="true">
-                    </a>
-                    <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@ViewBag.AlbumYouMightLike[i].AlbumId">@ViewBag.AlbumYouMightLike[i].AlbumTitle</a><br />
-                    <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.AlbumYouMightLike[i].ArtistId">@ViewBag.AlbumYouMightLike[i].ArtistName</a>
-                </div>
-            </div>
-        }
+@if (ViewBag.AlbumReviews.Count != 0)
+{
+    <div id="reviews-aside">
+        <h2 class="font-weight-bold mb-5">Reviews</h2>
+        <div class="table-responsive-md">
+            <table class="table col-md-6">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            Comment
+                        </th>
+                        <th scope="col">
+                            Rate
+                        </th>
+                        <th scope="col">
+                            Created on
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < 5; i++)
+                    {
+                        <tr>
+                            <td>
+                                @ViewBag.AlbumReviews[i].Comment
+                            </td>
+                            <td>
+                                @ViewBag.AlbumReviews[i].Rate
+                            </td>
+                            <td>
+                                @{
+                                    var t = ViewBag.AlbumReviews[i].CreationTime.ToString("d", CultureInfo.CreateSpecificCulture("es-ES"));
+                                }
+                                @t
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
+
+    <div id="reviews-full">
+        <h2 class="font-weight-bold mb-5">Reviews</h2>
+        <div class="table-responsive-md">
+            <table class="table col-md-12">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            Comment
+                        </th>
+                        <th scope="col">
+                            Rate
+                        </th>
+                        <th scope="col">
+                            Created on
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < 5; i++)
+                    {
+                        <tr>
+                            <td>
+                                @ViewBag.AlbumReviews[i].Comment
+                            </td>
+                            <td>
+                                @ViewBag.AlbumReviews[i].Rate
+                            </td>
+                            <td>
+                                @{
+                                    var t = ViewBag.AlbumReviews[i].CreationTime.ToString("d", CultureInfo.CreateSpecificCulture("es-ES"));
+                                }
+                                @t
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@if (ViewBag.AlbumYouMightLike.Count != 0)
+{
+    <div class="col-md-6">
+        <h2 class="font-weight-bold mb-5 mt-5">Albums You Might Like</h2>
+        <div class="row mt-5 mb-5">
+            @for (var i = 0; i < 2; i++)
+            {
+                <div class="col-md-6">
+                    <div class="mb-5 mr-4">
+                        <a class="img-link" asp-controller="Albums" asp-action="Details" asp-route-id="@ViewBag.AlbumYouMightLike[i].AlbumId">
+                            <img class="albumImg w-100 mb-2 shadow" alt="@ViewBag.AlbumYouMightLike[i].ArtistName" title="@ViewBag.AlbumYouMightLike[i].AlbumTitle" src=""
+                                 data-holder-rendered="true">
+                        </a>
+                        <a class="font-weight-bold text-decoration-none text-dark" asp-controller="Albums" asp-action="Details" asp-route-id="@ViewBag.AlbumYouMightLike[i].AlbumId">@ViewBag.AlbumYouMightLike[i].AlbumTitle</a><br />
+                        <a class="min-font-muted font-weight-bold text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@ViewBag.AlbumYouMightLike[i].ArtistId">@ViewBag.AlbumYouMightLike[i].ArtistName</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
 
 <div>
     @if ((await AuthorizationService.AuthorizeAsync(
@@ -271,7 +330,7 @@ Operations.Update)).Succeeded)
     @if (Model.Status != AlbumStatus.Approved)
     {
         @if ((await AuthorizationService.AuthorizeAsync(
-                User, Model, Operations.Approve)).Succeeded)
+              User, Model, Operations.Approve)).Succeeded)
         {
             <form style="display:inline;" method="post">
                 <input type="hidden" name="id" value="@Model.AlbumId" />
@@ -284,7 +343,7 @@ Operations.Update)).Succeeded)
     @if (Model.Status != AlbumStatus.Rejected)
     {
         @if ((await AuthorizationService.AuthorizeAsync(
-                User, Model, Operations.Reject)).Succeeded)
+              User, Model, Operations.Reject)).Succeeded)
         {
             <form style="display:inline;" method="post">
                 <input type="hidden" name="id" value="@Model.AlbumId" />

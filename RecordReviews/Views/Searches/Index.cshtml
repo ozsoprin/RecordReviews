@@ -34,135 +34,147 @@
     {
         @Html.AntiForgeryToken()
 
-<div class="form-horizontal">
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-horizontal">
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-    <div class="form-group">
-        <label for="type" class="col-md-2">
-            <b>Search For:</b>
-        </label>
-        <div class="col-md-7">
-            <select class="form-control" id="type" name="type">
-                <option value="Album" selected>Albums</option>
-                <option value="Artist">Artists</option>
-                <option value="Review">Reviews</option>
-            </select>
-        </div>
-    </div>
+            <div class="form-group">
+                <label for="type" class="col-md-2">
+                    <b>Search For:</b>
+                </label>
+                <div class="col-md-7">
+                    <select class="form-control" id="type" name="type">
+                        <option value="Album" selected>Albums</option>
+                        <option value="Artist">Artists</option>
+                        <option value="Review">Reviews</option>
+                    </select>
+                </div>
+            </div>
 
-    <div class="form-group">
-        <label for="primaryName" class="col-md-7" id="primary-name">
-            <b>Album Title:</b>
-        </label>
-        <div class="col-md-7">
-            @Html.EditorFor(model => model.PrimaryKey, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.PrimaryKey, null, new { @class = "text-danger" })
-        </div>
-    </div>
+            <div class="form-group">
+                <label for="primaryName" class="col-md-7" id="primary-name">
+                    <b>Album Title:</b>
+                </label>
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.PrimaryKey, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.PrimaryKey, null, new { @class = "text-danger" })
+                </div>
+            </div>
 
-    <div class="form-group advanced-item advanced-album advanced-review" id="s-name">
-        <label for="secondaryName" class="col-md-7" id="secondary-name">
-            <b>By Artist:</b>
-        </label>
-        <div class="col-md-7">
-            @Html.EditorFor(model => model.SecondaryKey, new { htmlAttributes = new { @class = "form-control advanced-input", id = "s-name-input" } })
-            @Html.ValidationMessageFor(model => model.SecondaryKey, null, new { @class = "text-danger" })
-        </div>
-    </div>
+            <div class="form-group advanced-item advanced-album advanced-review" id="s-name">
+                <label for="secondaryName" class="col-md-7" id="secondary-name">
+                    <b>By Artist:</b>
+                </label>
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.SecondaryKey, new { htmlAttributes = new { @class = "form-control advanced-input", id = "s-name-input" } })
+                    @Html.ValidationMessageFor(model => model.SecondaryKey, null, new { @class = "text-danger" })
+                </div>
+            </div>
 
-    <div class="form-group" id="g">
-        <label for="Genre" class="col-md-7" id="genre">
-            <b></b>
-        </label>
-        <div class="col-md-7">
-            @Html.EditorFor(model => model.Genre, new { htmlAttributes = new { @class = "form-control advanced-input", id = "g-input" } })
-            @Html.ValidationMessageFor(model => model.Genre, null, new { @class = "text-danger" })
-        </div>
-    </div>
+            <div class="form-group" id="g">
+                <label for="Genre" class="col-md-7" id="genre">
+                    <b></b>
+                </label>
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.Genre, new { htmlAttributes = new { @class = "form-control advanced-input", id = "g-input" } })
+                    @Html.ValidationMessageFor(model => model.Genre, null, new { @class = "text-danger" })
+                </div>
+            </div>
 
-    <div class="form-group" id="a">
-        <label for="ArtistName" class="col-md-7" id="artist">
-            <b></b>
-        </label>
-        <div class="col-md-7">
-            @Html.EditorFor(model => model.ArtistName, new { htmlAttributes = new { @class = "form-control advanced-input", id = "a-input" } })
-            @Html.ValidationMessageFor(model => model.ArtistName, null, new { @class = "text-danger" })
-        </div>
-    </div>
+            <div class="form-group" id="a">
+                <label for="ArtistName" class="col-md-7" id="artist">
+                    <b></b>
+                </label>
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.ArtistName, new { htmlAttributes = new { @class = "form-control advanced-input", id = "a-input" } })
+                    @Html.ValidationMessageFor(model => model.ArtistName, null, new { @class = "text-danger" })
+                </div>
+            </div>
 
-    <div class="form-group advanced-item advanced-artist advanced-album" id="g-c">
-        <label for="Genre" class="col-md-7" id="genre-country">
-            <b>Genre:</b>
-        </label>
-        <div class="col-md-7">
-            @Html.EditorFor(model => model.Genre, new { htmlAttributes = new { @class = "form-control advanced-input", id = "g-c-input" } })
-            @Html.ValidationMessageFor(model => model.Genre, null, new { @class = "text-danger" })
-        </div>
-    </div>
+            <div class="form-group advanced-item advanced-artist advanced-album" id="g-c">
+                <label for="Genre" class="col-md-7" id="genre-country">
+                    <b>Genre:</b>
+                </label>
+                <div class="col-md-7">
+                    @Html.EditorFor(model => model.Genre, new { htmlAttributes = new { @class = "form-control advanced-input", id = "g-c-input" } })
+                    @Html.ValidationMessageFor(model => model.Genre, null, new { @class = "text-danger" })
+                </div>
+            </div>
 
 
-    <div class="form-group advanced-item advanced-all">
-        <div class="col-md-7" id="date-range-label">
-            <h6><b>Release Date Range:</b></h6>
-        </div>
-        <div class="row">
-            <div class="col-md-8">
-                <div class="form-inline">
-                    <div class="col-md-5 mr-4">
-                        @Html.EditorFor(model => model.MinDateTime, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Starting from..." } })
-                        @Html.ValidationMessageFor(model => model.MinDateTime, null, new { @class = "text-danger" })
-                    </div>
-                    <div class="col-md-5 mr-4">
-                        @Html.EditorFor(model => model.MaxDateTime, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Up to..." } })
-                        @Html.ValidationMessageFor(model => model.MaxDateTime, null, new { @class = "text-danger" })
+            <div class="form-group advanced-item advanced-all">
+                <div class="col-md-7" id="date-range-label">
+                    <h6><b>Release Date Range:</b></h6>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-inline">
+                            <div class="col-md-5 mr-4">
+                                @Html.EditorFor(model => model.MinDateTime, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Starting from..." } })
+                                @Html.ValidationMessageFor(model => model.MinDateTime, null, new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-5 mr-4">
+                                @Html.EditorFor(model => model.MaxDateTime, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Up to..." } })
+                                @Html.ValidationMessageFor(model => model.MaxDateTime, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="form-group advanced-item advanced-all">
-        <h6><b class="col-md-7">Average Rate: </b></h6>
-        <div class="row">
-            <div class="col-md-8">
-                <div class="form-inline">
-                    <div class="col-md-5 mr-4">
-                        @Html.EditorFor(model => model.MinRate, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Starting from..." } })
-                        @Html.ValidationMessageFor(model => model.MinRate, null, new { @class = "text-danger" })
-                    </div>
-                    <div class="col-md-5 mr-4">
-                        @Html.EditorFor(model => model.MaxRate, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Up to..." } })
-                        @Html.ValidationMessageFor(model => model.MaxRate, null, new { @class = "text-danger" })
+            <div class="form-group advanced-item advanced-all">
+                <h6><b class="col-md-7">Average Rate: </b></h6>
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-inline">
+                            <div class="col-md-5 mr-4">
+                                @Html.EditorFor(model => model.MinRate, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Starting from..." } })
+                                @Html.ValidationMessageFor(model => model.MinRate, null, new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-5 mr-4">
+                                @Html.EditorFor(model => model.MaxRate, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Up to..." } })
+                                @Html.ValidationMessageFor(model => model.MaxRate, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
 
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-7">
-            <input type="submit" value="Search" class="btn px-3 my-2 my-sm-0 " id="search-btn" />
-            <button type="button" class="btn" id="advanced-search-btn">
-                <span id="btn-val">Go To Advanced Search</span>
-            </button>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-7">
+                    <input type="submit" value="Search" class="btn px-3 my-2 my-sm-0 " id="search-btn" />
+                    <button type="button" class="btn" id="advanced-search-btn">
+                        <span id="btn-val">Go To Advanced Search</span>
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
     }
 </section>
 <!--search section end-->
+<canvas id="myCanvas" width="1300" height="5" >
+    Your browser does not support the HTML canvas tag.
+</canvas>
+
+<script>
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    ctx.moveTo(0, 0);
+    ctx.lineTo(1300, 0);
+    ctx.stroke();
+</script>
 <!--results section start-->
 <section class="mt-5">
     @{
         if (ViewBag.Type != null)
         {
-            
+
             if (ViewBag.Results.Count == 0)
             {
                 <h4>No Results</h4>
             }
-            else { 
+            else
+            {
                 <h2>Results</h2>
                 var type = (string)ViewBag.Type;
                 if (type == "Artist")
@@ -198,8 +210,8 @@
                                         </td>
                                         <td>
                                             @if ((await AuthorizationService.AuthorizeAsync(
-                                                User, item,
-                                                Operations.Update)).Succeeded)
+                                               User, item,
+                                               Operations.Update)).Succeeded)
                                             {
                                                 <a class="text-muted" asp-controller="Artists" asp-action="Edit" asp-route-id="@item.ArtistID">Edit</a>
                                                 <text> | </text>
@@ -208,8 +220,8 @@
                                             <a class="text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistID">Details</a>
 
                                             @if ((await AuthorizationService.AuthorizeAsync(
-                                                User, item,
-                                                Operations.Delete)).Succeeded)
+                                               User, item,
+                                               Operations.Delete)).Succeeded)
                                             {
                                                 <text> | </text>
                                                 <a class="text-muted" asp-controller="Artists" asp-action="Delete" asp-route-id="@item.ArtistID">Delete</a>
@@ -269,8 +281,8 @@
                                         </td>
                                         <td>
                                             @if ((await AuthorizationService.AuthorizeAsync(
-                                               User, item,
-                                               Operations.Update)).Succeeded)
+                                              User, item,
+                                              Operations.Update)).Succeeded)
                                             {
                                                 <a class="text-muted" asp-controller="Albums" asp-action="Edit" asp-route-id="@item.AlbumId">Edit</a>
                                                 <text> | </text>
@@ -279,8 +291,8 @@
                                             <a class="text-muted" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">Details</a>
 
                                             @if ((await AuthorizationService.AuthorizeAsync(
-                                               User, item,
-                                               Operations.Delete)).Succeeded)
+                                              User, item,
+                                              Operations.Delete)).Succeeded)
                                             {
                                                 <text> | </text>
                                                 <a class="text-muted" asp-controller="Albums" asp-action="Delete" asp-route-id="@item.AlbumId">Delete</a>
@@ -334,8 +346,8 @@
                                         </td>
                                         <td>
                                             @if ((await AuthorizationService.AuthorizeAsync(
-                                               User, item,
-                                               Operations.Update)).Succeeded)
+                                              User, item,
+                                              Operations.Update)).Succeeded)
                                             {
                                                 <a class="text-muted" asp-controller="Reviews" asp-action="Edit" asp-route-id="@item.ReviewId">Edit</a>
                                                 <text> | </text>
@@ -344,8 +356,8 @@
                                             <a class="text-muted" asp-controller="Reviews" asp-action="Details" asp-route-id="@item.ReviewId">Details</a>
 
                                             @if ((await AuthorizationService.AuthorizeAsync(
-                                               User, item,
-                                               Operations.Delete)).Succeeded)
+                                              User, item,
+                                              Operations.Delete)).Succeeded)
                                             {
                                                 <text> | </text>
                                                 <a class="text-muted" asp-controller="Reviews" asp-action="Delete" asp-route-id="@item.ReviewId">Delete</a>
