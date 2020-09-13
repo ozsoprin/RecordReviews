@@ -201,18 +201,18 @@
                                                 User, item,
                                                 Operations.Update)).Succeeded)
                                             {
-                                                <a class="text-muted" asp-action="Edit" asp-route-id="@item.ArtistID">Edit</a>
+                                                <a class="text-muted" asp-controller="Artists" asp-action="Edit" asp-route-id="@item.ArtistID">Edit</a>
                                                 <text> | </text>
                                             }
 
-                                            <a class="text-muted" asp-action="Details" asp-route-id="@item.ArtistID">Details</a>
+                                            <a class="text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistID">Details</a>
 
                                             @if ((await AuthorizationService.AuthorizeAsync(
                                                 User, item,
                                                 Operations.Delete)).Succeeded)
                                             {
                                                 <text> | </text>
-                                                <a class="text-muted" asp-action="Delete" asp-route-id="@item.ArtistID">Delete</a>
+                                                <a class="text-muted" asp-controller="Artists" asp-action="Delete" asp-route-id="@item.ArtistID">Delete</a>
                                             }
                                         </td>
                                     </tr>
@@ -272,18 +272,18 @@
                                                User, item,
                                                Operations.Update)).Succeeded)
                                             {
-                                                <a class="text-muted" asp-action="Edit" asp-route-id="@item.AlbumId">Edit</a>
+                                                <a class="text-muted" asp-controller="Albums" asp-action="Edit" asp-route-id="@item.AlbumId">Edit</a>
                                                 <text> | </text>
                                             }
 
-                                            <a class="text-muted" asp-action="Details" asp-route-id="@item.AlbumId">Details</a>
+                                            <a class="text-muted" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">Details</a>
 
                                             @if ((await AuthorizationService.AuthorizeAsync(
                                                User, item,
                                                Operations.Delete)).Succeeded)
                                             {
                                                 <text> | </text>
-                                                <a class="text-muted" asp-action="Delete" asp-route-id="@item.AlbumId">Delete</a>
+                                                <a class="text-muted" asp-controller="Albums" asp-action="Delete" asp-route-id="@item.AlbumId">Delete</a>
                                             }
                                         </td>
                                     </tr>
@@ -334,21 +334,21 @@
                                         </td>
                                         <td>
                                             @if ((await AuthorizationService.AuthorizeAsync(
-                                                User, item,
-                                                Operations.Update)).Succeeded)
+                                               User, item,
+                                               Operations.Update)).Succeeded)
                                             {
-                                                <a class="text-muted" asp-action="Edit" asp-route-id="@item.ReviewId">Edit</a>
+                                                <a class="text-muted" asp-controller="Reviews" asp-action="Edit" asp-route-id="@item.ReviewId">Edit</a>
                                                 <text> | </text>
                                             }
 
-                                            <a class="text-muted" asp-action="Details" asp-route-id="@item.ReviewId">Details</a>
+                                            <a class="text-muted" asp-controller="Reviews" asp-action="Details" asp-route-id="@item.ReviewId">Details</a>
 
                                             @if ((await AuthorizationService.AuthorizeAsync(
-                                                User, item,
-                                                Operations.Delete)).Succeeded)
+                                               User, item,
+                                               Operations.Delete)).Succeeded)
                                             {
                                                 <text> | </text>
-                                                <a class="text-muted" asp-action="Delete" asp-route-id="@item.ReviewId">Delete</a>
+                                                <a class="text-muted" asp-controller="Reviews" asp-action="Delete" asp-route-id="@item.ReviewId">Delete</a>
                                             }
                                         </td>
                                     </tr>
