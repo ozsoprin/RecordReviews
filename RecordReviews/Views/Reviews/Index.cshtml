@@ -67,9 +67,16 @@
                 @*<p id="title" class="col-md-12 font-weight-bold">Last 10 Reviews </p>*@
             </div>
         </header>
-        <p>
-            <a class="text-dark" asp-action="Create">Create New</a>
-        </p>
+
+        @if ((await AuthorizationService.AuthorizeAsync(
+           User, Model,
+           Operations.Update)).Succeeded)
+        {
+            <p>
+                <a class="text-dark" asp-action="Create">Create New</a>
+            </p>
+        }
+
         <form class="row form-inline d-flex md-form form-sm mb-4" asp-controller="Reviews" asp-action="Index">
             <button type="submit" class="fabutton pl-3"><i class="fa fa-search" aria-hidden="true"></i></button>
             <input class="col-md-11 form-control form-control-sm ml-3 w-75" type="text" name="searchString" placeholder="Search by Artist's Name"
@@ -109,14 +116,14 @@
                             </td>
                             <td>
                                 @{
-                                    var time = Model.ElementAt(i).CreationTime.ToString("g", CultureInfo.CreateSpecificCulture("en-us"));
+                                    var time = Model.ElementAt(i).CreationTime.ToString("g", CultureInfo.CreateSpecificCulture("es-ES"));
                                 }
                                 @Html.DisplayFor(modelItem => time)
                             </td>
                             <td>
                                 @if ((await AuthorizationService.AuthorizeAsync(
-                                    User, Model.ElementAt(i),
-                                    Operations.Update)).Succeeded)
+                                   User, Model.ElementAt(i),
+                                   Operations.Update)).Succeeded)
                                 {
                                     <a class="text-muted" asp-action="Edit" asp-route-id="@Model.ElementAt(i).ReviewId">Edit</a>
                                     <text> | </text>
@@ -125,8 +132,8 @@
                                 <a class="text-muted" asp-action="Details" asp-route-id="@Model.ElementAt(i).ReviewId">Details</a>
 
                                 @if ((await AuthorizationService.AuthorizeAsync(
-                                    User, Model.ElementAt(i),
-                                    Operations.Delete)).Succeeded)
+                                   User, Model.ElementAt(i),
+                                   Operations.Delete)).Succeeded)
                                 {
                                     <text> | </text>
                                     <a class="text-muted" asp-action="Delete" asp-route-id="@Model.ElementAt(i).ReviewId">Delete</a>

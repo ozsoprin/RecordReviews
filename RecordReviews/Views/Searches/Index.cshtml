@@ -34,109 +34,121 @@
     {
         @Html.AntiForgeryToken()
 
-        <div class="form-horizontal">
-            <hr />
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<div class="form-horizontal">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-            <div class="form-group">
-                <label for="type" class="col-md-2">
-                    <b>Search For:</b>
-                </label>
-                <div class="col-md-7">
-                    <select class="form-control" id="type" name="type">
-                        <option value="Album" selected>Albums</option>
-                        <option value="Artist">Artists</option>
-                        <option value="Review">Reviews</option>
-                    </select>
-                </div>
-            </div>
+    <div class="form-group">
+        <label for="type" class="col-md-2">
+            <b>Search For:</b>
+        </label>
+        <div class="col-md-7">
+            <select class="form-control" id="type" name="type">
+                <option value="Album" selected>Albums</option>
+                <option value="Artist">Artists</option>
+                <option value="Review">Reviews</option>
+            </select>
+        </div>
+    </div>
 
-            <div class="form-group">
-                <label for="primaryName" class="col-md-7" id="primary-name">
-                    <b>Album Title:</b>
-                </label>
-                <div class="col-md-7">
-                    @Html.EditorFor(model => model.PrimaryKey, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.PrimaryKey, null, new { @class = "text-danger" })
-                </div>
-            </div>
+    <div class="form-group">
+        <label for="primaryName" class="col-md-7" id="primary-name">
+            <b>Album Title:</b>
+        </label>
+        <div class="col-md-7">
+            @Html.EditorFor(model => model.PrimaryKey, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.PrimaryKey, null, new { @class = "text-danger" })
+        </div>
+    </div>
 
-            <div class="form-group advanced-item advanced-album advanced-review" id="s-name">
-                <label for="secondaryName" class="col-md-7" id="secondary-name">
-                    <b>By Artist:</b>
-                </label>
-                <div class="col-md-7">
-                    @Html.EditorFor(model => model.SecondaryKey, new { htmlAttributes = new { @class = "form-control advanced-input", id = "s-name-input" } })
-                    @Html.ValidationMessageFor(model => model.SecondaryKey, null, new { @class = "text-danger" })
-                </div>
-            </div>
+    <div class="form-group advanced-item advanced-album advanced-review" id="s-name">
+        <label for="secondaryName" class="col-md-7" id="secondary-name">
+            <b>By Artist:</b>
+        </label>
+        <div class="col-md-7">
+            @Html.EditorFor(model => model.SecondaryKey, new { htmlAttributes = new { @class = "form-control advanced-input", id = "s-name-input" } })
+            @Html.ValidationMessageFor(model => model.SecondaryKey, null, new { @class = "text-danger" })
+        </div>
+    </div>
 
-            <div class="form-group" id="g">
-                <label for="Genre" class="col-md-7" id="genre">
-                    <b></b>
-                </label>
-                <div class="col-md-7">
-                    @Html.EditorFor(model => model.Genre, new { htmlAttributes = new { @class = "form-control advanced-input", id = "g-input" } })
-                    @Html.ValidationMessageFor(model => model.Genre, null, new { @class = "text-danger" })
-                </div>
-            </div>
+    <div class="form-group" id="g">
+        <label for="Genre" class="col-md-7" id="genre">
+            <b></b>
+        </label>
+        <div class="col-md-7">
+            @Html.EditorFor(model => model.Genre, new { htmlAttributes = new { @class = "form-control advanced-input", id = "g-input" } })
+            @Html.ValidationMessageFor(model => model.Genre, null, new { @class = "text-danger" })
+        </div>
+    </div>
 
-            <div class="form-group advanced-item advanced-artist advanced-album" id="g-c">
-                <label for="Genre" class="col-md-7" id="genre-country">
-                    <b>Genre:</b>
-                </label>
-                <div class="col-md-7">
-                    @Html.EditorFor(model => model.Genre, new { htmlAttributes = new { @class = "form-control advanced-input", id = "g-c-input" } })
-                    @Html.ValidationMessageFor(model => model.Genre, null, new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="form-group advanced-item advanced-all">
-                <div class="col-md-7" id="date-range-label">
-                    <h6><b>Release Date Range:</b></h6>
-                </div>
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="form-inline">
-                            <div class="col-md-5 mr-4">
-                                @Html.EditorFor(model => model.MinDateTime, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Starting from..." } })
-                                @Html.ValidationMessageFor(model => model.MinDateTime, null, new { @class = "text-danger" })
-                            </div>
-                            <div class="col-md-5 mr-4">
-                                @Html.EditorFor(model => model.MaxDateTime, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Up to..." } })
-                                @Html.ValidationMessageFor(model => model.MaxDateTime, null, new { @class = "text-danger" })
-                            </div>
-                        </div>
+    <div class="form-group" id="a">
+        <label for="ArtistName" class="col-md-7" id="artist">
+            <b></b>
+        </label>
+        <div class="col-md-7">
+            @Html.EditorFor(model => model.ArtistName, new { htmlAttributes = new { @class = "form-control advanced-input", id = "a-input" } })
+            @Html.ValidationMessageFor(model => model.ArtistName, null, new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group advanced-item advanced-artist advanced-album" id="g-c">
+        <label for="Genre" class="col-md-7" id="genre-country">
+            <b>Genre:</b>
+        </label>
+        <div class="col-md-7">
+            @Html.EditorFor(model => model.Genre, new { htmlAttributes = new { @class = "form-control advanced-input", id = "g-c-input" } })
+            @Html.ValidationMessageFor(model => model.Genre, null, new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+    <div class="form-group advanced-item advanced-all">
+        <div class="col-md-7" id="date-range-label">
+            <h6><b>Release Date Range:</b></h6>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-inline">
+                    <div class="col-md-5 mr-4">
+                        @Html.EditorFor(model => model.MinDateTime, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Starting from..." } })
+                        @Html.ValidationMessageFor(model => model.MinDateTime, null, new { @class = "text-danger" })
                     </div>
-                </div>
-            </div>
-            <div class="form-group advanced-item advanced-all">
-                <h6><b class="col-md-7">Average Rate: </b></h6>
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="form-inline">
-                            <div class="col-md-5 mr-4">
-                                @Html.EditorFor(model => model.MinRate, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Starting from..." } })
-                                @Html.ValidationMessageFor(model => model.MinRate, null, new { @class = "text-danger" })
-                            </div>
-                            <div class="col-md-5 mr-4">
-                                @Html.EditorFor(model => model.MaxRate, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Up to..." } })
-                                @Html.ValidationMessageFor(model => model.MaxRate, null, new { @class = "text-danger" })
-                            </div>
-                        </div>
+                    <div class="col-md-5 mr-4">
+                        @Html.EditorFor(model => model.MaxDateTime, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Up to..." } })
+                        @Html.ValidationMessageFor(model => model.MaxDateTime, null, new { @class = "text-danger" })
                     </div>
-                </div>
-            </div>
-
-
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-7">
-                    <input type="submit" value="Search" class="btn px-3 my-2 my-sm-0 " id="search-btn" />
-                    <button type="button" class="btn" id="advanced-search-btn">
-                        <span id="btn-val">Go To Advanced Search</span>
-                    </button>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="form-group advanced-item advanced-all">
+        <h6><b class="col-md-7">Average Rate: </b></h6>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-inline">
+                    <div class="col-md-5 mr-4">
+                        @Html.EditorFor(model => model.MinRate, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Starting from..." } })
+                        @Html.ValidationMessageFor(model => model.MinRate, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-5 mr-4">
+                        @Html.EditorFor(model => model.MaxRate, new { htmlAttributes = new { @class = "form-control advanced-input w-100", placeholder = "Up to..." } })
+                        @Html.ValidationMessageFor(model => model.MaxRate, null, new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-7">
+            <input type="submit" value="Search" class="btn px-3 my-2 my-sm-0 " id="search-btn" />
+            <button type="button" class="btn" id="advanced-search-btn">
+                <span id="btn-val">Go To Advanced Search</span>
+            </button>
+        </div>
+    </div>
+</div>
     }
 </section>
 <!--search section end-->
@@ -145,199 +157,206 @@
     @{
         if (ViewBag.Type != null)
         {
-            <h2>Results</h2>
-            var type = (string)ViewBag.Type;
-            if (type == "Artist")
+            
+            if (ViewBag.Results.Count == 0)
             {
-                <div class="table-responsive-md">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">
-                                    Artist's Name
-                                </th>
-                                <th scope="col">
-                                    Genre
-                                </th>
-                                <th scope="col">
-                                    Average Rate
-                                </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in (List<Artist>)ViewBag.Results)
-                            {
-                                <tr>
-                                    <td>
-                                        @item.ArtistName
-                                    </td>
-                                    <td>
-                                        @item.Genre
-                                    </td>
-                                    <td>
-                                        @item.AvgRate
-                                    </td>
-                                    <td>
-                                        @if ((await AuthorizationService.AuthorizeAsync(
-                                            User, item,
-                                            Operations.Update)).Succeeded)
-                                        {
-                                            <a class="text-muted" asp-action="Edit" asp-route-id="@item.ArtistID">Edit</a>
-                                            <text> | </text>
-                                        }
-
-                                        <a class="text-muted" asp-action="Details" asp-route-id="@item.ArtistID">Details</a>
-
-                                        @if ((await AuthorizationService.AuthorizeAsync(
-                                            User, item,
-                                            Operations.Delete)).Succeeded)
-                                        {
-                                            <text> | </text>
-                                            <a class="text-muted" asp-action="Delete" asp-route-id="@item.ArtistID">Delete</a>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                <h4>No Results</h4>
             }
-            else if (type == "Album")
-            {
-                <div class="table-responsive-md">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">
-                                    Album Title
-                                </th>
-                                <th scope="col">
-                                    Artist's Name
-                                </th>
-                                <th scope="col">
-                                    Release Datete
-                                </th>
-                                <th scope="col">
-                                    Genre
-                                </th>
-                                <th scope="col">
-                                    Average Rate
-                                </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in (List<Album>)ViewBag.Results)
-                            {
+            else { 
+                <h2>Results</h2>
+                var type = (string)ViewBag.Type;
+                if (type == "Artist")
+                {
+                    <div class="table-responsive-md">
+                        <table class="table">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        @item.AlbumTitle
-                                    </td>
-                                    <td>
-                                        @item.ArtistName
-                                    </td>
-                                    <td>
-                                        @{
-                                            var time = item.ReleaseDate.ToString("g", CultureInfo.CreateSpecificCulture("en-us"));
-                                        }
-                                        @Html.DisplayFor(modelItem => time)
-                                    </td>
-                                    <td>
-                                        @item.Genre
-                                    </td>
-                                    <td>
-                                        @item.AvgRate
-                                    </td>
-                                    <td>
-                                        @if ((await AuthorizationService.AuthorizeAsync(
-                                           User, item,
-                                           Operations.Update)).Succeeded)
-                                        {
-                                            <a class="text-muted" asp-action="Edit" asp-route-id="@item.AlbumId">Edit</a>
-                                            <text> | </text>
-                                        }
-
-                                        <a class="text-muted" asp-action="Details" asp-route-id="@item.AlbumId">Details</a>
-
-                                        @if ((await AuthorizationService.AuthorizeAsync(
-                                           User, item,
-                                           Operations.Delete)).Succeeded)
-                                        {
-                                            <text> | </text>
-                                            <a class="text-muted" asp-action="Delete" asp-route-id="@item.AlbumId">Delete</a>
-                                        }
-                                    </td>
+                                    <th scope="col">
+                                        Artist's Name
+                                    </th>
+                                    <th scope="col">
+                                        Genre
+                                    </th>
+                                    <th scope="col">
+                                        Average Rate
+                                    </th>
+                                    <th></th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            }
-            else
-            {
-                <div class="table-responsive-md">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">
-                                    Album
-                                </th>
-                                <th scope="col">
-                                    Comment
-                                </th>
-                                <th scope="col">
-                                    Rate
-                                </th>
-                                <th scope="col">
-                                    Created on
-                                </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in (List<Review>)ViewBag.Results)
-                            {
+                            </thead>
+                            <tbody>
+                                @foreach (var item in (List<Artist>)ViewBag.Results)
+                                {
+                                    <tr>
+                                        <td>
+                                            @item.ArtistName
+                                        </td>
+                                        <td>
+                                            @item.Genre
+                                        </td>
+                                        <td>
+                                            @item.AvgRate
+                                        </td>
+                                        <td>
+                                            @if ((await AuthorizationService.AuthorizeAsync(
+                                                User, item,
+                                                Operations.Update)).Succeeded)
+                                            {
+                                                <a class="text-muted" asp-action="Edit" asp-route-id="@item.ArtistID">Edit</a>
+                                                <text> | </text>
+                                            }
+
+                                            <a class="text-muted" asp-action="Details" asp-route-id="@item.ArtistID">Details</a>
+
+                                            @if ((await AuthorizationService.AuthorizeAsync(
+                                                User, item,
+                                                Operations.Delete)).Succeeded)
+                                            {
+                                                <text> | </text>
+                                                <a class="text-muted" asp-action="Delete" asp-route-id="@item.ArtistID">Delete</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else if (type == "Album")
+                {
+                    <div class="table-responsive-md">
+                        <table class="table">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        @item.Album.AlbumTitle
-                                    </td>
-                                    <td>
-                                        @item.Comment
-                                    </td>
-                                    <td>
-                                        @item.Rate
-                                    </td>
-                                    <td>
-                                        @{
-                                            var time = item.CreationTime.ToString("g", CultureInfo.CreateSpecificCulture("en-us"));
-                                        }
-                                        @Html.DisplayFor(modelItem => time)
-                                    </td>
-                                    <td>
-                                        @if ((await AuthorizationService.AuthorizeAsync(
-                                            User, item,
-                                            Operations.Update)).Succeeded)
-                                        {
-                                            <a class="text-muted" asp-action="Edit" asp-route-id="@item.ReviewId">Edit</a>
-                                            <text> | </text>
-                                        }
-
-                                        <a class="text-muted" asp-action="Details" asp-route-id="@item.ReviewId">Details</a>
-
-                                        @if ((await AuthorizationService.AuthorizeAsync(
-                                            User, item,
-                                            Operations.Delete)).Succeeded)
-                                        {
-                                            <text> | </text>
-                                            <a class="text-muted" asp-action="Delete" asp-route-id="@item.ReviewId">Delete</a>
-                                        }
-                                    </td>
+                                    <th scope="col">
+                                        Album Title
+                                    </th>
+                                    <th scope="col">
+                                        Artist's Name
+                                    </th>
+                                    <th scope="col">
+                                        Release Date
+                                    </th>
+                                    <th scope="col">
+                                        Genre
+                                    </th>
+                                    <th scope="col">
+                                        Average Rate
+                                    </th>
+                                    <th></th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in (List<Album>)ViewBag.Results)
+                                {
+                                    <tr>
+                                        <td>
+                                            @item.AlbumTitle
+                                        </td>
+                                        <td>
+                                            @item.ArtistName
+                                        </td>
+                                        <td>
+                                            @{
+                                                var time = item.ReleaseDate.ToString("d", CultureInfo.CreateSpecificCulture("es-ES"));
+                                            }
+                                            @Html.DisplayFor(modelItem => time)
+                                        </td>
+                                        <td>
+                                            @item.Genre
+                                        </td>
+                                        <td>
+                                            @item.AvgRate
+                                        </td>
+                                        <td>
+                                            @if ((await AuthorizationService.AuthorizeAsync(
+                                               User, item,
+                                               Operations.Update)).Succeeded)
+                                            {
+                                                <a class="text-muted" asp-action="Edit" asp-route-id="@item.AlbumId">Edit</a>
+                                                <text> | </text>
+                                            }
+
+                                            <a class="text-muted" asp-action="Details" asp-route-id="@item.AlbumId">Details</a>
+
+                                            @if ((await AuthorizationService.AuthorizeAsync(
+                                               User, item,
+                                               Operations.Delete)).Succeeded)
+                                            {
+                                                <text> | </text>
+                                                <a class="text-muted" asp-action="Delete" asp-route-id="@item.AlbumId">Delete</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive-md">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Album
+                                    </th>
+                                    <th scope="col">
+                                        Comment
+                                    </th>
+                                    <th scope="col">
+                                        Rate
+                                    </th>
+                                    <th scope="col">
+                                        Created on
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in (List<Review>)ViewBag.Results)
+                                {
+                                    <tr>
+                                        <td>
+                                            @item.Album.AlbumTitle
+                                        </td>
+                                        <td>
+                                            @item.Comment
+                                        </td>
+                                        <td>
+                                            @item.Rate
+                                        </td>
+                                        <td>
+                                            @{
+                                                var time = item.CreationTime.ToString("g", CultureInfo.CreateSpecificCulture("es-ES"));
+                                            }
+                                            @Html.DisplayFor(modelItem => time)
+                                        </td>
+                                        <td>
+                                            @if ((await AuthorizationService.AuthorizeAsync(
+                                                User, item,
+                                                Operations.Update)).Succeeded)
+                                            {
+                                                <a class="text-muted" asp-action="Edit" asp-route-id="@item.ReviewId">Edit</a>
+                                                <text> | </text>
+                                            }
+
+                                            <a class="text-muted" asp-action="Details" asp-route-id="@item.ReviewId">Details</a>
+
+                                            @if ((await AuthorizationService.AuthorizeAsync(
+                                                User, item,
+                                                Operations.Delete)).Succeeded)
+                                            {
+                                                <text> | </text>
+                                                <a class="text-muted" asp-action="Delete" asp-route-id="@item.ReviewId">Delete</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
             }
         }
     }
@@ -351,6 +370,7 @@
             $(".advanced-item").hide();
             $(".advanced-input").val(null);
             $("#g").hide();
+            $("#a").hide();
         });
     </script>
     <script>
@@ -359,6 +379,7 @@
                 var selectedType = $("option:selected").val();
                 if ($("#btn-val").html() === "Go To Normal Search") {
                     $("#g").hide();
+                    $("#a").hide();
                     $(".advanced-item").hide();
                     $(".advanced-input").val(null);
                     switch (selectedType) {
@@ -380,6 +401,7 @@
                     $(".advanced-input").val(null);
                     $(".advanced-item").hide();
                     $("#g").hide();
+                    $("#a").hide();
                     switch (selectedType) {
                         case "Album":
                             $("#primary-name").html("<b>Album Title:</b>");
@@ -392,6 +414,9 @@
                             $("#primary-name").html("<b>Album Title:</b>");
                             $("#secondary-name").html("<b>Written By:</b>");
                             $("#date-range-label").html("<h6><b>Creation Time Range:</b></h6>");
+                            $("#artist").html("<h6><b>On Artist:</b></h6>");
+                            $("#a").show();
+                            $(".advanced-review").show();
                             break;
                         case "Artist":
                             $("#primary-name").html("<b>Artist's Name:</b>");
@@ -417,6 +442,7 @@
                 var isAdvanced = $("#btn-val").html() === "Go To Normal Search";
                 if (isAdvanced) {
                     $("#g").hide();
+                    $("#a").hide();
                     $(".advanced-item").hide();
                     switch (selectedType) {
                         case "Album":
@@ -438,6 +464,8 @@
                             $("#primary-name").html("<b>Album Title:</b>");
                             $("#secondary-name").html("<b>Written By:</b>");
                             $("#date-range-label").html("<h6><b>Creation Time Range:</b></h6>");
+                            $("#artist").html("<h6><b>On Artist:</b></h6>");
+                            $("#a").show();
                             $(".advanced-review").show();
                             break;
                         default:
@@ -446,6 +474,7 @@
                 } else {
                     $(".advanced-item").hide();
                     $("#g").hide();
+                    $("#a").hide();
                     switch (selectedType) {
                         case "Album":
                         case "Review":
@@ -465,76 +494,3 @@
 
 
 
-
-
-
-
-
-
-
-@*<h1>Index</h1>
-
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.PrimaryKey)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.SecondaryKey)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.MinRate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.MaxRate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.GenreCountry)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.MaxDateTime)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.MinDateTime)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PrimaryKey)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.SecondaryKey)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.MinRate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.MaxRate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.GenreCountry)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.MaxDateTime)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.MinDateTime)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.type">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.type">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.type">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>*@

@@ -35,7 +35,7 @@
         </dt>
         <dd class="col-sm-10">
             @{
-                var time = Model.CreationTime.ToString("g", CultureInfo.CreateSpecificCulture("en-us"));
+                var time = Model.CreationTime.ToString("g", CultureInfo.CreateSpecificCulture("es-ES"));
             }
             @Html.DisplayFor(model => time)
         </dd>

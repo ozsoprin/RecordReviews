@@ -28,7 +28,7 @@
         </dt>
         <dd class="col-sm-10">
             @{
-                var time = Model.ReleaseDate.ToString("g", CultureInfo.CreateSpecificCulture("en-us"));
+                var time = Model.ReleaseDate.ToString("g", CultureInfo.CreateSpecificCulture("es-ES"));
             }
             @Html.DisplayFor(model => time)
         </dd>
