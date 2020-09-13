@@ -128,7 +128,7 @@ namespace RecordReviews.Controllers
                 HttpContext.Session.SetString("LastArtists", JsonConvert.SerializeObject(lastArtists));
             }
 
-            ViewBag.ArtistsYouMightLike = GetRecommended().ToArray();
+            ViewBag.ArtistsYouMightLike = GetRecommended().ToList();
             ViewBag.ReviewesForArtist = artist.GetReviews();
 
             return View(artist);

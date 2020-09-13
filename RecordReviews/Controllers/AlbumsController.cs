@@ -130,7 +130,7 @@ namespace RecordReviews.Controllers
                 HttpContext.Session.SetString("LastAlbums", JsonConvert.SerializeObject(lastAlbums));
             }
 
-            ViewBag.AlbumYouMightLike = GetRecommended().ToArray();
+            ViewBag.AlbumYouMightLike = GetRecommended().ToList();
 
             return View(album);
         }
