@@ -37,14 +37,9 @@
 
 
     <div class="container">
-        @if ((await AuthorizationService.AuthorizeAsync(
-             User, Model,
-             Operations.Update)).Succeeded)
-        {
-            <p>
-                <a class="text-dark" asp-action="Create">Create New</a>
-            </p>
-        }
+        <p>
+            <a class="text-dark" asp-action="Create">Create New</a>
+        </p>
 
 
         <form class="row form-inline d-flex md-form form-sm mt-0" asp-controller="Albums" asp-action="Index">

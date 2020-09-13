@@ -68,14 +68,9 @@
             </div>
         </header>
 
-        @if ((await AuthorizationService.AuthorizeAsync(
-           User, Model,
-           Operations.Update)).Succeeded)
-        {
-            <p>
-                <a class="text-dark" asp-action="Create">Create New</a>
-            </p>
-        }
+        <p>
+            <a class="text-dark" asp-action="Create">Create New</a>
+        </p>
 
         <form class="row form-inline d-flex md-form form-sm mb-4" asp-controller="Reviews" asp-action="Index">
             <button type="submit" class="fabutton pl-3"><i class="fa fa-search" aria-hidden="true"></i></button>
