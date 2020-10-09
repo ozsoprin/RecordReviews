@@ -70,7 +70,8 @@ namespace RecordReviews.Data
                 review.Status = ReviewStatus.Approved;
                 context.Reviews.Add(review);
                 album.UpdateAlbumRate();
-                album.PageViews++;
+                var views = (rand.Next() % 5) + 1;
+                album.PageViews += views;
             }
 
         }
@@ -180,26 +181,25 @@ namespace RecordReviews.Data
             {
                 new Artist {ArtistName = "Kanye West",BirthPlace = "United States", Genre = "Rap"},
                 new Artist {ArtistName = "Eminem",BirthPlace = "United States", Genre = "Rap"},
-                new Artist {ArtistName = "Adele",BirthPlace = "United Kingdom", Genre = "Pop"},
-                new Artist {ArtistName = "Sia",BirthPlace = "Australia", Genre = "Pop"},
-                new Artist {ArtistName = "Tones and I",BirthPlace = "Australia", Genre = "Pop"},
-                //new Artist {ArtistName = "Bob Marley",BirthPlace = "Jamaica", Genre = "Reggae"},
+                new Artist {ArtistName = "Kendrick Lamar",BirthPlace = "United States", Genre = "Rap"},
+                new Artist {ArtistName = "Drake",BirthPlace = "Canada", Genre = "Rap"},
                 new Artist {ArtistName = "Jimi Hendrix",BirthPlace = "United States", Genre = "Rock"},
                 new Artist {ArtistName = "Bon Jovi",BirthPlace = "United States", Genre = "Rock"},
+                new Artist {ArtistName = "Hozier",BirthPlace = "Ireland", Genre = "Rock"},
                 new Artist {ArtistName = "Beyoncé",BirthPlace = "United States", Genre = "Pop"},
                 new Artist {ArtistName = "Taylor Swift",BirthPlace = "United States", Genre = "Pop"},
                 new Artist {ArtistName = "Ed Sheeran",BirthPlace = "United Kingdom", Genre = "Pop"},
-                new Artist {ArtistName = "Hozier",BirthPlace = "Ireland", Genre = "Rock"},
+                new Artist {ArtistName = "Bruno Mars",BirthPlace = "United States", Genre = "Pop"},
+                new Artist {ArtistName = "Shakira",BirthPlace = "Colombia", Genre = "Pop"},
                 new Artist {ArtistName = "Enrique Iglesias",BirthPlace = "Spain", Genre = "Pop"},
+                new Artist {ArtistName = "Ariana Grande",BirthPlace = "United States", Genre = "Pop"},
+                new Artist {ArtistName = "Adele",BirthPlace = "United Kingdom", Genre = "Pop"},
+                new Artist {ArtistName = "Sia",BirthPlace = "Australia", Genre = "Pop"},
+                new Artist {ArtistName = "Justin Bieber",BirthPlace = "Canada", Genre = "Pop"},
                 new Artist {ArtistName = "Avicii",BirthPlace = "Sweeden", Genre = "Electronic"},
                 new Artist {ArtistName = "David Guetta",BirthPlace = "France", Genre = "Electronic"},
                 new Artist {ArtistName = "Calvin Harris",BirthPlace = "Scotland", Genre = "Electronic"},
-                new Artist {ArtistName = "Drake",BirthPlace = "Canada", Genre = "Rap"},
-                new Artist {ArtistName = "Ariana Grande",BirthPlace = "United States", Genre = "Pop"},
-                new Artist {ArtistName = "Kendrick Lamar",BirthPlace = "United States", Genre = "Rap"},
-                new Artist {ArtistName = "Bruno Mars",BirthPlace = "United States", Genre = "Pop"},
-                new Artist {ArtistName = "Shakira",BirthPlace = "Colombia", Genre = "Pop"},
-            };
+                };
             foreach (var artist in artists)
             {
                 context.Artists.Add(artist);
@@ -240,21 +240,10 @@ namespace RecordReviews.Data
                 new Album {ArtistName = "Sia",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Sia"), Genre = "Pop",AlbumTitle = "1000 Forms of Fear",ReleaseDate = DateTime.Parse("2014-07-04")},
                 new Album {ArtistName = "Sia",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Sia"), Genre = "Pop",AlbumTitle = "This Is Acting",ReleaseDate = DateTime.Parse("2016-01-29")},
                 new Album {ArtistName = "Sia",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Sia"), Genre = "Pop",AlbumTitle = "Everyday Is Christmas",ReleaseDate = DateTime.Parse("2017-11-17")},
-                //new Album {ArtistName = "Bob Marley",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Bob Marley"), Genre = "Reggae",AlbumTitle = "Chances Are",ReleaseDate = DateTime.Parse("1981-10-01")},
-                //new Album {ArtistName = "Bob Marley",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Bob Marley"), Genre = "Reggae",AlbumTitle = "The Wailing Wailers",ReleaseDate = DateTime.Parse("1965-01-01")},
-                //new Album {ArtistName = "Bob Marley",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Bob Marley"), Genre = "Reggae",AlbumTitle = "Soul Rebels",ReleaseDate = DateTime.Parse("1970-12-01")},
-                //new Album {ArtistName = "Bob Marley",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Bob Marley"), Genre = "Reggae",AlbumTitle = "Soul Revolution",ReleaseDate = DateTime.Parse("1971-01-01")},
-                //new Album {ArtistName = "Bob Marley",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Bob Marley"), Genre = "Reggae",AlbumTitle = "The Best of The Wailers",ReleaseDate = DateTime.Parse("1971-08-01")},
-                //new Album {ArtistName = "Bob Marley",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Bob Marley"), Genre = "Reggae",AlbumTitle = "Catch a Fire",ReleaseDate = DateTime.Parse("1973-04-13")},
-                //new Album {ArtistName = "Bob Marley",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Bob Marley"), Genre = "Reggae",AlbumTitle = "Burnin'",ReleaseDate = DateTime.Parse("1973-10-19")},
-                //new Album {ArtistName = "Bob Marley",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Bob Marley"), Genre = "Reggae",AlbumTitle = "Chances Are",ReleaseDate = DateTime.Parse("1981-10-01")},
-                //new Album {ArtistName = "Bob Marley",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Bob Marley"), Genre = "Reggae",AlbumTitle = "Exodus",ReleaseDate = DateTime.Parse("1977-06-03")},
                 new Album {ArtistName = "Jimi Hendrix",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Jimi Hendrix"), Genre = "Rock",AlbumTitle = "Are You Experienced",ReleaseDate = DateTime.Parse("1967-08-23")},
                 new Album {ArtistName = "Jimi Hendrix",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Jimi Hendrix"), Genre = "Rock",AlbumTitle = "Axis: Bold as Love",ReleaseDate = DateTime.Parse("1968-01-15")},
                 new Album {ArtistName = "Jimi Hendrix",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Jimi Hendrix"), Genre = "Rock",AlbumTitle = "Electric Ladyland",ReleaseDate = DateTime.Parse("1968-10-16")},
                 new Album {ArtistName = "Jimi Hendrix",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Jimi Hendrix"), Genre = "Rock",AlbumTitle = "Band of Gypsys",ReleaseDate = DateTime.Parse("1970-03-25")},
-                //new Album {ArtistName = "Jimi Hendrix",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Jimi Hendrix"), Genre = "Rock",AlbumTitle = "Woodstock: Music from the Original Soundtrack and More",ReleaseDate = DateTime.Parse("1970-05-27")},
-                //new Album {ArtistName = "Jimi Hendrix",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Jimi Hendrix"), Genre = "Rock",AlbumTitle = "Historic Performances Recorded at the Monterey International Pop Festival",ReleaseDate = DateTime.Parse("1970-08-26")},
                 new Album {ArtistName = "Jimi Hendrix",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Jimi Hendrix"), Genre = "Rock",AlbumTitle = "Smash Hits",ReleaseDate = DateTime.Parse("1969-07-30")},
                 new Album {ArtistName = "Beyoncé",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Beyoncé"), Genre = "Pop",AlbumTitle = "Dangerously in Love",ReleaseDate = DateTime.Parse("2003-06-23")},
                 new Album {ArtistName = "Beyoncé",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Beyoncé"), Genre = "Pop",AlbumTitle = "B'Day",ReleaseDate = DateTime.Parse("2006-09-01")},
@@ -270,11 +259,14 @@ namespace RecordReviews.Data
                 new Album {ArtistName = "Taylor Swift",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Taylor Swift"), Genre = "Pop",AlbumTitle = "Reputation",ReleaseDate = DateTime.Parse("2017-11-10")},
                 new Album {ArtistName = "Taylor Swift",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Taylor Swift"), Genre = "Pop",AlbumTitle = "Lover",ReleaseDate = DateTime.Parse("2019-08-23")},
                 new Album {ArtistName = "Taylor Swift",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Taylor Swift"), Genre = "Pop",AlbumTitle = "Folklore",ReleaseDate = DateTime.Parse("2020-07-24")},
-                //new Album {ArtistName = "Ed Sheeran",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Ed Sheeran"), Genre = "Pop",AlbumTitle = "+",ReleaseDate = DateTime.Parse("2011-09-09")},
                 new Album {ArtistName = "Ed Sheeran",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Ed Sheeran"), Genre = "Pop",AlbumTitle = "×",ReleaseDate = DateTime.Parse("2014-06-23")},
                 new Album {ArtistName = "Ed Sheeran",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Ed Sheeran"), Genre = "Pop",AlbumTitle = "÷",ReleaseDate = DateTime.Parse("2017-03-03")},
                 new Album {ArtistName = "Ed Sheeran",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Ed Sheeran"), Genre = "Pop",AlbumTitle = "No.6 Collaborations Project",ReleaseDate = DateTime.Parse("2019-07-12")},
-                new Album {ArtistName = "Tones and I",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Tones and I"), Genre = "Pop",AlbumTitle = "The Kids Are Coming",ReleaseDate = DateTime.Parse("2019-08-30")},
+                new Album {ArtistName = "Justin Bieber",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Justin Bieber"), Genre = "Pop",AlbumTitle = "Under the Mistletoe",ReleaseDate = DateTime.Parse("2011-11-01")},
+                new Album {ArtistName = "Justin Bieber",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Justin Bieber"), Genre = "Pop",AlbumTitle = "Believe",ReleaseDate = DateTime.Parse("2012-06-15")},
+                new Album {ArtistName = "Justin Bieber",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Justin Bieber"), Genre = "Pop",AlbumTitle = "Journals",ReleaseDate = DateTime.Parse("2013-12-23")},
+                new Album {ArtistName = "Justin Bieber",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Justin Bieber"), Genre = "Pop",AlbumTitle = "Purpose",ReleaseDate = DateTime.Parse("2015-11-13")},
+                new Album {ArtistName = "Justin Bieber",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Justin Bieber"), Genre = "Pop",AlbumTitle = "Changes",ReleaseDate = DateTime.Parse("2020-02-14")},
                 new Album {ArtistName = "Hozier",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Hozier"), Genre = "Rock",AlbumTitle = "Hozier",ReleaseDate = DateTime.Parse("2014-09-19")},
                 new Album {ArtistName = "Hozier",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Hozier"), Genre = "Rock",AlbumTitle = "Wasteland, Baby!",ReleaseDate = DateTime.Parse("2019-03-01")},
                 new Album {ArtistName = "Bon Jovi",Artist = context.Artists.SingleOrDefault(a => a.ArtistName == "Bon Jovi"), Genre = "Rock",AlbumTitle = "Bon Jovi",ReleaseDate = DateTime.Parse("1984-01-21")},
@@ -396,8 +388,8 @@ namespace RecordReviews.Data
             foreach (var artist in artistList)
             {
                 artist.UpdateArtistRate();
-                var multipler = rand.Next() % 15 + 1;
-                artist.PageViews = artist.Albums.Count() * multipler + (rand.Next() % 500 + 1);
+                var multiplier = rand.Next() % 15 + 1;
+                artist.PageViews = artist.Albums.Count() * multiplier + (rand.Next() % 400 + 150);
             }
             context.SaveChanges();
         }
