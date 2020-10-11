@@ -200,7 +200,7 @@ namespace RecordReviews.Controllers
                     return Forbid();
                 }
 
-                await _context.AddAsync(artist);
+                await _context.Artists.AddAsync(artist);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Details", new { id = artist.ArtistID });
             }
