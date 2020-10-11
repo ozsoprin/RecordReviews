@@ -91,6 +91,23 @@ namespace RecordReviews.Controllers
             if (HttpContext.Session.GetString("LastArtists") != null)
             {
                 var artistList = JsonConvert.DeserializeObject<Artist[]>(HttpContext.Session.GetString("LastArtists")).ToList();
+                var exists = false;
+                int index = 0;
+                foreach(var viewedArtist in artistList)
+                {
+                    if (viewedArtist.ArtistID == artist.ArtistID)
+                    {
+                        exists = true;
+                        break;
+                    }
+
+                    index++;
+                }
+
+                if (exists)
+                {
+                    artistList.RemoveAt(index);
+                }
                 if (artistList.Count == 10)
                 {
                     artistList.RemoveAt(artistList.Count - 1);
@@ -372,7 +389,7 @@ namespace RecordReviews.Controllers
 
                 var lastartist = artistList[0];
 
-                var recommendedArtist = _context.Artists.Where(a => a.Genre == Genre && a.ArtistID != lastartist.ArtistID).OrderBy(album => Guid.NewGuid())
+                var recommendedArtist = _context.Artists.Where(a => a.Genre == Genre && a.ArtistID != lastartist.ArtistID).OrderBy(artist => Guid.NewGuid())
                     .AsEnumerable();
 
                 return recommendedArtist;
