@@ -163,7 +163,7 @@ namespace RecordReviews.Controllers
 
                 review.CreationTime = DateTime.Now;
                 review.Album = await _context.Albums.Include(a=>a.Reviews).Include(a => a.Artist).ThenInclude(a=>a.Albums).ThenInclude(a=>a.Reviews).FirstOrDefaultAsync(a => a.AlbumId == review.AlbumId);
-                _context.Add(review);
+                await _context.Reviews.AddAsync(review);
                 review.UpdateRate();
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Details","Albums", new { id = review.Album.AlbumId });
