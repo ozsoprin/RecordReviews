@@ -85,7 +85,6 @@ namespace RecordReviews.Controllers
 
             ViewBag.AlbumReviews = _context.Albums.Include(a => a.Reviews).SingleOrDefault(a => a.AlbumId == id)
                 ?.Reviews.ToList();
-            ViewBag.AlbumYouMightLike = _context.Albums.OrderByDescending(a => a.AvgRate).ToList();
             album.PageViews++;
 
             if (HttpContext.Session.GetString("LastAlbums") != null)
