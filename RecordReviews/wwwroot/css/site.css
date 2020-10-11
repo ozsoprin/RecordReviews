@@ -1,5 +1,9 @@
 ﻿
 
+@font-face {
+    font-family: myFirstFont;
+    src: url("/Fonts/Raleway-VariableFont_wght.ttf");
+}
 
 html {
     position: relative;
@@ -7,18 +11,17 @@ html {
     width: 100%;
     margin: 0;
     padding: 0;
-    font-family: 'Raleway', sans-serif;
-   
+    font-family: myFirstFont,sans-serif;
 }
 
 body {
     /* Margin bottom by footer height */
     margin-bottom: 60px;
-    margin-top:100px;
+    margin-top: 100px;
     height: 100%;
     width: 100%;
     padding: 0;
-    font-family: 'Raleway', sans-serif;
+    font-family: myFirstFont,sans-serif;
     background-color: #D9AFD9;
     background-image: linear-gradient(0deg, #D9AFD9 0%, #97D9E1 85%);
 }
@@ -280,9 +283,7 @@ aside {
     margin-bottom: 100px;
     width: 450px;
 }
-
-
-/*yotam*/
-#demo {
-    width: 90%;
+video {
+    box-shadow: 0px 30px 50px rgba(0, 0, 0, 0.1);
+    border-radius: 80px;
 }
