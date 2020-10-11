@@ -214,6 +214,7 @@ namespace RecordReviews.Controllers
 
                 //Generating a new artist if not existed
                 var newArtist = new Artist(album.ArtistName, "Unknown", album.Genre);
+                newArtist.OwnerID = _userManager.GetUserId(User);
                 await _context.Artists.AddAsync(newArtist);
                 await _context.SaveChangesAsync();
 
