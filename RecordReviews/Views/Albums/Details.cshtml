@@ -316,10 +316,18 @@
 
 <div>
     @if ((await AuthorizationService.AuthorizeAsync(
-User, Model,
-Operations.Update)).Succeeded)
+    User, Model,
+    Operations.Update)).Succeeded)
     {
         <a class="text-muted" asp-action="Edit" asp-route-id="@Model.AlbumId">Edit</a>
+        <text> | </text>
+    }
+
+    @if ((await AuthorizationService.AuthorizeAsync(
+        User, Model,
+        Operations.Delete)).Succeeded)
+    {
+        <a class="text-muted" asp-action="Delete" asp-route-id="@Model.AlbumId">Delete</a>
         <text> | </text>
     }
     <a class="text-muted" asp-action="Index">Back to Albums</a>
