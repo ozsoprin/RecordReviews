@@ -117,7 +117,7 @@ namespace RecordReviews.Controllers
                         List<Artist> artists = new List<Artist>();
                         foreach (var artist in artistQuery)
                         {
-                            if (artist.FindLastAlbum() <= maxDate && artist.FindEarliestAlbum() >= minDate)
+                            if (artist.FindLastAlbum() <= maxDate || artist.FindEarliestAlbum() >= minDate)
                             {
                                 artists.Add(artist);
                             }
