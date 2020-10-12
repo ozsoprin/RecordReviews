@@ -11,20 +11,22 @@
     $(document).ready(function () {
         $(".btn").click(function () {
             var token = "EAAEXg0s6zRoBAJZCYRm0ZCFViLt6kDVoxJMaWiBdeoFNwQXcl79d1HiJADhJ9lWCJYZBpj8JpRF6lsiROwpy4B0nw2UeWKbSsGvQ0crl5SGTr10K9SY2WTOGk6UZCSRiWFUFU4mZCxKZCOXZA3fPCpuiAcKbQOQMYKqWQDlZCpgFIpXKD787dF7V";
-            $.ajaxSetup({ cache: true });
+            //$.ajaxSetup({ cache: true });
             $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
                 FB.init({
                     appId: '104250951413353',
-                    version: 'v2.7' // or v2.1, v2.2, v2.3, ...
+                    autoLogAppEvents: true,
+                    xfbml: true,
+                    version: 'v8.0'
                 });
-                FB.api(
-                    '/104250951413353/feed',
-                    'GET',
-                    { "access_token": token },
-                    function (response) {
-                        // Insert your code here
-                    }
-                );
+                //FB.api(
+                //    '/104250951413353/feed',
+                //    'GET',
+                //    { "access_token": token },
+                //    function (response) {
+                //        // Insert your code here
+                //    }
+                //);
                 var title = $(".title").val();
 
                 var body = 'New Album -  ' + title + ' | Come check out this new release!';
