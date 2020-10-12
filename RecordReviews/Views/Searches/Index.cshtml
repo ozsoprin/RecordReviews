@@ -51,24 +51,24 @@
             </div>
 
             @*<div class="form-group" id="g">
-                <label for="Genre" class="col-md-7" id="genre">
-                    <b></b>
-                </label>
-                <div class="col-md-7">
-                    @Html.EditorFor(model => model.Genre, new { htmlAttributes = new { @class = "form-control advanced-input", id = "g-input" } })
-                    @Html.ValidationMessageFor(model => model.Genre, null, new { @class = "text-danger" })
-                </div>
-            </div>*@
+                    <label for="Genre" class="col-md-7" id="genre">
+                        <b></b>
+                    </label>
+                    <div class="col-md-7">
+                        @Html.EditorFor(model => model.Genre, new { htmlAttributes = new { @class = "form-control advanced-input", id = "g-input" } })
+                        @Html.ValidationMessageFor(model => model.Genre, null, new { @class = "text-danger" })
+                    </div>
+                </div>*@
 
-            <div class="form-group" id="a">
-                <label for="ArtistName" class="col-md-7" id="artist">
-                    <b></b>
-                </label>
-                <div class="col-md-7">
-                    @Html.EditorFor(model => model.ArtistName, new { htmlAttributes = new { @class = "form-control advanced-input", id = "a-input" } })
-                    @Html.ValidationMessageFor(model => model.ArtistName, null, new { @class = "text-danger" })
-                </div>
-            </div>
+            @*<div class="form-group" id="a">
+                    <label for="ArtistName" class="col-md-7" id="artist">
+                        <b></b>
+                    </label>
+                    <div class="col-md-7">
+                        @Html.EditorFor(model => model.ArtistName, new { htmlAttributes = new { @class = "form-control advanced-input", id = "a-input" } })
+                        @Html.ValidationMessageFor(model => model.ArtistName, null, new { @class = "text-danger" })
+                    </div>
+                </div>*@
 
             <div class="form-group advanced-item advanced-artist advanced-album" id="g-c">
                 <label for="Genre" class="col-md-7" id="genre-country">
@@ -131,7 +131,7 @@
     }
 </section>
 <!--search section end-->
-<canvas id="myCanvas" width="1300" height="5" >
+<canvas id="myCanvas" width="1300" height="5">
     Your browser does not support the HTML canvas tag.
 </canvas>
 
@@ -189,8 +189,8 @@
                                         </td>
                                         <td>
                                             @if ((await AuthorizationService.AuthorizeAsync(
-                                               User, item,
-                                               Operations.Update)).Succeeded)
+                                              User, item,
+                                              Operations.Update)).Succeeded)
                                             {
                                                 <a class="text-muted" asp-controller="Artists" asp-action="Edit" asp-route-id="@item.ArtistID">Edit</a>
                                                 <text> | </text>
@@ -199,8 +199,8 @@
                                             <a class="text-muted" asp-controller="Artists" asp-action="Details" asp-route-id="@item.ArtistID">Details</a>
 
                                             @if ((await AuthorizationService.AuthorizeAsync(
-                                               User, item,
-                                               Operations.Delete)).Succeeded)
+                                              User, item,
+                                              Operations.Delete)).Succeeded)
                                             {
                                                 <text> | </text>
                                                 <a class="text-muted" asp-controller="Artists" asp-action="Delete" asp-route-id="@item.ArtistID">Delete</a>
@@ -260,8 +260,8 @@
                                         </td>
                                         <td>
                                             @if ((await AuthorizationService.AuthorizeAsync(
-                                              User, item,
-                                              Operations.Update)).Succeeded)
+                                             User, item,
+                                             Operations.Update)).Succeeded)
                                             {
                                                 <a class="text-muted" asp-controller="Albums" asp-action="Edit" asp-route-id="@item.AlbumId">Edit</a>
                                                 <text> | </text>
@@ -270,8 +270,8 @@
                                             <a class="text-muted" asp-controller="Albums" asp-action="Details" asp-route-id="@item.AlbumId">Details</a>
 
                                             @if ((await AuthorizationService.AuthorizeAsync(
-                                              User, item,
-                                              Operations.Delete)).Succeeded)
+                                             User, item,
+                                             Operations.Delete)).Succeeded)
                                             {
                                                 <text> | </text>
                                                 <a class="text-muted" asp-controller="Albums" asp-action="Delete" asp-route-id="@item.AlbumId">Delete</a>
@@ -325,8 +325,8 @@
                                         </td>
                                         <td>
                                             @if ((await AuthorizationService.AuthorizeAsync(
-                                              User, item,
-                                              Operations.Update)).Succeeded)
+                                             User, item,
+                                             Operations.Update)).Succeeded)
                                             {
                                                 <a class="text-muted" asp-controller="Reviews" asp-action="Edit" asp-route-id="@item.ReviewId">Edit</a>
                                                 <text> | </text>
@@ -335,8 +335,8 @@
                                             <a class="text-muted" asp-controller="Reviews" asp-action="Details" asp-route-id="@item.ReviewId">Details</a>
 
                                             @if ((await AuthorizationService.AuthorizeAsync(
-                                              User, item,
-                                              Operations.Delete)).Succeeded)
+                                             User, item,
+                                             Operations.Delete)).Succeeded)
                                             {
                                                 <text> | </text>
                                                 <a class="text-muted" asp-controller="Reviews" asp-action="Delete" asp-route-id="@item.ReviewId">Delete</a>
@@ -403,9 +403,8 @@
                             break;
                         case "Review":
                             $("#primary-name").html("<b>Album Title:</b>");
-                            $("#secondary-name").html("<b>Written By:</b>");
+                            $("#secondary-name").html("<b>Artist Name:</b>");
                             $("#date-range-label").html("<h6><b>Creation Time Range:</b></h6>");
-                            $("#artist").html("<h6><b>On Artist:</b></h6>");
                             $("#a").show();
                             $(".advanced-review").show();
                             break;
@@ -453,9 +452,8 @@
                             break;
                         case "Review":
                             $("#primary-name").html("<b>Album Title:</b>");
-                            $("#secondary-name").html("<b>Written By:</b>");
-                            $("#date-range-label").html("<h6><b>Creation Time Range:</b></h6>");
-                            $("#artist").html("<h6><b>On Artist:</b></h6>");
+                            $("#secondary-name").html("<b>Artist Name:</b>");
+                            $("#date-range-label").html("<h6><b>Creation Time Range:</b></h6>")
                             $("#a").show();
                             $(".advanced-review").show();
                             break;

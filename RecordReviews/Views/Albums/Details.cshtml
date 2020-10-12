@@ -45,7 +45,7 @@
     }
 </script>
 
-@*<script>
+<script>
         function getVideo() {
             var artist = $(".youtube-video").attr('alt');
             var title = $(".youtube-video").attr('title');
@@ -67,7 +67,7 @@
                 });
 
         }
-    </script>*@
+    </script>
 <script>
     function strPadLeft(string, padding, length) {
         return (new Array(length + 1).join(padding) + string).slice(-length);
@@ -149,7 +149,7 @@
             await creatAlbumImg(element);
         });
         getBioAlbum();
-        //getVideo();
+        getVideo();
         getTracks();
     });
 </script>
