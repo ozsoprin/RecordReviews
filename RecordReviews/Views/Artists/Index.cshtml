@@ -7,7 +7,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
     async function creatArtistImg(element) {
-        var LastFmKey = "4a06f33fa225792783b9c7c2e6b9fde6";
+        var LastFmKey = "LASTFMKEY";
         var name = $(element).attr('alt');
         var url = await encodeURI("https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=" +
             name +
@@ -24,11 +24,11 @@
 </script>
 <!--script for img (last.fm) end-->
 <!--scripts for google map start-->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c&callback=initMap&libraries=&v=weekly"
+<script src="https://maps.googleapis.com/maps/api/js?key=APIKEY"
             async defer>
 </script>
 <script>
-    var GoogleKey = 'AIzaSyD54My_EKJRdnOMUu4w1Pwv7cxaoovMs5c';
+    var GoogleKey = 'APIKEY';
      function initMap() {
           var options = {
                  zoom: 1,
